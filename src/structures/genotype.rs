@@ -15,13 +15,21 @@ impl<T: Gene> Genotype<T>{
     }
 
     /**
+     * Function to add the DNA inside the genotype and calculate the phenotype
+     */
+    pub fn add_dna(mut self, dna: Vec<T>) {
+        self.dna = dna;
+        self.phenotype = self.calculate_phenotype();
+    }
+
+    /**
      * Calculates the phenotype, adding the values of the dna
      */
-    fn calculate_phenotype(&self) -> f64{
+    fn calculate_phenotype(&self) -> f64 {
         let mut phenotype = 0.0;
         for gene in &self.dna {
             phenotype += gene.value();
         }
-        phenotype
+       phenotype
     }
 }
