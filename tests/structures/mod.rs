@@ -46,3 +46,22 @@ fn genotype_add_gene(){
     assert_eq!(&genotype_1.dna[0], &gene_1);
     assert_eq!(&genotype_1.dna[1], &gene_2);
 }
+
+#[test]
+fn genotype_calculate_phenotype(){
+     //We create 4 genes
+     let gene_1 = Gene{id:1,value:10.1};
+     let gene_2 = Gene{id:2, value:20.2};
+     let gene_3 = Gene{id:3, value:30.3};
+     let gene_4 = Gene{id:4, value:40.4};
+ 
+     //We create the genotype
+     let mut genotype_1 = Genotype::new();
+     genotype_1.add_dna(vec![gene_1, gene_2, gene_3, gene_4]);
+ 
+     //We check the number of elements in the dna
+     assert_eq!(genotype_1.dna.len(), 4);
+ 
+     //We check the phenotype
+     assert_eq!(genotype_1.phenotype, 101.0);
+}

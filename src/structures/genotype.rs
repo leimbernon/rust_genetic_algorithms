@@ -26,6 +26,7 @@ impl<T: GeneT> Genotype<T>{
      */
     pub fn add_gene(&mut self, gene: T){
         self.dna.push(gene);
+        self.phenotype = self.calculate_phenotype();
     }
 
     /**
