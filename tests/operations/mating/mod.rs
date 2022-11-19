@@ -65,5 +65,5 @@ fn test_random_odd_mating(){
     //We create the population and create the random mating
     let population = vec![individual_1, individual_2, individual_3, individual_4, individual_5];
     let mating_population = random::random_mating(&population);
-    assert_eq!(mating_population.len(), 3);
+    assert_eq!(mating_population.len(), 2);
 }
