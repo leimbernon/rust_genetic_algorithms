@@ -6,9 +6,12 @@ use genetic_algorithms::operations::{mating::random};
 #[derive(Copy, Clone)]
 struct Gene{
     pub id: i64,
-    pub value: f64,
 }
-impl GeneT for Gene{}
+impl GeneT for Gene{
+    fn get_id(&self) -> &i64{
+        return &self.id;
+    }
+}
 
 #[derive(Debug)]
 pub struct Genotype<T: GeneT>{
@@ -28,12 +31,12 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
 fn test_random_even_mating(){
 
     //We create 6 dna's for 6 individuals
-    let dna_1 = vec![Gene{id:1,value:10.1}, Gene{id:2,value:20.2}];
-    let dna_2 = vec![Gene{id:3,value:30.3}, Gene{id:4,value:40.4}];
-    let dna_3 = vec![Gene{id:5,value:50.5}, Gene{id:6,value:60.6}];
-    let dna_4 = vec![Gene{id:7,value:70.7}, Gene{id:8,value:80.8}];
-    let dna_5 = vec![Gene{id:9,value:90.9}, Gene{id:10,value:100.10}];
-    let dna_6 = vec![Gene{id:11,value:110.11}, Gene{id:12,value:120.12}];
+    let dna_1 = vec![Gene{id:1}, Gene{id:2}];
+    let dna_2 = vec![Gene{id:3}, Gene{id:4}];
+    let dna_3 = vec![Gene{id:5}, Gene{id:6}];
+    let dna_4 = vec![Gene{id:7}, Gene{id:8}];
+    let dna_5 = vec![Gene{id:9}, Gene{id:10}];
+    let dna_6 = vec![Gene{id:11}, Gene{id:12}];
 
     //We create the individuals
     let individual_1 = Genotype{dna: dna_1, phenotype: 0.0};
@@ -54,11 +57,11 @@ fn test_random_even_mating(){
 fn test_random_odd_mating(){
     
     //We create 6 dna's for 6 individuals
-    let dna_1 = vec![Gene{id:1,value:10.1}, Gene{id:2,value:20.2}];
-    let dna_2 = vec![Gene{id:3,value:30.3}, Gene{id:4,value:40.4}];
-    let dna_3 = vec![Gene{id:5,value:50.5}, Gene{id:6,value:60.6}];
-    let dna_4 = vec![Gene{id:7,value:70.7}, Gene{id:8,value:80.8}];
-    let dna_5 = vec![Gene{id:9,value:90.9}, Gene{id:10,value:100.10}];
+    let dna_1 = vec![Gene{id:1}, Gene{id:2}];
+    let dna_2 = vec![Gene{id:3}, Gene{id:4}];
+    let dna_3 = vec![Gene{id:5}, Gene{id:6}];
+    let dna_4 = vec![Gene{id:7}, Gene{id:8}];
+    let dna_5 = vec![Gene{id:9}, Gene{id:10}];
 
     //We create the individuals
     let individual_1 = Genotype{dna: dna_1, phenotype: 0.0};

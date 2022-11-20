@@ -1,4 +1,6 @@
-pub trait GeneT {}
+pub trait GeneT {
+    fn get_id(&self) -> &i64;
+}
 
 pub trait GenotypeT<T: GeneT>{
     fn get_dna(&self) -> &Vec<T>;
