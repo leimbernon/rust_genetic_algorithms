@@ -1,12 +1,12 @@
-use crate::structures::gene::GeneT;
-use crate::structures::genotype::Genotype;
+use crate::structures::GeneT;
+use crate::structures::GenotypeT;
 use std::collections::HashMap;
 use rand::Rng;
 
 /**
  * Function to make the random mating between the list of individuals
  */
-pub fn random_mating<T: GeneT>(individuals: &Vec<Genotype<T>>) -> HashMap<usize, usize>{
+pub fn random_mating<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>) -> HashMap<usize, usize>{
 
     let mut mating = HashMap::new();
     let mut indexes = Vec::new();

@@ -1,7 +1,6 @@
-use crate::structures::genotype::Genotype;
+use crate::structures::GenotypeT;
+use crate::structures::GeneT;
 
-use crate::structures::gene::GeneT;
-
-pub fn cycle<T: GeneT>(parent_1: &Genotype<T>, parent_2: &Genotype<T>) {
+pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) {
 
 }

@@ -1,21 +1,26 @@
-use genetic_algorithms::structures::{gene::GeneT, genotype::Genotype};
+use genetic_algorithms::structures::{GeneT, GenotypeT};
 use genetic_algorithms::operations::{mating::random};
-use super::*;
 
+//Structures definition
 #[derive(Debug)]
 #[derive(Copy, Clone)]
 struct Gene{
     pub id: i64,
-    value: f64,
+    pub value: f64,
 }
-impl GeneT for Gene{
-    fn value(&self) -> &f64{
-        return &self.value;
+impl GeneT for Gene{}
+
+#[derive(Debug)]
+pub struct Genotype<T: GeneT>{
+    pub dna: Vec<T>,
+    pub phenotype: f64,
+}
+impl <T: GeneT> GenotypeT<T> for Genotype<T>{
+    fn get_dna(&self) -> &Vec<T> {
+        return &self.dna;
     }
-}
-impl PartialEq for Gene {
-    fn eq(&self, other: &Self) -> bool {
-        self.id == other.id && self.value == other.value
+    fn get_phenotype(&self) -> &f64 {
+        return &self.phenotype;
     }
 }
 
