@@ -54,4 +54,16 @@ fn test_cycle_crossover(){
     assert_eq!(dna_child_1.len(), parent_1.dna.len());
     assert_eq!(dna_child_2.len(), dna_child_2.len());
     assert_eq!(parent_1.dna.len(), parent_2.dna.len());
+
+    //Checking that the crossover has been well executed for the child 1
+    assert_eq!(dna_child_1.get(0).unwrap().get_id(), &4);
+    assert_eq!(dna_child_1.get(1).unwrap().get_id(), &2);
+    assert_eq!(dna_child_1.get(2).unwrap().get_id(), &3);
+    assert_eq!(dna_child_1.get(3).unwrap().get_id(), &1);
+
+    //Checking that the crossover has been well executed for the child 2
+    assert_eq!(dna_child_2.get(0).unwrap().get_id(), &1);
+    assert_eq!(dna_child_2.get(1).unwrap().get_id(), &3);
+    assert_eq!(dna_child_2.get(2).unwrap().get_id(), &2);
+    assert_eq!(dna_child_2.get(3).unwrap().get_id(), &4);
 }
