@@ -1,9 +1,8 @@
-use genetic_algorithms::structures::{GeneT, GenotypeT};
+use genetic_algorithms::traits::{GeneT, GenotypeT};
 use genetic_algorithms::operations::{mating::random};
 
 //Structures definition
-#[derive(Debug)]
-#[derive(Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 struct Gene{
     pub id: i64,
 }
@@ -19,11 +18,14 @@ pub struct Genotype<T: GeneT>{
     pub phenotype: f64,
 }
 impl <T: GeneT> GenotypeT<T> for Genotype<T>{
-    fn get_dna(&self) -> &Vec<T> {
-        return &self.dna;
+    fn get_dna(&self) -> Vec<T> {
+        self.dna.to_vec()
     }
     fn get_phenotype(&self) -> &f64 {
         return &self.phenotype;
+    }
+    fn create() -> Self {
+        Self::create()
     }
 }
 

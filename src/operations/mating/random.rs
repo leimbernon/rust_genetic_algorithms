@@ -1,5 +1,5 @@
-use crate::structures::GeneT;
-use crate::structures::GenotypeT;
+use crate::traits::GeneT;
+use crate::traits::GenotypeT;
 use std::collections::HashMap;
 use rand::Rng;
 

@@ -1,3 +1,3 @@
 pub mod operations;
 
-pub mod structures;
+pub mod traits;
