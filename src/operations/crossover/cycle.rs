@@ -4,12 +4,12 @@ use crate::traits::GeneT;
 pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Vec<U> {
 
     //Creates the children
-    let mut child_1 = U::create();
-    let mut child_2 = U::create();
+    let child_1 = U::create();
+    let child_2 = U::create();
 
     //Creates the temporal vectors
-    let mut parent_1_copy = parent_1.clone();
-    let mut parent_2_copy = parent_2.clone();
+    let parent_1_copy = parent_1.clone();
+    let parent_2_copy = parent_2.clone();
 
     //Starting the cycles
     let mut cycle_number = 0;
