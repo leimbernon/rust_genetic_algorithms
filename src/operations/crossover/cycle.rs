@@ -1,63 +1,71 @@
 use crate::traits::GenotypeT;
 use crate::traits::GeneT;
 
-pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Vec<U> {
+pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<Vec<Vec<T>>> {
 
-    //Creates the children
-    let child_1 = U::create();
-    let child_2 = U::create();
+    //Before doing the operation, we check that the dna in the parent 1 has the same length of the dna in the parent 2
+    if parent_1.get_dna().len() != parent_2.get_dna().len() {
+        panic!("parent 1 and parent 2 must have the same dna length");
+    }
 
     //Creates the temporal vectors
-    let parent_1_copy = parent_1.clone();
-    let parent_2_copy = parent_2.clone();
+    let mut dna_parent_1 = parent_1.get_dna().clone();
+    let mut dna_parent_2 = parent_2.get_dna().clone();
+
+
+    //Creates the DNA of the children
+    let mut dna_child_1 = vec![T::new(); dna_parent_1.len()];
+    let mut dna_child_2 = vec![T::new(); dna_parent_2.len()];
 
     //Starting the cycles
     let mut cycle_number = 0;
 
-    while parent_1_copy.get_dna().len() > 0 {
+    while dna_parent_1.len() > 0 {
 
         //Getting the indexes for the current cycle
-        let indexes = local_cycle(parent_1_copy, parent_2_copy);
+        let indexes = local_cycle(&dna_parent_1, &dna_parent_2);
 
         //Removing the dna indexes from parent 1 and parent 2
         //And setting the values of the DNA
-        for i in 0..(&indexes.len()-1){
+        for i in 0..indexes.len(){
 
             //If the cycle number is odd
             if cycle_number & 1 == 1 {
 
                 //Children 1 will take the indexes from parent 2 and child 2 from parent 1
-                child_1.get_dna().insert(indexes[i], parent_2.get_dna().get(i).cloned().unwrap());
-                child_2.get_dna().insert(indexes[i], parent_1.get_dna().get(i).cloned().unwrap());
+                dna_child_1.insert(indexes[i], parent_2.get_dna().get(i).cloned().unwrap());
+                dna_child_2.insert(indexes[i], parent_1.get_dna().get(i).cloned().unwrap());
 
             }else{
                 //Children 1 will take the indexes from parent 1 and child 2 from parent 2
-                child_1.get_dna().insert(indexes[i], parent_1.get_dna().get(i).cloned().unwrap());
-                child_2.get_dna().insert(indexes[i], parent_2.get_dna().get(i).cloned().unwrap());
+                dna_child_1.insert(indexes[i], parent_1.get_dna().get(i).cloned().unwrap());
+                dna_child_2.insert(indexes[i], parent_2.get_dna().get(i).cloned().unwrap());
             }
+        }
 
-            parent_1_copy.get_dna().remove(i);
-            parent_2_copy.get_dna().remove(i);
+        for i in 0..indexes.len(){
+            dna_parent_1.remove(indexes[i]);
+            dna_parent_2.remove(indexes[i]);
         }
         
         cycle_number += 1;
     }
 
-    return vec![child_1, child_2];
+    return Some(vec![dna_child_1, dna_child_2]);
 }
 
 /**
  * Function to follow the indexes in the dna
  */
-fn local_cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Vec<usize>{
+fn local_cycle<T: GeneT>(dna_parent_1: &Vec<T>, dna_parent_2: &Vec<T>) -> Vec<usize>{
 
     let mut indexes = Vec::new();
     let mut index = 0;
 
     //If there is some element in the starting element
-    if parent_1.get_dna().get(index).is_some() {
+    if dna_parent_1.get(index).is_some() {
         
-        let starting_value = *parent_1.get_dna().get(index).unwrap().get_id();
+        let starting_value = *dna_parent_1.get(index).unwrap().get_id();
         let mut value_parent_2 = -1;
 
         //If the values are not the same
@@ -65,31 +73,12 @@ fn local_cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Vec<usi
 
             //Adds the index in the vector
             indexes.push(index);
-            value_parent_2 = *parent_2.get_dna().get(index).unwrap().get_id();
+            value_parent_2 = *dna_parent_2.get(index).unwrap().get_id();
 
             //Now, we search the index in the parent 2 of the value get in the parent 1
-            index = search_index(parent_1, value_parent_2);
+            index = dna_parent_1.iter().position(|g| g.get_id() == &value_parent_2).unwrap();
         }
     }
 
     return indexes;
-}
-
-
-/**
- * Function to search the index of a value in a vector
- */
-fn search_index<T: GeneT, U: GenotypeT<T>>(parent: &U, value: i64) -> usize{
-
-    let mut index = 0;
-    while index < parent.get_dna().len() {
-
-        if parent.get_dna().get(index).unwrap().get_id() == &value {
-            break;
-        }
-
-        index += 1;
-    }
-
-    index
 }

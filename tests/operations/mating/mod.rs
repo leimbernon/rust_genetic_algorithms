@@ -7,6 +7,9 @@ struct Gene{
     pub id: i64,
 }
 impl GeneT for Gene{
+    fn new()->Gene{
+        return Gene{id: -1};
+    }
     fn get_id(&self) -> &i64{
         return &self.id;
     }
@@ -24,8 +27,11 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_phenotype(&self) -> &f64 {
         return &self.phenotype;
     }
-    fn create() -> Self {
-        Self::create()
+    fn new() -> Self {
+       return Genotype{
+        dna: Vec::new(),
+        phenotype: 0.0,
+       }
     }
 }
 
