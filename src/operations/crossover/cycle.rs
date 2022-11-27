@@ -2,7 +2,7 @@ use crate::traits::GenotypeT;
 use crate::traits::GeneT;
 
 
-pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<Vec<Vec<T>>>{
+pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &mut U, parent_2: &mut U) -> Option<Vec<U>>{
 
     //Before doing the operation, we check that the dna in the parent 1 has the same length of the dna in the parent 2
     if parent_1.get_dna().len() != parent_2.get_dna().len() {
@@ -16,6 +16,9 @@ pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<Ve
     //Creation of the children DNA
     let mut dna_child_1 = vec![T::new(); parent_1.get_dna().len()];
     let mut dna_child_2 = vec![T::new(); parent_2.get_dna().len()];
+
+    let mut child_1 = U::new();
+    let mut child_2 = U::new();
     
     //We loop until having all the elements from the parent 1
     while indexes.len() < parent_1.get_dna().len() {
@@ -39,7 +42,11 @@ pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<Ve
         cycle_number += 1;
     }
 
-    return Some(vec![dna_child_1, dna_child_2]);
+    //Setting the DNA to the children
+    *child_1.get_dna() = dna_child_1;
+    *child_2.get_dna() = dna_child_2;
+
+    return Some(vec![child_1, child_2]);
 }
 
 
