@@ -1,36 +1,5 @@
-use genetic_algorithms::traits::{GeneT, GenotypeT};
+use crate::structures::{Gene, Genotype};
 use genetic_algorithms::operations::{crossover::cycle};
-
-//Structures definition
-#[derive(Debug, Copy, Clone, Default)]
-struct Gene{
-    pub id: i64,
-}
-impl GeneT for Gene{
-    fn new()->Gene{
-        return Gene{id: -1};
-    }
-    fn get_id(&self) -> &i64{
-        return &self.id;
-    }
-}
-
-#[derive(Debug)]
-pub struct Genotype<T: GeneT>{
-    pub dna: Vec<T>,
-    pub phenotype: f64,
-}
-impl <T: GeneT> GenotypeT<T> for Genotype<T>{
-    fn get_dna(&mut self) -> &mut Vec<T> {
-        &mut self.dna
-    }
-    fn get_phenotype(&self) -> &f64 {
-        return &self.phenotype;
-    }
-    fn new() -> Genotype<T> {
-        Genotype { dna: Vec::new(), phenotype: 0.0 }
-    }
-}
 
 
 #[test]
@@ -56,14 +25,14 @@ fn test_cycle_crossover(){
     assert_eq!(parent_1.dna.len(), parent_2.dna.len());
 
     //Checking that the crossover has been well executed for the child 1
-    assert_eq!(child_1.dna.get(0).unwrap().get_id(), &4);
-    assert_eq!(child_1.dna.get(1).unwrap().get_id(), &2);
-    assert_eq!(child_1.dna.get(2).unwrap().get_id(), &3);
-    assert_eq!(child_1.dna.get(3).unwrap().get_id(), &1);
+    assert_eq!(child_1.dna.get(0).unwrap().id, 4);
+    assert_eq!(child_1.dna.get(1).unwrap().id, 2);
+    assert_eq!(child_1.dna.get(2).unwrap().id, 3);
+    assert_eq!(child_1.dna.get(3).unwrap().id, 1);
 
     //Checking that the crossover has been well executed for the child 2
-    assert_eq!(child_2.dna.get(0).unwrap().get_id(), &1);
-    assert_eq!(child_2.dna.get(1).unwrap().get_id(), &3);
-    assert_eq!(child_2.dna.get(2).unwrap().get_id(), &2);
-    assert_eq!(child_2.dna.get(3).unwrap().get_id(), &4);
+    assert_eq!(child_2.dna.get(0).unwrap().id, 1);
+    assert_eq!(child_2.dna.get(1).unwrap().id, 3);
+    assert_eq!(child_2.dna.get(2).unwrap().id, 2);
+    assert_eq!(child_2.dna.get(3).unwrap().id, 4);
 }

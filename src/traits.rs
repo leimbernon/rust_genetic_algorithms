@@ -1,4 +1,4 @@
-pub trait GeneT: Default + Clone {
+pub trait GeneT: Default + Clone + Copy {
     fn new() -> Self;
     fn get_id(&self) -> &i64;
 }
