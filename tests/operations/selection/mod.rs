@@ -1,8 +1,8 @@
 use crate::structures::{Gene, Genotype};
-use genetic_algorithms::operations::{mating::random};
+use genetic_algorithms::operations::{selection::random};
 
 #[test]
-fn test_random_even_mating(){
+fn test_random_even_selection(){
 
     //We create 6 dna's for 6 individuals
     let dna_1 = vec![Gene{id:1}, Gene{id:2}];
@@ -22,13 +22,13 @@ fn test_random_even_mating(){
 
     //We create the population and create the random mating
     let population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6];
-    let mating_population = random::random_mating(&population);
+    let mating_population = random::random(&population);
     assert_eq!(mating_population.len(), 3);
 
 }
 
 #[test]
-fn test_random_odd_mating(){
+fn test_random_odd_selection(){
     
     //We create 6 dna's for 6 individuals
     let dna_1 = vec![Gene{id:1}, Gene{id:2}];
@@ -46,6 +46,6 @@ fn test_random_odd_mating(){
 
     //We create the population and create the random mating
     let population = vec![individual_1, individual_2, individual_3, individual_4, individual_5];
-    let mating_population = random::random_mating(&population);
+    let mating_population = random::random(&population);
     assert_eq!(mating_population.len(), 2);
 }
