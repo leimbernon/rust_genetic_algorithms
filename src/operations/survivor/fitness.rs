@@ -1,10 +1,4 @@
-use crate::traits::{GeneT, GenotypeT};
-
-pub enum ProblemSolving {
-    Minimization,
-    Maximization,
-}
-
+use crate::{traits::{GeneT, GenotypeT}, ga::ProblemSolving};
 
 pub fn fitness_based<T:GeneT, U:GenotypeT<T>>(mut individuals: Vec<U>, population_size: usize, problem_solving: ProblemSolving) -> Vec<U>{
 
