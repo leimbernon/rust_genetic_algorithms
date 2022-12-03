@@ -1,6 +1,7 @@
 use crate::{traits::{GeneT, GenotypeT}, ga::ProblemSolving};
 
-pub fn fitness_based<T:GeneT, U:GenotypeT<T>>(mut individuals: Vec<U>, population_size: usize, problem_solving: ProblemSolving) -> Vec<U>{
+pub fn fitness_based<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec<U>, population_size: usize, problem_solving: ProblemSolving)
+{
 
     //We first sort the individuals by their fitness
     individuals.sort_by(|a, b| b.get_phenotype().partial_cmp(&a.get_phenotype()).unwrap());
@@ -22,6 +23,4 @@ pub fn fitness_based<T:GeneT, U:GenotypeT<T>>(mut individuals: Vec<U>, populatio
             },
         }
     }
-
-    return individuals;
 }
