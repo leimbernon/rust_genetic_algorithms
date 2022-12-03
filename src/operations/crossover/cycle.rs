@@ -21,7 +21,7 @@ pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<Ve
     let mut child_2 = U::new();
     
     //We loop until having all the elements from the parent 1
-    while indexes.len() < parent_1.get_dna().len() {
+    while indexes.len() <= parent_1.get_dna().len() {
 
         let cycle_indexes = local_cycle(&indexes, &parent_1.get_dna(), &parent_2.get_dna());
         indexes.extend(cycle_indexes.iter().copied());

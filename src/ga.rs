@@ -8,18 +8,18 @@ pub enum ProblemSolving {
 
 #[derive(Copy, Clone)]
 pub struct GaConfiguration {
-    problem_solving: ProblemSolving,
-    max_generations: i32,
-    selection: Selection,
-    crossover: Crossover,
-    mutation: Mutation,
-    survivor: Survivor,
+    pub problem_solving: ProblemSolving,
+    pub max_generations: i32,
+    pub selection: Selection,
+    pub crossover: Crossover,
+    pub mutation: Mutation,
+    pub survivor: Survivor,
 }
 
 /**
  * Function to start the genetic algorithms cycle
  */
-pub fn start<T:GeneT, U:GenotypeT<T> + Copy>(mut population: Population<T,U>, configuration: GaConfiguration)->Vec<U>
+pub fn start<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configuration: GaConfiguration)->Vec<U>
 {
     let initial_population_size = population.size();
 
@@ -30,14 +30,14 @@ pub fn start<T:GeneT, U:GenotypeT<T> + Copy>(mut population: Population<T,U>, co
         let parents = selection::factory(configuration.selection, &population.individuals);
 
         //2- Reproduce the parents
-        for j in 0..parents.len() {
+        for j in parents.keys() {
             
             let index_parent_1 = parents.get_key_value(&j).unwrap().0;
             let index_parent_2 = parents.get_key_value(&j).unwrap().1;
-            let mut parent_1 = population.individuals.get(*index_parent_1).copied().unwrap();
-            let mut parent_2 = population.individuals.get(*index_parent_2).copied().unwrap();
+            let parent_1 = population.individuals.get(*index_parent_1).unwrap().clone();
+            let parent_2 = population.individuals.get(*index_parent_2).unwrap().clone();
 
-            let mut offspring = crossover::factory(configuration.crossover, &mut parent_1, &mut parent_2).unwrap();
+            let mut offspring = crossover::factory(configuration.crossover, parent_1, parent_2).unwrap();
             let mut child_1 = offspring.pop().unwrap();
             let mut child_2 = offspring.pop().unwrap();
 

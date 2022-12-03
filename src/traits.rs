@@ -3,7 +3,7 @@ pub trait GeneT: Default + Clone + Copy {
     fn get_id(&self) -> &i64;
 }
 
-pub trait GenotypeT<T: GeneT>{
+pub trait GenotypeT<T: GeneT + Default>{
     fn new() -> Self;
     fn get_dna(&self) -> &Vec<T>;
     fn get_dna_mut(&mut self) -> &mut Vec<T>;
