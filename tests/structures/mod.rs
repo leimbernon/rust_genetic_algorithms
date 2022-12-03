@@ -20,7 +20,10 @@ pub struct Genotype<T: GeneT>{
     pub phenotype: f64,
 }
 impl <T: GeneT> GenotypeT<T> for Genotype<T>{
-    fn get_dna(&mut self) -> &mut Vec<T> {
+    fn get_dna(&self) -> &Vec<T> {
+        &self.dna
+    }
+    fn get_dna_mut(&mut self) -> &mut Vec<T> {
         &mut self.dna
     }
     fn get_phenotype(&self) -> &f64 {
