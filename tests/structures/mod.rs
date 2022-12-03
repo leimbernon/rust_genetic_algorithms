@@ -3,13 +3,13 @@ use genetic_algorithms::traits::{GeneT, GenotypeT};
 //Structures definition
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub struct Gene{
-    pub id: i64,
+    pub id: i32,
 }
 impl GeneT for Gene{
     fn new()->Gene{
         return Gene{id: -1};
     }
-    fn get_id(&self) -> &i64{
+    fn get_id(&self) -> &i32{
         return &self.id;
     }
 }
@@ -28,6 +28,17 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     }
     fn get_phenotype(&self) -> &f64 {
         return &self.phenotype;
+    }
+    fn calculate_phenotype(&mut self) {
+        
+        self.phenotype = 0.0;
+        let mut position = 0;
+
+        for i in &self.dna{
+            let phenotype = f64::from(i.get_id()*position);
+            self.phenotype += phenotype;
+            position += 1;
+        }
     }
     fn new() -> Self {
        return Genotype{

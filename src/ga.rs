@@ -45,12 +45,16 @@ pub fn start<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configura
             mutation::factory(configuration.mutation, &mut child_1);
             mutation::factory(configuration.mutation, &mut child_2);
 
+            //4- Calculate the phenotype of both children
+            child_1.calculate_phenotype();
+            child_2.calculate_phenotype();
+
             //Insert the children in the population
             population.individuals.push(child_1);
             population.individuals.push(child_2);
         }
 
-        //4- Survivor selection
+        //5- Survivor selection
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.problem_solving);
     }
 
