@@ -1,5 +1,5 @@
 use crate::structures::{Gene, Genotype};
-use genetic_algorithms::{operations::{survivor::fitness}, traits::GenotypeT};
+use genetic_algorithms::{operations::{survivor::fitness}, traits::GenotypeT, ga};
 
 #[test]
 fn test_fitness_survivor_minization(){
@@ -34,10 +34,10 @@ fn test_fitness_survivor_minization(){
 
 
     //We create the population and create the random mating
-    let population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6,
+    let mut population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6,
     individual_7, individual_8, individual_9, individual_10, individual_11, individual_12];
 
-    let population = fitness::fitness_based(population, 10, fitness::ProblemSolving::Minimization);
+    fitness::fitness_based(&mut population, 10,  ga::ProblemSolving::Minimization);
 
     //Tests that the population has 10 individuals
     assert_eq!(population.len(), 10);
@@ -80,10 +80,10 @@ fn test_fitness_survivor_maximization(){
 
 
     //We create the population and create the random mating
-    let population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6,
+    let mut population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6,
     individual_7, individual_8, individual_9, individual_10, individual_11, individual_12];
 
-    let population = fitness::fitness_based(population, 10, fitness::ProblemSolving::Maximization);
+    fitness::fitness_based(&mut population, 10, ga::ProblemSolving::Maximization);
 
     //Tests that the population has 10 individuals
     assert_eq!(population.len(), 10);
