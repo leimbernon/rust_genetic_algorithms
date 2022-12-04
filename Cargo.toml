@@ -6,7 +6,7 @@ version = "0.1.0"
 edition = "2021"
 license = "Apache-2.0"
 repository = "https://github.com/leimbernon/rust_genetic_algorithms.git"
-keywords = ["genetics", "algorithm", "artificial_intelligence", "artificial", "intelligence"]
+keywords = ["genetics", "algorithm", "ai", "artificial", "intelligence"]
 categories = ["emulators","development-tools", "science", "simulation"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
