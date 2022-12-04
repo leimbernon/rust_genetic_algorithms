@@ -14,6 +14,7 @@ This library provides a simple framework to implement [genetic algorithms (GA)](
     - [Population](#population)
     - [Runner](#runner)
   - [Example](#example)
+  - [Usage](#usage)
 
 ## Features
 
@@ -162,3 +163,11 @@ Finally, run the GA.
 population = run(population, configuration);
 ```
 
+## Usage
+
+Add this to your `Cargo.toml`:
+
+```toml
+[dependencies]
+genetic_algorithms = "0.1.1"
+```
