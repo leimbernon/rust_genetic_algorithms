@@ -1,5 +1,21 @@
-pub mod mating;
-pub mod mutation;
-pub mod recombination;
 pub mod selection;
+pub mod crossover;
+pub mod mutation;
 pub mod survivor;
+
+#[derive(Copy, Clone)]
+pub enum Selection {
+    Random,
+}
+#[derive(Copy, Clone)]
+pub enum Crossover {
+    Cycle,
+}
+#[derive(Copy, Clone)]
+pub enum Mutation {
+    Swap,
+}
+#[derive(Copy, Clone)]
+pub enum Survivor {
+    Fitness,
+}

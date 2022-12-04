@@ -1,3 +1,4 @@
 pub mod operations;
-
-pub mod structures;
+pub mod traits;
+pub mod population;
+pub mod ga;
