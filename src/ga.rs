@@ -17,14 +17,21 @@ pub struct GaConfiguration {
 }
 
 /**
- * Function to start the genetic algorithms cycle
+ * Function to run the genetic algorithms cycle
  */
-pub fn start<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configuration: GaConfiguration)->Vec<U>
+pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configuration: GaConfiguration)->Population<T,U>
 {
     let initial_population_size = population.size();
 
+    //We first calculate the phenotype of the population
+    for individual in &mut population.individuals{
+        individual.calculate_phenotype();
+    }
+
     //We start the cycles
-    for _i in 0..configuration.max_generations {
+    for i in 0..configuration.max_generations {
+
+        println!("Generation number: {}", i+1);
 
         //1- Parent selection for reproduction
         let parents = selection::factory(configuration.selection, &population.individuals);
@@ -58,5 +65,5 @@ pub fn start<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configura
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.problem_solving);
     }
 
-    return Vec::new();
+    return population;
 }

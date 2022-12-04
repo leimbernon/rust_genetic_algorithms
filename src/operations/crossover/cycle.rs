@@ -55,7 +55,7 @@ fn local_cycle<T: GeneT>(indexes: &Vec<usize>, dna_parent_1: &Vec<T>, dna_parent
     let mut index = 0;
 
     //We look for the starting index, that must not be repeated
-    for i in 0..dna_parent_1.len() - 1{
+    for i in 0..dna_parent_1.len(){
         let mut repeated = false;
 
         for j in 0..indexes.len(){
@@ -85,7 +85,12 @@ fn local_cycle<T: GeneT>(indexes: &Vec<usize>, dna_parent_1: &Vec<T>, dna_parent
         value_parent_2 = *dna_parent_2.get(index).unwrap().get_id();
 
         //Now, we search the index in the parent 2 of the value get in the parent 1
-        index = dna_parent_1.iter().position(|g| g.get_id() == &value_parent_2).unwrap();
+        let position_found = dna_parent_1.iter().position(|g| g.get_id() == &value_parent_2);
+        if position_found != None{
+            index = position_found.unwrap();
+        }else{
+            panic!("Error finding {} of parent 2 in parent 1", value_parent_2);
+        }
      }
 
     return cycle_indexes;

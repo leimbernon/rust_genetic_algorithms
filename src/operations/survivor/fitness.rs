@@ -11,12 +11,12 @@ pub fn fitness_based<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec<U>, populati
         let individuals_to_remove = individuals.len() - population_size;
 
         match problem_solving {
-            ProblemSolving::Minimization => {
+            ProblemSolving::Maximization => {
                 for _i in 0..individuals_to_remove{
                     individuals.remove(individuals.len() - 1);
                 }
             },
-            ProblemSolving::Maximization => {
+            ProblemSolving::Minimization => {
                 for _i in 0..individuals_to_remove{
                     individuals.remove(0);
                 }
