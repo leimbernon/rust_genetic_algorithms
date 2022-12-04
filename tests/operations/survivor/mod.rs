@@ -41,8 +41,8 @@ fn test_fitness_survivor_minization(){
 
     //Tests that the population has 10 individuals
     assert_eq!(population.len(), 10);
-    assert_eq!(*population[0].get_phenotype(), 19.0);
-    assert_eq!(*population[9].get_phenotype(), 10.3);
+    assert_eq!(*population[0].get_phenotype(), 17.0);
+    assert_eq!(*population[9].get_phenotype(), 10.1);
 
 }
 
@@ -87,7 +87,7 @@ fn test_fitness_survivor_maximization(){
 
     //Tests that the population has 10 individuals
     assert_eq!(population.len(), 10);
-    assert_eq!(*population[0].get_phenotype(), 17.0);
-    assert_eq!(*population[9].get_phenotype(), 10.1);
+    assert_eq!(*population[0].get_phenotype(), 19.0);
+    assert_eq!(*population[9].get_phenotype(), 10.3);
 
 }
