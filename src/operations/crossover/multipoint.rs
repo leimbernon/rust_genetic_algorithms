@@ -3,7 +3,7 @@ use crate::traits::GeneT;
 
 pub fn multipoint_crossover<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U, crossover_number_of_points: &i32) -> Option<Vec<U>>{
 
-    //Before doing the operation, we check that the dna in the parent 1 has the same length of the dna in the parent 2
+    //Before doing the operation, we check that the dna in parent 1 has the same length of the dna in parent 2
     if parent_1.get_dna().len() != parent_2.get_dna().len() {
         panic!("parent 1 and parent 2 must have the same dna length");
     }
@@ -49,7 +49,7 @@ pub fn multipoint_crossover<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &
         }
     }
 
-    //Sets the dna into the children and return the children
+    //Sets the dna into the children and return them
     *child_1.get_dna_mut() = dna_child_1;
     *child_2.get_dna_mut() = dna_child_2;
 
