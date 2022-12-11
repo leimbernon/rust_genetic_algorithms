@@ -10,6 +10,7 @@ pub enum ProblemSolving {
 pub struct GaConfiguration {
     pub problem_solving: ProblemSolving,
     pub max_generations: i32,
+    pub crossover_number_of_points: i32,
     pub selection: Selection,
     pub crossover: Crossover,
     pub mutation: Mutation,
@@ -44,7 +45,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
             let parent_1 = population.individuals.get(*index_parent_1).unwrap().clone();
             let parent_2 = population.individuals.get(*index_parent_2).unwrap().clone();
 
-            let mut offspring = crossover::factory(configuration.crossover, parent_1, parent_2).unwrap();
+            let mut offspring = crossover::factory(configuration.crossover, parent_1, parent_2, &configuration).unwrap();
             let mut child_1 = offspring.pop().unwrap();
             let mut child_2 = offspring.pop().unwrap();
 

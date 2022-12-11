@@ -8,6 +8,7 @@ fn test_ga_start_maximize(){
     let configuration = GaConfiguration{
         problem_solving: ProblemSolving::Maximization,
         max_generations: 100,
+        crossover_number_of_points: 0,
         selection: Selection::Random,
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
@@ -46,6 +47,7 @@ fn test_ga_start_minimize(){
     let configuration = GaConfiguration{
         problem_solving: ProblemSolving::Minimization,
         max_generations: 100,
+        crossover_number_of_points: 0,
         selection: Selection::Random,
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
