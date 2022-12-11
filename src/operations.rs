@@ -16,6 +16,7 @@ pub enum Crossover {
 #[derive(Copy, Clone)]
 pub enum Mutation {
     Swap,
+    Inversion,
 }
 #[derive(Copy, Clone)]
 pub enum Survivor {
