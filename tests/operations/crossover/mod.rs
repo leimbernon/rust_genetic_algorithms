@@ -1,5 +1,5 @@
 use crate::structures::{Gene, Genotype};
-use genetic_algorithms::{operations::{crossover::{cycle, multipoint::multipoint_crossover}, Selection, Crossover, Mutation, Survivor}, ga::{GaConfiguration, ProblemSolving}};
+use genetic_algorithms::{operations::{crossover::{cycle, multipoint::multipoint_crossover}}};
 
 
 #[test]
