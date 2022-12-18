@@ -1,20 +1,19 @@
 # RUST genetic algorithms library
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a934b8668dbf4412b3c63a7b275ad949)](https://app.codacy.com/gh/leimbernon/rust_genetic_algorithms?utm_source=github.com&utm_medium=referral&utm_content=leimbernon/rust_genetic_algorithms&utm_campaign=Badge_Grade_Settings) [![CircleCI](https://dl.circleci.com/status-badge/img/gh/leimbernon/rust_genetic_algorithms/tree/develop.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/leimbernon/rust_genetic_algorithms/tree/develop)
 
-
 ## Description
 This library provides a simple framework to implement [genetic algorithms (GA)](https://en.wikipedia.org/wiki/Genetic_algorithm) with Rust.
 
-## Table of content
-- [RUST genetic algorithms library](#rust-genetic-algorithms-library)
-  - [Description](#description)
-  - [Features](#features)
-    - [Traits](#traits)
-    - [Operators](#operators)
-    - [Population](#population)
-    - [Runner](#runner)
-  - [Example](#example)
-  - [Usage](#usage)
+## Table of content
+-   [RUST genetic algorithms library](#rust-genetic-algorithms-library)
+  -   [Description](#description)
+  -   [Features](#features)
+    -   [Traits](#traits)
+    -   [Operators](#operators)
+    -   [Population](#population)
+    -   [Runner](#runner)
+  -   [Example](#example)
+  -   [Usage](#usage)
 
 ## Features
 
@@ -24,28 +23,28 @@ This version uses traits for generic implementations.
 
 These traits are within the `traits` module:
 
-- `GeneT`: This trait must be implemented on your own gene representation.
-  - `new()`: This is the constructor function.
-  - `get_id()`: This function must return the id of the gene.
-- `GenotypeT`: This trait must be implemented on your own genotype representation.
-  - `new()`: This is the constructor function.
-  - `get_dna()`: Must return the vector of genes (`GeneT`).
-  - `get_dna_mut()`: Must return the mutable vector of genes (`GeneT`), manily for the mutation operator.
-  - `calculate_phenotype()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
-  - `get_phenotype()`: Returns the fitness previously calculated by `calculate_phenotype()`.
+-   `GeneT`: This trait must be implemented on your own gene representation.
+  -   `new()`: This is the constructor function.
+  -   `get_id()`: This function must return the id of the gene.
+-   `GenotypeT`: This trait must be implemented on your own genotype representation.
+  -   `new()`: This is the constructor function.
+  -   `get_dna()`: Must return the vector of genes (`GeneT`).
+  -   `get_dna_mut()`: Must return the mutable vector of genes (`GeneT`), manily for the mutation operator.
+  -   `calculate_phenotype()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
+  -   `get_phenotype()`: Returns the fitness previously calculated by `calculate_phenotype()`.
 
 ### Operators
 
 Within the module `operations` we have the following operators:
 
-- Crossover
-  - Cycle
-- Mutation
-  - Swap
-- Selection
-  - Random
-- Survivor
-  - Fitness Based
+-   Crossover
+  -   Cycle
+-   Mutation
+  -   Swap
+-   Selection
+  -   Random
+-   Survivor
+  -   Fitness Based
 
 ### Population
 
@@ -57,12 +56,11 @@ Within the `population` module, `Population` structure will define the populatio
 Because genetic algorithms run over different generations, in this library there is a `start` function within module `ga` that facilitates the process.
 This function will need the `GaConfiguration` structure which contains the operators to use, the maximum number of generations, and the problem solver (Maximization or Minimization), and the `Population` structure, which is in the `population` module.
 
-
 ## Example
 
 A simple example of use could be the minimization of a genotype whose gene has only an id.
 
-### Creation of the gene and genotype structure
+### Creation of the gene and genotype structure
 
 Use the traits.
 `use use genetic_algorithms::{ga::{GaConfiguration, ProblemSolving, run}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT};`
