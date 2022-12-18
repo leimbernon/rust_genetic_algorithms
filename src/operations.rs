@@ -21,4 +21,5 @@ pub enum Mutation {
 #[derive(Copy, Clone)]
 pub enum Survivor {
     Fitness,
+    Age,
 }

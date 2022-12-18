@@ -9,8 +9,8 @@ fn test_cycle_crossover(){
     let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
     let dna_2 = vec![Gene{id:4}, Gene{id:3}, Gene{id:2}, Gene{id:1}];
 
-    let mut parent_1 = Genotype{dna: dna_1, phenotype: 0.0};
-    let mut parent_2 = Genotype{dna: dna_2, phenotype: 0.0};
+    let mut parent_1 = Genotype{dna: dna_1, phenotype: 0.0, age: 0};
+    let mut parent_2 = Genotype{dna: dna_2, phenotype: 0.0, age: 0};
 
     //Getting the offspring
     let mut offspring = cycle::cycle(&mut parent_1, &mut parent_2).unwrap();
@@ -46,8 +46,8 @@ fn test_multipoint_crossover_2_points(){
     let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}, Gene{id:5}, Gene{id:6}];
     let dna_2 = vec![Gene{id:6}, Gene{id:5}, Gene{id:4}, Gene{id:3}, Gene{id:2}, Gene{id:1}];
 
-    let mut parent_1 = Genotype{dna: dna_1, phenotype: 0.0};
-    let mut parent_2 = Genotype{dna: dna_2, phenotype: 0.0};
+    let mut parent_1 = Genotype{dna: dna_1, phenotype: 0.0, age: 0};
+    let mut parent_2 = Genotype{dna: dna_2, phenotype: 0.0, age: 0};
 
     //Getting the offspring
     let mut offspring = multipoint_crossover(&mut parent_1, &mut parent_2, &2).unwrap();
@@ -85,8 +85,8 @@ fn test_multipoint_crossover_4_points(){
     let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}, Gene{id:5}, Gene{id:6}];
     let dna_2 = vec![Gene{id:6}, Gene{id:5}, Gene{id:4}, Gene{id:3}, Gene{id:2}, Gene{id:1}];
 
-    let mut parent_1 = Genotype{dna: dna_1, phenotype: 0.0};
-    let mut parent_2 = Genotype{dna: dna_2, phenotype: 0.0};
+    let mut parent_1 = Genotype{dna: dna_1, phenotype: 0.0, age: 0};
+    let mut parent_2 = Genotype{dna: dna_2, phenotype: 0.0, age: 0};
 
     //Getting the offspring
     let mut offspring = multipoint_crossover(&mut parent_1, &mut parent_2, &4).unwrap();

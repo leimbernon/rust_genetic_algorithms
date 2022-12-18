@@ -9,4 +9,6 @@ pub trait GenotypeT<T: GeneT + Default>{
     fn get_dna_mut(&mut self) -> &mut Vec<T>;
     fn calculate_phenotype(&mut self);
     fn get_phenotype(&self) -> &f64;
+    fn get_age_mut(&mut self) -> &mut i32;
+    fn get_age(&self) -> &i32;
 }

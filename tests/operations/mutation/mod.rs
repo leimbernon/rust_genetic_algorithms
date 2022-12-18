@@ -11,7 +11,7 @@ fn test_swap_mutation(){
     Gene{id:46}, Gene{id:47}, Gene{id:48}, Gene{id:49}, Gene{id:50}]; 
 
     //We create the individuals
-    let mut individual_1 = Genotype{dna: dna_1, phenotype: 0.0};
+    let mut individual_1 = Genotype{dna: dna_1, phenotype: 0.0, age: 0};
     let individual_1_copy = individual_1.clone();
 
     //We mutate the dna
@@ -29,7 +29,7 @@ fn test_inversion_mutation(){
     Gene{id:46}, Gene{id:47}, Gene{id:48}, Gene{id:49}, Gene{id:50}]; 
 
     //We create the individuals
-    let mut individual_1 = Genotype{dna: dna_1, phenotype: 0.0};
+    let mut individual_1 = Genotype{dna: dna_1, phenotype: 0.0, age: 0};
     let individual_1_copy = individual_1.clone();
 
     //We mutate the dna
