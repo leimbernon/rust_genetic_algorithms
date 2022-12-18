@@ -39,12 +39,16 @@ Within the module `operations` we have the following operators:
 
 -   Crossover
   -   Cycle
+  -   Multipoint
 -   Mutation
   -   Swap
+  -   Inversion
 -   Selection
   -   Random
+  -   Fitness proportionate
 -   Survivor
-  -   Fitness Based
+  -   Fitness based
+  -   Age based
 
 ### Population
 
@@ -89,6 +93,7 @@ Define the genotype structure, and the phenotype calculation.
 pub struct Genotype<T: GeneT>{
     pub dna: Vec<T>,
     pub phenotype: f64,
+    pub age: i32,
 }
 impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_dna(&self) -> &Vec<T> {
@@ -99,6 +104,12 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     }
     fn get_phenotype(&self) -> &f64 {
         return &self.phenotype;
+    }
+     fn get_age_mut(&mut self) -> &mut i32 {
+        &mut self.age
+    }
+    fn get_age(&self) -> &i32 {
+        &self.age
     }
     fn calculate_phenotype(&mut self) {
         
@@ -112,10 +123,11 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
         }
     }
     fn new() -> Self {
-       return Genotype{
-        dna: Vec::new(),
-        phenotype: 0.0,
-       }
+        return Genotype{
+            dna: Vec::new(),
+            phenotype: 0.0,
+            age: 0,
+        }
     }
 }
 ```
@@ -147,10 +159,8 @@ let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
     let dna_9 = vec![Gene{id:2}, Gene{id:1}, Gene{id:4}, Gene{id:3}];
     let dna_10 = vec![Gene{id:1}, Gene{id:4}, Gene{id:3}, Gene{id:2}];
 
-let individuals = vec![Genotype{dna: dna_1, phenotype: 1.0}, Genotype{dna: dna_2, phenotype: 2.0},
-    Genotype{dna: dna_3, phenotype: 3.0}, Genotype{dna: dna_4, phenotype: 4.0}, Genotype{dna: dna_5, phenotype: 5.0}, 
-    Genotype{dna: dna_6, phenotype: 6.0}, Genotype{dna: dna_7, phenotype: 7.0}, Genotype{dna: dna_8, phenotype: 8.0},
-    Genotype{dna: dna_9, phenotype: 9.0}, Genotype{dna: dna_10, phenotype: 10.0}];
+let individuals = vec![Genotype{dna: dna_1, phenotype: 1.0, age: 0}, Genotype{dna: dna_2, phenotype: 2.0, age: 0},
+    Genotype{dna: dna_3, phenotype: 3.0, age: 0}, Genotype{dna: dna_4, phenotype: 4.0, age: 0}, Genotype{dna: dna_5, phenotype: 5.0, age: 0}, Genotype{dna: dna_6, phenotype: 6.0, age: 0}, Genotype{dna: dna_7, phenotype: 7.0, age: 0}, Genotype{dna: dna_8, phenotype: 8.0, age: 0}, Genotype{dna: dna_9, phenotype: 9.0, age: 0}, Genotype{dna: dna_10, phenotype: 10.0, age: 0}];
 
     let mut population = Population::new(individuals);
 ```
@@ -167,5 +177,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.1.1"
+genetic_algorithms = "0.2.0"
 ```
