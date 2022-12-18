@@ -142,6 +142,7 @@ let configuration = GaConfiguration{
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
         survivor: Survivor::Fitness,
+        crossover_number_of_points: 0,
     };
 ```
 
