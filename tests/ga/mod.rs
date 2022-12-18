@@ -8,6 +8,7 @@ fn test_ga_start_maximize(){
     let configuration = GaConfiguration{
         problem_solving: ProblemSolving::Maximization,
         max_generations: 100,
+        crossover_number_of_points: 0,
         selection: Selection::Random,
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
@@ -26,10 +27,10 @@ fn test_ga_start_maximize(){
     let dna_9 = vec![Gene{id:2}, Gene{id:1}, Gene{id:4}, Gene{id:3}];
     let dna_10 = vec![Gene{id:1}, Gene{id:4}, Gene{id:3}, Gene{id:2}];
 
-    let individuals = vec![Genotype{dna: dna_1, phenotype: 1.0}, Genotype{dna: dna_2, phenotype: 2.0},
-    Genotype{dna: dna_3, phenotype: 3.0}, Genotype{dna: dna_4, phenotype: 4.0}, Genotype{dna: dna_5, phenotype: 5.0}, 
-    Genotype{dna: dna_6, phenotype: 6.0}, Genotype{dna: dna_7, phenotype: 7.0}, Genotype{dna: dna_8, phenotype: 8.0},
-    Genotype{dna: dna_9, phenotype: 9.0}, Genotype{dna: dna_10, phenotype: 10.0}];
+    let individuals = vec![Genotype{dna: dna_1, phenotype: 1.0, age: 0}, Genotype{dna: dna_2, phenotype: 2.0, age: 0},
+    Genotype{dna: dna_3, phenotype: 3.0, age: 0}, Genotype{dna: dna_4, phenotype: 4.0, age: 0}, Genotype{dna: dna_5, phenotype: 5.0, age: 0}, 
+    Genotype{dna: dna_6, phenotype: 6.0, age: 0}, Genotype{dna: dna_7, phenotype: 7.0, age: 0}, Genotype{dna: dna_8, phenotype: 8.0, age: 0},
+    Genotype{dna: dna_9, phenotype: 9.0, age: 0}, Genotype{dna: dna_10, phenotype: 10.0, age: 0}];
 
     let mut population = Population::new(individuals);
     population = run(population, configuration);
@@ -46,6 +47,7 @@ fn test_ga_start_minimize(){
     let configuration = GaConfiguration{
         problem_solving: ProblemSolving::Minimization,
         max_generations: 100,
+        crossover_number_of_points: 0,
         selection: Selection::Random,
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
@@ -64,10 +66,10 @@ fn test_ga_start_minimize(){
     let dna_9 = vec![Gene{id:2}, Gene{id:1}, Gene{id:4}, Gene{id:3}];
     let dna_10 = vec![Gene{id:1}, Gene{id:4}, Gene{id:3}, Gene{id:2}];
 
-    let individuals = vec![Genotype{dna: dna_1, phenotype: 1.0}, Genotype{dna: dna_2, phenotype: 2.0},
-    Genotype{dna: dna_3, phenotype: 3.0}, Genotype{dna: dna_4, phenotype: 4.0}, Genotype{dna: dna_5, phenotype: 5.0}, 
-    Genotype{dna: dna_6, phenotype: 6.0}, Genotype{dna: dna_7, phenotype: 7.0}, Genotype{dna: dna_8, phenotype: 8.0},
-    Genotype{dna: dna_9, phenotype: 9.0}, Genotype{dna: dna_10, phenotype: 10.0}];
+    let individuals = vec![Genotype{dna: dna_1, phenotype: 1.0, age: 0}, Genotype{dna: dna_2, phenotype: 2.0, age: 0},
+    Genotype{dna: dna_3, phenotype: 3.0, age: 0}, Genotype{dna: dna_4, phenotype: 4.0, age: 0}, Genotype{dna: dna_5, phenotype: 5.0, age: 0}, 
+    Genotype{dna: dna_6, phenotype: 6.0, age: 0}, Genotype{dna: dna_7, phenotype: 7.0, age: 0}, Genotype{dna: dna_8, phenotype: 8.0, age: 0},
+    Genotype{dna: dna_9, phenotype: 9.0, age: 0}, Genotype{dna: dna_10, phenotype: 10.0, age: 0}];
 
     let mut population = Population::new(individuals);
     population = run(population, configuration);
