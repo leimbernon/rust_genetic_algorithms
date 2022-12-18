@@ -5,15 +5,15 @@
 This library provides a simple framework to implement [genetic algorithms (GA)](https://en.wikipedia.org/wiki/Genetic_algorithm) with Rust.
 
 ## Table of content
--   [RUST genetic algorithms library](#rust-genetic-algorithms-library)
-  -   [Description](#description)
-  -   [Features](#features)
-    -   [Traits](#traits)
-    -   [Operators](#operators)
-    -   [Population](#population)
-    -   [Runner](#runner)
-  -   [Example](#example)
-  -   [Usage](#usage)
+- [RUST genetic algorithms library](#rust-genetic-algorithms-library)
+  - [Description](#description)
+  - [Features](#features)
+    - [Traits](#traits)
+    - [Operators](#operators)
+    - [Population](#population)
+    - [Runner](#runner)
+  - [Example](#example)
+  - [Usage](#usage)
 
 ## Features
 
@@ -23,32 +23,32 @@ This version uses traits for generic implementations.
 
 These traits are within the `traits` module:
 
--   `GeneT`: This trait must be implemented on your own gene representation.
-  -   `new()`: This is the constructor function.
-  -   `get_id()`: This function must return the id of the gene.
--   `GenotypeT`: This trait must be implemented on your own genotype representation.
-  -   `new()`: This is the constructor function.
-  -   `get_dna()`: Must return the vector of genes (`GeneT`).
-  -   `get_dna_mut()`: Must return the mutable vector of genes (`GeneT`), manily for the mutation operator.
-  -   `calculate_phenotype()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
-  -   `get_phenotype()`: Returns the fitness previously calculated by `calculate_phenotype()`.
+- `GeneT`: This trait must be implemented on your own gene representation.
+  - `new()`: This is the constructor function.
+  - `get_id()`: This function must return the id of the gene.
+- `GenotypeT`: This trait must be implemented on your own genotype representation.
+  - `new()`: This is the constructor function.
+  - `get_dna()`: Must return the vector of genes (`GeneT`).
+  - `get_dna_mut()`: Must return the mutable vector of genes (`GeneT`), manily for the mutation operator.
+  - `calculate_phenotype()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
+  - `get_phenotype()`: Returns the fitness previously calculated by `calculate_phenotype()`.
 
 ### Operators
 
 Within the module `operations` we have the following operators:
 
--   Crossover
-  -   Cycle
-  -   Multipoint
--   Mutation
-  -   Swap
-  -   Inversion
--   Selection
-  -   Random
-  -   Fitness proportionate
--   Survivor
-  -   Fitness based
-  -   Age based
+- Crossover
+  - Cycle
+  - Multipoint
+- Mutation
+  - Swap
+  - Inversion
+- Selection
+  - Random
+  - Fitness proportionate
+- Survivor
+  - Fitness based
+  - Age based
 
 ### Population
 
