@@ -10,6 +10,7 @@ pub enum ProblemSolving {
 pub struct GaConfiguration {
     pub problem_solving: ProblemSolving,
     pub max_generations: i32,
+    pub number_of_couples: i32,
     pub crossover_number_of_points: i32,
     pub selection: Selection,
     pub crossover: Crossover,
@@ -38,7 +39,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
         age += 1;
 
         //1- Parent selection for reproduction
-        let parents = selection::factory(configuration.selection, &population.individuals);
+        let parents = selection::factory(configuration.selection, &population.individuals, configuration.number_of_couples);
 
         //2- Reproduce the parents
         for j in parents.keys() {
