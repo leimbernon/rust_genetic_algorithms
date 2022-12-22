@@ -7,12 +7,14 @@ This library provides a simple framework to implement [genetic algorithms (GA)](
 ## Table of content
 - [RUST genetic algorithms library](#rust-genetic-algorithms-library)
   - [Description](#description)
+  - [Table of content](#table-of-content)
   - [Features](#features)
     - [Traits](#traits)
     - [Operators](#operators)
     - [Population](#population)
     - [Runner](#runner)
   - [Example](#example)
+    - [Creation of the gene and genotype structure](#creation-of-the-gene-and-genotype-structure)
   - [Usage](#usage)
 
 ## Features
@@ -32,6 +34,8 @@ These traits are within the `traits` module:
   - `get_dna_mut()`: Must return the mutable vector of genes (`GeneT`), manily for the mutation operator.
   - `calculate_phenotype()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
   - `get_phenotype()`: Returns the fitness previously calculated by `calculate_phenotype()`.
+  - `get_age()`: Returns the age of the genotype.
+  - `get_age_mut()`: Must return the mutable age of the genotype.
 
 ### Operators
 
@@ -45,7 +49,8 @@ Within the module `operations` we have the following operators:
   - Inversion
 - Selection
   - Random
-  - Fitness proportionate
+  - Roulette Wheel
+  - Stochastic Universal Sampling
 - Survivor
   - Fitness based
   - Age based
@@ -136,13 +141,14 @@ Define the configuration of the GA.
 
 ```
 let configuration = GaConfiguration{
-        problem_solving: ProblemSolving::Maximization,
+        problem_solving: ProblemSolving::Minimization,
         max_generations: 100,
+        number_of_couples: 10,
+        crossover_number_of_points: 0,
         selection: Selection::Random,
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
         survivor: Survivor::Fitness,
-        crossover_number_of_points: 0,
     };
 ```
 
@@ -178,5 +184,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.2.1"
+genetic_algorithms = "0.3.0"
 ```
