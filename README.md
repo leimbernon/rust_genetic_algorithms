@@ -47,6 +47,7 @@ Within the module `operations` we have the following operators:
 - Mutation
   - Swap
   - Inversion
+  - Scramble
 - Selection
   - Random
   - Roulette Wheel
