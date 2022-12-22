@@ -46,17 +46,22 @@ pub fn stochastic_universal_sampling<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<
     let individual_couples = (couples*2) as usize;
 
     //1- Calculate the selection probabilities
-    let mut selection_probabilities: Vec<usize> = Vec::new();
+    let mut total = 0.0;
+    let mut last_selection_value = 0.0;
+    let mut selection_probabilities = Vec::new();
     let mut rng = rand::thread_rng();
 
-    for genotype in individuals 
-    { 
-        let selection_probability = (*genotype.get_phenotype() as usize) / individuals.len();
+    for genotype in individuals{ 
+        total += *genotype.get_phenotype();
+    }
+    for genotype in individuals{
+        let selection_probability = (*genotype.get_phenotype() / total) + last_selection_value;
+        last_selection_value = selection_probability;
         selection_probabilities.push(selection_probability);
     }
 
     //2- Calculate the pointer distance and the starting point between 0 and the pointer distance
-    let pointer_distance = (1 / (individual_couples)) as f64;
+    let pointer_distance = 1.0 / individual_couples as f64;
     let starting_point = rng.gen_range(0.0..pointer_distance);
 
     //3- Parent identification
@@ -82,10 +87,11 @@ pub fn stochastic_universal_sampling<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<
 
             if couple_completed {
                 mating.insert(first_mate, i);
-                couple_completed = !couple_completed;
             }else{
                 first_mate = i;
             }
+
+            couple_completed = !couple_completed;
 
         } else if end_of_individuals && current_point >= selection_probabilities[i] as f64 {
             if couple_completed {
