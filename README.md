@@ -44,6 +44,7 @@ Within the module `operations` we have the following operators:
 - Crossover
   - Cycle
   - Multipoint
+  - Uniform
 - Mutation
   - Swap
   - Inversion
