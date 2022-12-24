@@ -6,17 +6,20 @@ pub mod survivor;
 #[derive(Copy, Clone)]
 pub enum Selection {
     Random,
-    FitnessProportionate,
+    RouletteWheel,
+    StochasticUniversalSampling
 }
 #[derive(Copy, Clone)]
 pub enum Crossover {
     Cycle,
     MultiPoint,
+    Uniform,
 }
 #[derive(Copy, Clone)]
 pub enum Mutation {
     Swap,
     Inversion,
+    Scramble,
 }
 #[derive(Copy, Clone)]
 pub enum Survivor {
