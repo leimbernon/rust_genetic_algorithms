@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use crate::ga::SelectionConfiguration;
 use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 
@@ -14,11 +15,11 @@ pub mod random;
 pub mod fitness_proportionate;
 pub mod tournament;
 
-pub fn factory<T: GeneT, U: GenotypeT<T>>(selection: Selection, individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>{
+pub fn factory<T: GeneT, U: GenotypeT<T>>(selection: Selection, individuals: &Vec<U>, configuration: Option<SelectionConfiguration>) -> HashMap<usize, usize>{
     match selection {
         Selection::Random => {random(individuals)},
         Selection::RouletteWheel => {roulette_wheel_selection(individuals)},
-        Selection::StochasticUniversalSampling => {stochastic_universal_sampling(individuals, couples)},
-        Selection::Tournament => {tournament(individuals, couples)},
+        Selection::StochasticUniversalSampling => {stochastic_universal_sampling(individuals, configuration.unwrap().number_of_couples)},
+        Selection::Tournament => {tournament(individuals, configuration.unwrap().number_of_couples)},
     }
 }

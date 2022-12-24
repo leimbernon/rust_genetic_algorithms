@@ -7,11 +7,21 @@ pub enum ProblemSolving {
 }
 
 #[derive(Copy, Clone)]
+pub struct SelectionConfiguration{
+    pub number_of_couples: i32,
+}
+
+#[derive(Copy, Clone)]
+pub struct CrossoverConfiguration{
+    pub number_of_points: i32,
+}
+
+#[derive(Copy, Clone)]
 pub struct GaConfiguration {
     pub problem_solving: ProblemSolving,
     pub max_generations: i32,
-    pub number_of_couples: i32,
-    pub crossover_number_of_points: i32,
+    pub selection_configuration: Option<SelectionConfiguration>,
+    pub crossover_configuration: Option<CrossoverConfiguration>,
     pub selection: Selection,
     pub crossover: Crossover,
     pub mutation: Mutation,
@@ -39,7 +49,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
         age += 1;
 
         //1- Parent selection for reproduction
-        let parents = selection::factory(configuration.selection, &population.individuals, configuration.number_of_couples);
+        let parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration);
 
         //2- Reproduce the parents
         for j in parents.keys() {
@@ -49,7 +59,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
             let parent_1 = population.individuals.get(*index_parent_1).unwrap().clone();
             let parent_2 = population.individuals.get(*index_parent_2).unwrap().clone();
 
-            let mut offspring = crossover::factory(configuration.crossover, parent_1, parent_2, &configuration).unwrap();
+            let mut offspring = crossover::factory(configuration.crossover, parent_1, parent_2, configuration.crossover_configuration).unwrap();
             let mut child_1 = offspring.pop().unwrap();
             let mut child_2 = offspring.pop().unwrap();
 
