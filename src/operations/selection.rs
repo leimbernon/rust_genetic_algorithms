@@ -19,6 +19,6 @@ pub fn factory<T: GeneT, U: GenotypeT<T>>(selection: Selection, individuals: &Ve
         Selection::Random => {random(individuals)},
         Selection::RouletteWheel => {roulette_wheel_selection(individuals)},
         Selection::StochasticUniversalSampling => {stochastic_universal_sampling(individuals, couples)},
-        Selection::Tournament => {tournament(individuals)},
+        Selection::Tournament => {tournament(individuals, couples)},
     }
 }
