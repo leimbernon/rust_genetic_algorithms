@@ -23,23 +23,26 @@ pub fn tournament<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>, couples: i32) -
         let index_1 = rng.gen_range(0..indexes.len());
         let index_2 = rng.gen_range(0..indexes.len());
         let final_index;
+        let index_to_delete;
 
         //Fights between both parents
         if individuals[index_1].get_phenotype() >= individuals[index_2].get_phenotype() {
-            final_index = index_1;
+            final_index = indexes[index_1];
+            index_to_delete = index_1;
         }else{
-            final_index = index_2;
+            final_index = indexes[index_2];
+            index_to_delete = index_2;
         }
 
         //Sets the mating
         if parent_1 == None {
             parent_1 = Some(final_index);
         }else{
-            mating.insert(parent_1.unwrap(), final_index);
+            mating.insert(parent_1.unwrap() as usize, final_index as usize);
             parent_1 = None;
         }
 
-        indexes.remove(final_index);
+        indexes.remove(index_to_delete);
     }
 
     return mating;
