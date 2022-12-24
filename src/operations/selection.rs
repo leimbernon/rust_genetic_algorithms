@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::ga::SelectionConfiguration;
+use crate::configuration::SelectionConfiguration;
 use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 

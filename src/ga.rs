@@ -1,32 +1,5 @@
-use crate::{population::{Population}, traits::{GenotypeT, GeneT}, operations::{Crossover, Selection, Mutation, Survivor, selection, crossover, mutation, survivor}};
-
-#[derive(Copy, Clone, PartialEq)]
-pub enum ProblemSolving {
-    Minimization,
-    Maximization,
-}
-
-#[derive(Copy, Clone)]
-pub struct SelectionConfiguration{
-    pub number_of_couples: i32,
-}
-
-#[derive(Copy, Clone)]
-pub struct CrossoverConfiguration{
-    pub number_of_points: i32,
-}
-
-#[derive(Copy, Clone)]
-pub struct GaConfiguration {
-    pub problem_solving: ProblemSolving,
-    pub max_generations: i32,
-    pub selection_configuration: Option<SelectionConfiguration>,
-    pub crossover_configuration: Option<CrossoverConfiguration>,
-    pub selection: Selection,
-    pub crossover: Crossover,
-    pub mutation: Mutation,
-    pub survivor: Survivor,
-}
+use crate::{population::{Population}, traits::{GenotypeT, GeneT}, operations::{selection, crossover, mutation, survivor}, configuration::ProblemSolving};
+use crate::configuration::GaConfiguration;
 
 /**
  * Function to run the genetic algorithms cycle
