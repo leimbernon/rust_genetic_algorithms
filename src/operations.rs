@@ -13,6 +13,7 @@ pub enum Selection {
 pub enum Crossover {
     Cycle,
     MultiPoint,
+    Uniform,
 }
 #[derive(Copy, Clone)]
 pub enum Mutation {
