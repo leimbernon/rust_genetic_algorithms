@@ -1,9 +1,9 @@
 use super::Crossover;
 use crate::ga::GaConfiguration;
 use crate::traits::{GenotypeT, GeneT};
-use crate::operations::crossover::cycle::cycle;
-use crate::operations::crossover::multipoint::multipoint_crossover;
-use crate::operations::crossover::uniform_crossover::uniform;
+use self::cycle::cycle;
+use self::multipoint::multipoint_crossover;
+use self::uniform_crossover::uniform;
 
 pub mod cycle;
 pub mod multipoint;

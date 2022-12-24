@@ -13,6 +13,7 @@ This library provides a simple framework to implement [genetic algorithms (GA)](
     - [Operators](#operators)
     - [Population](#population)
     - [Runner](#runner)
+    - [Configuration](#configuration)
   - [Example](#example)
     - [Creation of the gene and genotype structure](#creation-of-the-gene-and-genotype-structure)
   - [Usage](#usage)
@@ -53,6 +54,7 @@ Within the module `operations` we have the following operators:
   - Random
   - Roulette Wheel
   - Stochastic Universal Sampling
+  - Tournament
 - Survivor
   - Fitness based
   - Age based
@@ -65,7 +67,20 @@ Within the `population` module, `Population` structure will define the populatio
 ### Runner
 
 Because genetic algorithms run over different generations, in this library there is a `start` function within module `ga` that facilitates the process.
-This function will need the `GaConfiguration` structure which contains the operators to use, the maximum number of generations, and the problem solver (Maximization or Minimization), and the `Population` structure, which is in the `population` module.
+This function will need the `GaConfiguration` structure which contains the operators to use, the maximum number of generations, the problem solver (Maximization or Minimization), etc, and the `Population` structure, which is in the `population` module.
+
+### Configuration
+
+Within this library you can configure the way to run genetic algorithms through the configuration structure `GaConfiguration`.
+This structure contains the following attributes:
+- `problem_solving`: You can select from a Minimization problem or a Maximization problem.
+- `max_generations`: In case of not getting the optimal result, this attribute indicates the maximum number of generations to execute before stopping.
+- `number_of_couples`: This attribute is only valid for stochastic universal sampling. It indicates the number of couples to select from the population.
+- `crossover_number_of_points`: This attribute is only valid for crossover multipoint, and it indicates how many points will be made within the dna in crossover operations.
+- `selection`: Indicates what selection operator to use.
+- `crossover`: Indicates what crossover operator to use.
+- `mutation`: Indicates what mutation operator to use.
+- `survivor`: Indicates what survivor operator to use.
 
 ## Example
 
@@ -186,5 +201,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.3.0"
+genetic_algorithms = "0.4.0"
 ```
