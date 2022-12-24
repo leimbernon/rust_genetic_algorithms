@@ -30,6 +30,9 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_phenotype(&self) -> &f64 {
         return &self.phenotype;
     }
+    fn get_phenotype_mut(&mut self) -> &mut f64 {
+        &mut self.phenotype
+    }
     fn get_age_mut(&mut self) -> &mut i32 {
         &mut self.age
     }

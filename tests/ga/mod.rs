@@ -36,7 +36,7 @@ fn test_ga_start_maximize(){
     let mut population = Population::new(individuals);
     population = run(population, configuration);
     
-    assert_eq!(population.individuals.len(), 10);
+    assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_phenotype(), &20.0);
 
 }
@@ -76,7 +76,7 @@ fn test_ga_start_minimize(){
     let mut population = Population::new(individuals);
     population = run(population, configuration);
     
-    assert_eq!(population.individuals.len(), 10);
+    assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_phenotype(), &10.0);
 
 }

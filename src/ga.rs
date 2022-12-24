@@ -1,6 +1,6 @@
 use crate::{population::{Population}, traits::{GenotypeT, GeneT}, operations::{Crossover, Selection, Mutation, Survivor, selection, crossover, mutation, survivor}};
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum ProblemSolving {
     Minimization,
     Maximization,
@@ -33,13 +33,24 @@ pub struct GaConfiguration {
  */
 pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configuration: GaConfiguration)->Population<T,U>
 {
+    //Best individual within the generations and population returned
+    let mut best_individual = U::new();
+    let mut initial_individual = true;
     let initial_population_size = population.size();
     let mut age = 0;
 
-    //We first calculate the phenotype of the population and set the age of each parent
+    //We first calculate the phenotype of the population, set the age of each parent and set the best individual
     for individual in &mut population.individuals{
         individual.calculate_phenotype();
         *individual.get_age_mut() = age;
+        
+        if !initial_individual {
+            best_individual = get_best_individual(&best_individual, &individual, configuration.problem_solving);
+        } else{
+            *best_individual.get_dna_mut() = individual.get_dna().clone();
+            *best_individual.get_phenotype_mut() = individual.get_phenotype().clone();
+            initial_individual = true;
+        }
     }
 
     //We start the cycles
@@ -74,6 +85,10 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
             *child_1.get_age_mut() = age;
             *child_2.get_age_mut() = age;
 
+            //Sets the best individual
+            best_individual = get_best_individual(&best_individual, &child_1, configuration.problem_solving);
+            best_individual = get_best_individual(&best_individual, &child_2, configuration.problem_solving);
+
             //Insert the children in the population
             population.individuals.push(child_1);
             population.individuals.push(child_2);
@@ -83,5 +98,37 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.problem_solving);
     }
 
-    return population;
+    return Population::new(vec![best_individual]);
+}
+
+//Function to determine which of the individuals is the best individual and return the best of them
+fn get_best_individual<T:GeneT, U:GenotypeT<T>>(individual_1: &U, individual_2: &U, problem_solving: ProblemSolving) -> U{
+
+    let mut best_individual = U::new();
+
+    if problem_solving == ProblemSolving::Maximization {
+
+        //We check if the phenotype is the best and store it if it's the case
+        if individual_1.get_phenotype() >= individual_2.get_phenotype(){
+            *best_individual.get_dna_mut() = individual_1.get_dna().clone();
+            *best_individual.get_phenotype_mut() = individual_1.get_phenotype().clone();
+        }else{
+            *best_individual.get_dna_mut() = individual_2.get_dna().clone();
+            *best_individual.get_phenotype_mut() = individual_2.get_phenotype().clone();
+        }
+
+    } else {
+
+        //We check if the phenotype is the best and store it if it's the case
+        if individual_1.get_phenotype() >= individual_2.get_phenotype(){
+            *best_individual.get_dna_mut() = individual_2.get_dna().clone();
+            *best_individual.get_phenotype_mut() = individual_2.get_phenotype().clone();
+        }else{
+            *best_individual.get_dna_mut() = individual_1.get_dna().clone();
+            *best_individual.get_phenotype_mut() = individual_1.get_phenotype().clone();
+        }
+
+    }
+
+    best_individual
 }
