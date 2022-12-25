@@ -14,14 +14,14 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
 
     //We first calculate the phenotype of the population, set the age of each parent and set the best individual
     for individual in &mut population.individuals{
-        individual.calculate_phenotype();
+        individual.calculate_fitness();
         *individual.get_age_mut() = age;
         
         if !initial_individual {
             best_individual = get_best_individual(&best_individual, &individual, configuration.problem_solving);
         } else{
             *best_individual.get_dna_mut() = individual.get_dna().clone();
-            *best_individual.get_phenotype_mut() = individual.get_phenotype().clone();
+            *best_individual.get_fitness_mut() = individual.get_fitness().clone();
             initial_individual = true;
         }
     }
@@ -52,8 +52,8 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
             mutation::factory(configuration.mutation, &mut child_2);
 
             //4- Calculate the phenotype of both children and set their age
-            child_1.calculate_phenotype();
-            child_2.calculate_phenotype();
+            child_1.calculate_fitness();
+            child_2.calculate_fitness();
 
             *child_1.get_age_mut() = age;
             *child_2.get_age_mut() = age;
@@ -82,23 +82,23 @@ fn get_best_individual<T:GeneT, U:GenotypeT<T>>(individual_1: &U, individual_2: 
     if problem_solving == ProblemSolving::Maximization {
 
         //We check if the phenotype is the best and store it if it's the case
-        if individual_1.get_phenotype() >= individual_2.get_phenotype(){
+        if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_1.get_dna().clone();
-            *best_individual.get_phenotype_mut() = individual_1.get_phenotype().clone();
+            *best_individual.get_fitness_mut() = individual_1.get_fitness().clone();
         }else{
             *best_individual.get_dna_mut() = individual_2.get_dna().clone();
-            *best_individual.get_phenotype_mut() = individual_2.get_phenotype().clone();
+            *best_individual.get_fitness_mut() = individual_2.get_fitness().clone();
         }
 
     } else {
 
         //We check if the phenotype is the best and store it if it's the case
-        if individual_1.get_phenotype() >= individual_2.get_phenotype(){
+        if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_2.get_dna().clone();
-            *best_individual.get_phenotype_mut() = individual_2.get_phenotype().clone();
+            *best_individual.get_fitness_mut() = individual_2.get_fitness().clone();
         }else{
             *best_individual.get_dna_mut() = individual_1.get_dna().clone();
-            *best_individual.get_phenotype_mut() = individual_1.get_phenotype().clone();
+            *best_individual.get_fitness_mut() = individual_1.get_fitness().clone();
         }
 
     }

@@ -26,7 +26,7 @@ pub fn tournament<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>, couples: i32) -
         let index_to_delete;
 
         //Fights between both parents
-        if individuals[index_1].get_phenotype() >= individuals[index_2].get_phenotype() {
+        if individuals[index_1].get_fitness() >= individuals[index_2].get_fitness() {
             final_index = indexes[index_1];
             index_to_delete = index_1;
         }else{

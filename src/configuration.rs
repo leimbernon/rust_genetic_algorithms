@@ -28,3 +28,8 @@ pub struct GaConfiguration {
     pub mutation: Mutation,
     pub survivor: Survivor,
 }
+
+#[derive(Copy, Clone)]
+pub struct FitnessLimit{
+
+}

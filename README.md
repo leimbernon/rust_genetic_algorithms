@@ -33,8 +33,8 @@ These traits are within the `traits` module:
   - `new()`: This is the constructor function.
   - `get_dna()`: Must return the vector of genes (`GeneT`).
   - `get_dna_mut()`: Must return the mutable vector of genes (`GeneT`), manily for the mutation operator.
-  - `calculate_phenotype()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
-  - `get_phenotype()`: Returns the fitness previously calculated by `calculate_phenotype()`.
+  - `calculate_fitness()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
+  - `get_fitness()`: Returns the fitness previously calculated by `calculate_fitness()`.
   - `get_age()`: Returns the age of the genotype.
   - `get_age_mut()`: Must return the mutable age of the genotype.
 
@@ -130,7 +130,7 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_dna_mut(&mut self) -> &mut Vec<T> {
         &mut self.dna
     }
-    fn get_phenotype(&self) -> &f64 {
+    fn get_fitness(&self) -> &f64 {
         return &self.phenotype;
     }
      fn get_age_mut(&mut self) -> &mut i32 {
@@ -139,7 +139,7 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_age(&self) -> &i32 {
         &self.age
     }
-    fn calculate_phenotype(&mut self) {
+    fn calculate_fitness(&mut self) {
         
         self.phenotype = 0.0;
         let mut position = 0;
