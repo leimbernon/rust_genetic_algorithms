@@ -1,4 +1,4 @@
-use std::{sync::{mpsc::{sync_channel}}, thread, collections::HashMap};
+use std::{sync::{mpsc::{sync_channel}, Mutex, Arc}, thread, collections::HashMap};
 
 use crate::{population::{Population}, traits::{GenotypeT, GeneT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
 use crate::configuration::GaConfiguration;
@@ -6,7 +6,7 @@ use crate::configuration::GaConfiguration;
 /**
  * Function to run the genetic algorithms cycle
  */
-pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configuration: GaConfiguration)->Population<T,U>
+pub fn run<T:GeneT, U:GenotypeT<T> + Send + Sync + 'static + Clone>(mut population: Population<T,U>, configuration: GaConfiguration)->Population<T,U>
 {
     //Best individual within the generations and population returned
     let mut best_individual = U::new();
@@ -48,7 +48,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
             let parent_1 = population.individuals.get(*index_parent_1).unwrap().clone();
             let parent_2 = population.individuals.get(*index_parent_2).unwrap().clone();
 
-            let mut offspring = crossover::factory(configuration.crossover, parent_1, parent_2, configuration.crossover_configuration).unwrap();
+            let mut offspring = crossover::factory(configuration.crossover, &parent_1, &parent_2, configuration.crossover_configuration).unwrap();
             let mut child_1 = offspring.pop().unwrap();
             let mut child_2 = offspring.pop().unwrap();
 
@@ -149,7 +149,7 @@ fn limit_reached<T:GeneT, U:GenotypeT<T>>(limit: LimitConfiguration, individuals
 /**
  * Gets the population fitness, age and the best individual
  */
-fn population_fitness_calculation<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec<U>, configuration: GaConfiguration){
+fn population_fitness_calculation<T:GeneT, U:GenotypeT<T> + Send + Sync + 'static + Clone>(individuals: &mut Vec<U>, configuration: GaConfiguration){
 
     let mut number_of_threads = configuration.number_of_threads.unwrap_or(1);
     let (tx, rx) = sync_channel(number_of_threads as usize);
@@ -161,6 +161,10 @@ fn population_fitness_calculation<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec
     let mut start_index = 0;
     let mut jump = individuals.len() as i32 / number_of_threads;
 
+    //Cloning the individuals for multithreading
+    let individuals_t = Vec::from_iter(individuals[..].iter().cloned());
+    let individuals_t = Arc::new(Mutex::new(individuals_t));
+
     //Walking through the threads
     for _ in 0..number_of_threads {
 
@@ -170,7 +174,7 @@ fn population_fitness_calculation<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec
         }
 
         //Cloning the information from the main thread
-        let (start_index_t, tx, jump_t) = (start_index.clone(), tx.clone(),  jump.clone());
+        let (start_index_t, tx, jump_t, individuals_t) = (start_index.clone(), tx.clone(),  jump.clone(), Arc::clone(&individuals_t));
 
         //Starting the thread management
         thread::spawn(move || {
@@ -179,7 +183,8 @@ fn population_fitness_calculation<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec
 
             //Calculates the fitness from the corresponding population
             for i in start_index_t..(start_index_t + jump_t){
-                fitness_map.insert(i as usize, 17.5);
+                individuals_t.lock().unwrap()[i as usize].calculate_fitness();
+                fitness_map.insert(i as usize, *individuals_t.lock().unwrap()[i as usize].get_fitness());
             }
 
             //Sending the fitness map
