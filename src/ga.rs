@@ -27,7 +27,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
     }
 
     //We start the cycles
-    for i in 0..configuration.max_generations {
+    for i in 0..configuration.limit_configuration.max_generations {
 
         println!("Generation number: {}", i+1);
         age += 1;

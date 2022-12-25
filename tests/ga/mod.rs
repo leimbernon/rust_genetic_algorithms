@@ -1,4 +1,4 @@
-use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving}};
+use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration}};
 use crate::{structures::{Gene, Genotype}};
 
 #[test]
@@ -7,7 +7,7 @@ fn test_ga_start_maximize(){
     //Creates the GA configuration
     let configuration = GaConfiguration{
         problem_solving: ProblemSolving::Maximization,
-        max_generations: 100,
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None},
         selection_configuration: None,
         crossover_configuration: None,
         selection: Selection::Random,
@@ -47,7 +47,7 @@ fn test_ga_start_minimize(){
     //Creates the GA configuration
     let configuration = GaConfiguration{
         problem_solving: ProblemSolving::Minimization,
-        max_generations: 100,
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None},
         selection_configuration: None,
         crossover_configuration: None,
         selection: Selection::Random,
