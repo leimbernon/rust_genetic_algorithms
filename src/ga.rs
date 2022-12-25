@@ -164,15 +164,13 @@ fn population_fitness_calculation<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec
     //Walking through the threads
     for _ in 0..number_of_threads {
 
-        //Cloning the information from the main thread
-        let start_index_t = start_index.clone();
-        let tx = tx.clone();
-        
         //We calculate the next jump
         if jump > individuals.len() as i32 - (start_index + jump) {
             jump += individuals.len() as i32 - (start_index + jump);
         }
-        let jump_t = jump.clone();
+
+        //Cloning the information from the main thread
+        let (start_index_t, tx, jump_t) = (start_index.clone(), tx.clone(),  jump.clone());
 
         //Starting the thread management
         thread::spawn(move || {
