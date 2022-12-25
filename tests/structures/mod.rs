@@ -27,10 +27,10 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_dna_mut(&mut self) -> &mut Vec<T> {
         &mut self.dna
     }
-    fn get_phenotype(&self) -> &f64 {
+    fn get_fitness(&self) -> &f64 {
         return &self.phenotype;
     }
-    fn get_phenotype_mut(&mut self) -> &mut f64 {
+    fn get_fitness_mut(&mut self) -> &mut f64 {
         &mut self.phenotype
     }
     fn get_age_mut(&mut self) -> &mut i32 {
@@ -39,7 +39,7 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_age(&self) -> &i32 {
         &self.age
     }
-    fn calculate_phenotype(&mut self) {
+    fn calculate_fitness(&mut self) {
         
         self.phenotype = 0.0;
         let mut position = 0;
