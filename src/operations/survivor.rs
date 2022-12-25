@@ -1,4 +1,4 @@
-use crate::ga::ProblemSolving;
+use crate::configuration::ProblemSolving;
 use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 use self::fitness::fitness_based;

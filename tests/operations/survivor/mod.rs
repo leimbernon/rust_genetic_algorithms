@@ -1,5 +1,5 @@
 use crate::structures::{Gene, Genotype};
-use genetic_algorithms::{operations::{survivor::{fitness, age}}, traits::GenotypeT, ga};
+use genetic_algorithms::{operations::{survivor::{fitness, age}}, traits::GenotypeT, configuration::ProblemSolving};
 
 #[test]
 fn test_fitness_survivor_minization(){
@@ -37,7 +37,7 @@ fn test_fitness_survivor_minization(){
     let mut population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6,
     individual_7, individual_8, individual_9, individual_10, individual_11, individual_12];
 
-    fitness::fitness_based(&mut population, 10,  ga::ProblemSolving::Minimization);
+    fitness::fitness_based(&mut population, 10,  ProblemSolving::Minimization);
 
     //Tests that the population has 10 individuals
     assert_eq!(population.len(), 10);
@@ -83,7 +83,7 @@ fn test_fitness_survivor_maximization(){
     let mut population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6,
     individual_7, individual_8, individual_9, individual_10, individual_11, individual_12];
 
-    fitness::fitness_based(&mut population, 10, ga::ProblemSolving::Maximization);
+    fitness::fitness_based(&mut population, 10, ProblemSolving::Maximization);
 
     //Tests that the population has 10 individuals
     assert_eq!(population.len(), 10);

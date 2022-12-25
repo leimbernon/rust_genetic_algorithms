@@ -1,4 +1,4 @@
-use crate::{traits::{GeneT, GenotypeT}, ga::ProblemSolving};
+use crate::{traits::{GeneT, GenotypeT}, configuration::ProblemSolving};
 
 pub fn fitness_based<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec<U>, population_size: usize, problem_solving: ProblemSolving)
 {

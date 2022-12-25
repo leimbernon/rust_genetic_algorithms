@@ -1,5 +1,5 @@
 use super::Crossover;
-use crate::ga::{CrossoverConfiguration};
+use crate::configuration::{CrossoverConfiguration};
 use crate::traits::{GenotypeT, GeneT};
 use self::cycle::cycle;
 use self::multipoint::multipoint_crossover;
