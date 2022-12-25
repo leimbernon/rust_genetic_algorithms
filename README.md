@@ -99,7 +99,7 @@ A simple example of use could be the minimization of a genotype whose gene has o
 ### Creation of the gene and genotype structure
 
 Use the traits.
-`use use genetic_algorithms::{ga::{GaConfiguration, ProblemSolving, run}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT};`
+`use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration}};`
 
 Define the gene structure.
 
