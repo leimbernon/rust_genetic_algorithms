@@ -1,4 +1,4 @@
-use genetic_algorithms::{ga::{GaConfiguration, ProblemSolving, run}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT};
+use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration}};
 use crate::{structures::{Gene, Genotype}};
 
 #[test]
@@ -6,10 +6,9 @@ fn test_ga_start_maximize(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
-        problem_solving: ProblemSolving::Maximization,
-        max_generations: 100,
-        number_of_couples: 10,
-        crossover_number_of_points: 0,
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization},
+        selection_configuration: None,
+        crossover_configuration: None,
         selection: Selection::Random,
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
@@ -36,8 +35,8 @@ fn test_ga_start_maximize(){
     let mut population = Population::new(individuals);
     population = run(population, configuration);
     
-    assert_eq!(population.individuals.len(), 10);
-    assert_eq!(population.individuals[0].get_phenotype(), &20.0);
+    assert_eq!(population.individuals.len(), 1);
+    assert_eq!(population.individuals[0].get_fitness(), &20.0);
 
 }
 
@@ -46,10 +45,9 @@ fn test_ga_start_minimize(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
-        problem_solving: ProblemSolving::Minimization,
-        max_generations: 100,
-        number_of_couples: 10,
-        crossover_number_of_points: 0,
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization},
+        selection_configuration: None,
+        crossover_configuration: None,
         selection: Selection::Random,
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
@@ -76,7 +74,7 @@ fn test_ga_start_minimize(){
     let mut population = Population::new(individuals);
     population = run(population, configuration);
     
-    assert_eq!(population.individuals.len(), 10);
-    assert_eq!(population.individuals[0].get_phenotype(), &10.0);
+    assert_eq!(population.individuals.len(), 1);
+    assert_eq!(population.individuals[0].get_fitness(), &10.0);
 
 }

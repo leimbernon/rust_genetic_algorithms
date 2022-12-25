@@ -13,6 +13,7 @@ This library provides a simple framework to implement [genetic algorithms (GA)](
     - [Operators](#operators)
     - [Population](#population)
     - [Runner](#runner)
+    - [GA Configuration](#ga-configuration)
   - [Example](#example)
     - [Creation of the gene and genotype structure](#creation-of-the-gene-and-genotype-structure)
   - [Usage](#usage)
@@ -32,8 +33,8 @@ These traits are within the `traits` module:
   - `new()`: This is the constructor function.
   - `get_dna()`: Must return the vector of genes (`GeneT`).
   - `get_dna_mut()`: Must return the mutable vector of genes (`GeneT`), manily for the mutation operator.
-  - `calculate_phenotype()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
-  - `get_phenotype()`: Returns the fitness previously calculated by `calculate_phenotype()`.
+  - `calculate_fitness()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
+  - `get_fitness()`: Returns the fitness previously calculated by `calculate_fitness()`.
   - `get_age()`: Returns the age of the genotype.
   - `get_age_mut()`: Must return the mutable age of the genotype.
 
@@ -53,6 +54,7 @@ Within the module `operations` we have the following operators:
   - Random
   - Roulette Wheel
   - Stochastic Universal Sampling
+  - Tournament
 - Survivor
   - Fitness based
   - Age based
@@ -65,7 +67,30 @@ Within the `population` module, `Population` structure will define the populatio
 ### Runner
 
 Because genetic algorithms run over different generations, in this library there is a `start` function within module `ga` that facilitates the process.
-This function will need the `GaConfiguration` structure which contains the operators to use, the maximum number of generations, and the problem solver (Maximization or Minimization), and the `Population` structure, which is in the `population` module.
+This function will need the `GaConfiguration` structure which contains the operators to use, the maximum number of generations, the problem solver (Maximization or Minimization), etc, and the `Population` structure, which is in the `population` module.
+
+### GA Configuration
+
+Within this library you can configure the way to run genetic algorithms through the configuration structure `GaConfiguration`.
+This structure contains the following attributes:
+- `limit_configuration`: It configures the limits of the Genetic Algorithms with the `LimitConfiguration` structure.
+- `selection_configuration`: Optional. It configures the selection method with the `SelectionConfiguration` structure.
+- `crossover_configuration`: Optional. It configures the crossover method with the `CrossoverConfiguration` structure.
+- `selection`: Indicates what selection operator to use.
+- `crossover`: Indicates what crossover operator to use.
+- `mutation`: Indicates what mutation operator to use.
+- `survivor`: Indicates what survivor operator to use.
+
+`SelectionConfiguration`:
+- `number_of_couples`: This attribute is only valid for stochastic universal sampling. It indicates the number of couples to select from the population.
+
+`CrossoverConfiguration`:
+- `number_of_points`: This attribute is only valid for crossover multipoint, and it indicates how many points will be made within the dna in crossover operations.
+
+`LimitConfiguration`:
+- `problem_solving`: You can select from a Minimization problem or a Maximization problem.
+- `max_generations`: In case of not getting the optimal result, this attribute indicates the maximum number of generations to execute before stopping.
+- `fitness_target`: Optional. The fitness of the best individual.
 
 ## Example
 
@@ -74,7 +99,7 @@ A simple example of use could be the minimization of a genotype whose gene has o
 ### Creation of the gene and genotype structure
 
 Use the traits.
-`use use genetic_algorithms::{ga::{GaConfiguration, ProblemSolving, run}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT};`
+`use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration}};`
 
 Define the gene structure.
 
@@ -109,7 +134,7 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_dna_mut(&mut self) -> &mut Vec<T> {
         &mut self.dna
     }
-    fn get_phenotype(&self) -> &f64 {
+    fn get_fitness(&self) -> &f64 {
         return &self.phenotype;
     }
      fn get_age_mut(&mut self) -> &mut i32 {
@@ -118,7 +143,7 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_age(&self) -> &i32 {
         &self.age
     }
-    fn calculate_phenotype(&mut self) {
+    fn calculate_fitness(&mut self) {
         
         self.phenotype = 0.0;
         let mut position = 0;
@@ -143,10 +168,9 @@ Define the configuration of the GA.
 
 ```
 let configuration = GaConfiguration{
-        problem_solving: ProblemSolving::Minimization,
-        max_generations: 100,
-        number_of_couples: 10,
-        crossover_number_of_points: 0,
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization},
+        selection_configuration: SelectionConfiguration{number_of_couples: 10},
+        crossover_configuration: None,
         selection: Selection::Random,
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
@@ -186,5 +210,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.3.0"
+genetic_algorithms = "0.4.0"
 ```
