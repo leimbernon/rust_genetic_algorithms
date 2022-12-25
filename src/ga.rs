@@ -68,7 +68,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
         }
 
         //5- Survivor selection
-        survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration.problem_solving);
+        survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration);
 
         //6- Identifies if the limit has been reached or not
         if limit_reached(configuration.limit_configuration, &population.individuals){

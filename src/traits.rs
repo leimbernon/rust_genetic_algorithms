@@ -12,4 +12,8 @@ pub trait GenotypeT<T: GeneT + Default>{
     fn get_fitness_mut(&mut self) -> &mut f64;
     fn get_age_mut(&mut self) -> &mut i32;
     fn get_age(&self) -> &i32;
+
+    fn get_fitness_distance(&self, fitness_target: &f64) -> f64 {
+        (fitness_target - self.get_fitness()).abs()
+    }
 }
