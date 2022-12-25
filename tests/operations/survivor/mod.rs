@@ -4,7 +4,7 @@ use genetic_algorithms::{operations::{survivor::{fitness, age}}, traits::Genotyp
 #[test]
 fn test_fitness_survivor_minization(){
 
-    //We create 12 phenotypes for 12 individuals
+    //We create 12 fitnesss for 12 individuals
     let dna_1 = vec![Gene{id:1}];
     let dna_2 = vec![Gene{id:1}];
     let dna_3 = vec![Gene{id:1}];
@@ -19,18 +19,18 @@ fn test_fitness_survivor_minization(){
     let dna_12 = vec![Gene{id:1}];
 
     //We create the individuals
-    let individual_1 = Genotype{dna: dna_1, phenotype: 10.1, age: 0};
-    let individual_2 = Genotype{dna: dna_2, phenotype: 10.2, age: 0};
-    let individual_3 = Genotype{dna: dna_3, phenotype: 10.3, age: 0};
-    let individual_4 = Genotype{dna: dna_4, phenotype: 11.0, age: 0};
-    let individual_5 = Genotype{dna: dna_5, phenotype: 12.0, age: 0};
-    let individual_6 = Genotype{dna: dna_6, phenotype: 13.0, age: 0};
-    let individual_7 = Genotype{dna: dna_7, phenotype: 14.0, age: 0};
-    let individual_8 = Genotype{dna: dna_8, phenotype: 15.0, age: 0};
-    let individual_9 = Genotype{dna: dna_9, phenotype: 16.0, age: 0};
-    let individual_10 = Genotype{dna: dna_10, phenotype: 17.0, age: 0};
-    let individual_11 = Genotype{dna: dna_11, phenotype: 18.0, age: 0};
-    let individual_12 = Genotype{dna: dna_12, phenotype: 19.0, age: 0};
+    let individual_1 = Genotype{dna: dna_1, fitness: 10.1, age: 0};
+    let individual_2 = Genotype{dna: dna_2, fitness: 10.2, age: 0};
+    let individual_3 = Genotype{dna: dna_3, fitness: 10.3, age: 0};
+    let individual_4 = Genotype{dna: dna_4, fitness: 11.0, age: 0};
+    let individual_5 = Genotype{dna: dna_5, fitness: 12.0, age: 0};
+    let individual_6 = Genotype{dna: dna_6, fitness: 13.0, age: 0};
+    let individual_7 = Genotype{dna: dna_7, fitness: 14.0, age: 0};
+    let individual_8 = Genotype{dna: dna_8, fitness: 15.0, age: 0};
+    let individual_9 = Genotype{dna: dna_9, fitness: 16.0, age: 0};
+    let individual_10 = Genotype{dna: dna_10, fitness: 17.0, age: 0};
+    let individual_11 = Genotype{dna: dna_11, fitness: 18.0, age: 0};
+    let individual_12 = Genotype{dna: dna_12, fitness: 19.0, age: 0};
 
 
     //We create the population and create the random mating
@@ -50,7 +50,7 @@ fn test_fitness_survivor_minization(){
 #[test]
 fn test_fitness_survivor_maximization(){
 
-    //We create 12 phenotypes for 12 individuals
+    //We create 12 fitnesss for 12 individuals
     let dna_1 = vec![Gene{id:1}];
     let dna_2 = vec![Gene{id:1}];
     let dna_3 = vec![Gene{id:1}];
@@ -65,18 +65,18 @@ fn test_fitness_survivor_maximization(){
     let dna_12 = vec![Gene{id:1}];
 
     //We create the individuals
-    let individual_1 = Genotype{dna: dna_1, phenotype: 10.1, age: 0};
-    let individual_2 = Genotype{dna: dna_2, phenotype: 10.2, age: 0};
-    let individual_3 = Genotype{dna: dna_3, phenotype: 10.3, age: 0};
-    let individual_4 = Genotype{dna: dna_4, phenotype: 11.0, age: 0};
-    let individual_5 = Genotype{dna: dna_5, phenotype: 12.0, age: 0};
-    let individual_6 = Genotype{dna: dna_6, phenotype: 13.0, age: 0};
-    let individual_7 = Genotype{dna: dna_7, phenotype: 14.0, age: 0};
-    let individual_8 = Genotype{dna: dna_8, phenotype: 15.0, age: 0};
-    let individual_9 = Genotype{dna: dna_9, phenotype: 16.0, age: 0};
-    let individual_10 = Genotype{dna: dna_10, phenotype: 17.0, age: 0};
-    let individual_11 = Genotype{dna: dna_11, phenotype: 18.0, age: 0};
-    let individual_12 = Genotype{dna: dna_12, phenotype: 19.0, age: 0};
+    let individual_1 = Genotype{dna: dna_1, fitness: 10.1, age: 0};
+    let individual_2 = Genotype{dna: dna_2, fitness: 10.2, age: 0};
+    let individual_3 = Genotype{dna: dna_3, fitness: 10.3, age: 0};
+    let individual_4 = Genotype{dna: dna_4, fitness: 11.0, age: 0};
+    let individual_5 = Genotype{dna: dna_5, fitness: 12.0, age: 0};
+    let individual_6 = Genotype{dna: dna_6, fitness: 13.0, age: 0};
+    let individual_7 = Genotype{dna: dna_7, fitness: 14.0, age: 0};
+    let individual_8 = Genotype{dna: dna_8, fitness: 15.0, age: 0};
+    let individual_9 = Genotype{dna: dna_9, fitness: 16.0, age: 0};
+    let individual_10 = Genotype{dna: dna_10, fitness: 17.0, age: 0};
+    let individual_11 = Genotype{dna: dna_11, fitness: 18.0, age: 0};
+    let individual_12 = Genotype{dna: dna_12, fitness: 19.0, age: 0};
 
 
     //We create the population and create the random mating
@@ -96,7 +96,7 @@ fn test_fitness_survivor_maximization(){
 #[test]
 fn test_age_based_survivor(){
 
-    //We create 12 phenotypes for 12 individuals
+    //We create 12 fitnesss for 12 individuals
     let dna_1 = vec![Gene{id:1}];
     let dna_2 = vec![Gene{id:1}];
     let dna_3 = vec![Gene{id:1}];
@@ -111,18 +111,18 @@ fn test_age_based_survivor(){
     let dna_12 = vec![Gene{id:1}];
 
     //We create the individuals
-    let individual_1 = Genotype{dna: dna_1, phenotype: 10.1, age: 0};
-    let individual_2 = Genotype{dna: dna_2, phenotype: 10.2, age: 0};
-    let individual_3 = Genotype{dna: dna_3, phenotype: 10.3, age: 1};
-    let individual_4 = Genotype{dna: dna_4, phenotype: 11.0, age: 1};
-    let individual_5 = Genotype{dna: dna_5, phenotype: 12.0, age: 3};
-    let individual_6 = Genotype{dna: dna_6, phenotype: 13.0, age: 3};
-    let individual_7 = Genotype{dna: dna_7, phenotype: 14.0, age: 2};
-    let individual_8 = Genotype{dna: dna_8, phenotype: 15.0, age: 2};
-    let individual_9 = Genotype{dna: dna_9, phenotype: 16.0, age: 2};
-    let individual_10 = Genotype{dna: dna_10, phenotype: 17.0, age: 2};
-    let individual_11 = Genotype{dna: dna_11, phenotype: 18.0, age: 1};
-    let individual_12 = Genotype{dna: dna_12, phenotype: 19.0, age: 1};
+    let individual_1 = Genotype{dna: dna_1, fitness: 10.1, age: 0};
+    let individual_2 = Genotype{dna: dna_2, fitness: 10.2, age: 0};
+    let individual_3 = Genotype{dna: dna_3, fitness: 10.3, age: 1};
+    let individual_4 = Genotype{dna: dna_4, fitness: 11.0, age: 1};
+    let individual_5 = Genotype{dna: dna_5, fitness: 12.0, age: 3};
+    let individual_6 = Genotype{dna: dna_6, fitness: 13.0, age: 3};
+    let individual_7 = Genotype{dna: dna_7, fitness: 14.0, age: 2};
+    let individual_8 = Genotype{dna: dna_8, fitness: 15.0, age: 2};
+    let individual_9 = Genotype{dna: dna_9, fitness: 16.0, age: 2};
+    let individual_10 = Genotype{dna: dna_10, fitness: 17.0, age: 2};
+    let individual_11 = Genotype{dna: dna_11, fitness: 18.0, age: 1};
+    let individual_12 = Genotype{dna: dna_12, fitness: 19.0, age: 1};
 
 
     //We create the population and create the random mating
@@ -146,7 +146,7 @@ fn test_age_based_survivor(){
 #[test]
 fn test_survivor_fitness_fixed(){
 
-    //We create 12 phenotypes for 12 individuals
+    //We create 12 fitnesss for 12 individuals
     let dna_1 = vec![Gene{id:1}];
     let dna_2 = vec![Gene{id:1}];
     let dna_3 = vec![Gene{id:1}];
@@ -161,18 +161,18 @@ fn test_survivor_fitness_fixed(){
     let dna_12 = vec![Gene{id:1}];
 
     //We create the individuals
-    let individual_1 = Genotype{dna: dna_1, phenotype: 10.1, age: 0};
-    let individual_2 = Genotype{dna: dna_2, phenotype: 10.2, age: 0};
-    let individual_3 = Genotype{dna: dna_3, phenotype: 10.3, age: 0};
-    let individual_4 = Genotype{dna: dna_4, phenotype: 11.0, age: 0};
-    let individual_5 = Genotype{dna: dna_5, phenotype: 12.0, age: 0};
-    let individual_6 = Genotype{dna: dna_6, phenotype: 13.0, age: 0};
-    let individual_7 = Genotype{dna: dna_7, phenotype: 14.0, age: 0};
-    let individual_8 = Genotype{dna: dna_8, phenotype: 15.0, age: 0};
-    let individual_9 = Genotype{dna: dna_9, phenotype: 16.0, age: 0};
-    let individual_10 = Genotype{dna: dna_10, phenotype: 17.0, age: 0};
-    let individual_11 = Genotype{dna: dna_11, phenotype: 18.0, age: 0};
-    let individual_12 = Genotype{dna: dna_12, phenotype: 19.0, age: 0};
+    let individual_1 = Genotype{dna: dna_1, fitness: 10.1, age: 0};
+    let individual_2 = Genotype{dna: dna_2, fitness: 10.2, age: 0};
+    let individual_3 = Genotype{dna: dna_3, fitness: 10.3, age: 0};
+    let individual_4 = Genotype{dna: dna_4, fitness: 11.0, age: 0};
+    let individual_5 = Genotype{dna: dna_5, fitness: 12.0, age: 0};
+    let individual_6 = Genotype{dna: dna_6, fitness: 13.0, age: 0};
+    let individual_7 = Genotype{dna: dna_7, fitness: 14.0, age: 0};
+    let individual_8 = Genotype{dna: dna_8, fitness: 15.0, age: 0};
+    let individual_9 = Genotype{dna: dna_9, fitness: 16.0, age: 0};
+    let individual_10 = Genotype{dna: dna_10, fitness: 17.0, age: 0};
+    let individual_11 = Genotype{dna: dna_11, fitness: 18.0, age: 0};
+    let individual_12 = Genotype{dna: dna_12, fitness: 19.0, age: 0};
 
 
     //We create the population and create the random mating

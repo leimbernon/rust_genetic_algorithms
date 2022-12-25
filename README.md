@@ -118,13 +118,13 @@ impl GeneT for Gene{
 }
 ```
 
-Define the genotype structure, and the phenotype calculation.
+Define the genotype structure, and the fitness calculation.
 
 ```
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Genotype<T: GeneT>{
     pub dna: Vec<T>,
-    pub phenotype: f64,
+    pub fitness: f64,
     pub age: i32,
 }
 impl <T: GeneT> GenotypeT<T> for Genotype<T>{
@@ -135,7 +135,7 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
         &mut self.dna
     }
     fn get_fitness(&self) -> &f64 {
-        return &self.phenotype;
+        return &self.fitness;
     }
      fn get_age_mut(&mut self) -> &mut i32 {
         &mut self.age
@@ -145,19 +145,19 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     }
     fn calculate_fitness(&mut self) {
         
-        self.phenotype = 0.0;
+        self.fitness = 0.0;
         let mut position = 0;
 
         for i in &self.dna{
-            let phenotype = f64::from(i.get_id()*position);
-            self.phenotype += phenotype;
+            let fitness = f64::from(i.get_id()*position);
+            self.fitness += fitness;
             position += 1;
         }
     }
     fn new() -> Self {
         return Genotype{
             dna: Vec::new(),
-            phenotype: 0.0,
+            fitness: 0.0,
             age: 0,
         }
     }
@@ -192,8 +192,8 @@ let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
     let dna_9 = vec![Gene{id:2}, Gene{id:1}, Gene{id:4}, Gene{id:3}];
     let dna_10 = vec![Gene{id:1}, Gene{id:4}, Gene{id:3}, Gene{id:2}];
 
-let individuals = vec![Genotype{dna: dna_1, phenotype: 1.0, age: 0}, Genotype{dna: dna_2, phenotype: 2.0, age: 0},
-    Genotype{dna: dna_3, phenotype: 3.0, age: 0}, Genotype{dna: dna_4, phenotype: 4.0, age: 0}, Genotype{dna: dna_5, phenotype: 5.0, age: 0}, Genotype{dna: dna_6, phenotype: 6.0, age: 0}, Genotype{dna: dna_7, phenotype: 7.0, age: 0}, Genotype{dna: dna_8, phenotype: 8.0, age: 0}, Genotype{dna: dna_9, phenotype: 9.0, age: 0}, Genotype{dna: dna_10, phenotype: 10.0, age: 0}];
+let individuals = vec![Genotype{dna: dna_1, fitness: 1.0, age: 0}, Genotype{dna: dna_2, fitness: 2.0, age: 0},
+    Genotype{dna: dna_3, fitness: 3.0, age: 0}, Genotype{dna: dna_4, fitness: 4.0, age: 0}, Genotype{dna: dna_5, fitness: 5.0, age: 0}, Genotype{dna: dna_6, fitness: 6.0, age: 0}, Genotype{dna: dna_7, fitness: 7.0, age: 0}, Genotype{dna: dna_8, fitness: 8.0, age: 0}, Genotype{dna: dna_9, fitness: 9.0, age: 0}, Genotype{dna: dna_10, fitness: 10.0, age: 0}];
 
     let mut population = Population::new(individuals);
 ```

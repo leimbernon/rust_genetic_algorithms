@@ -27,6 +27,7 @@ pub struct LimitConfiguration{
 
 #[derive(Copy, Clone)]
 pub struct GaConfiguration {
+    pub number_of_threads: Option<i32>,
     pub limit_configuration: LimitConfiguration,
     pub selection_configuration: Option<SelectionConfiguration>,
     pub crossover_configuration: Option<CrossoverConfiguration>,

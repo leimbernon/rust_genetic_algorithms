@@ -8,12 +8,12 @@ pub fn roulette_wheel_selection<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>) -
     let mut mating = HashMap::new();
 
     //1- Calculate the sum of all fitnesses
-    let mut total_phenotype = 0.0;
+    let mut total_fitness = 0.0;
     let mut rng = rand::thread_rng();
 
     for genotype in individuals 
     { 
-        total_phenotype += genotype.get_fitness(); 
+        total_fitness += genotype.get_fitness(); 
     }
 
     //2- Identifies what individuals will be parents
@@ -22,7 +22,7 @@ pub fn roulette_wheel_selection<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>) -
     for index in  0..individuals.len(){
 
         //We get the probability
-        if &rng.gen_range(0.0..total_phenotype) >= individuals.get(index).unwrap().get_fitness(){
+        if &rng.gen_range(0.0..total_fitness) >= individuals.get(index).unwrap().get_fitness(){
 
             if parent_1 == None {
                 //If parent 1 is not set, we set it
