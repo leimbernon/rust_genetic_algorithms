@@ -1,4 +1,4 @@
-use crate::{population::{Population}, traits::{GenotypeT, GeneT}, operations::{selection, crossover, mutation, survivor}, configuration::ProblemSolving};
+use crate::{population::{Population}, traits::{GenotypeT, GeneT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
 use crate::configuration::GaConfiguration;
 
 /**
@@ -69,12 +69,19 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
 
         //5- Survivor selection
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration.problem_solving);
+
+        //6- Identifies if the limit has been reached or not
+        if limit_reached(configuration.limit_configuration, &population.individuals){
+            break;
+        }
     }
 
     return Population::new(vec![best_individual]);
 }
 
-//Function to determine which of the individuals is the best individual and return the best of them
+/**
+ * Function to determine which of the individuals is the best individual and return the best of them
+ */
 fn get_best_individual<T:GeneT, U:GenotypeT<T>>(individual_1: &U, individual_2: &U, problem_solving: ProblemSolving) -> U{
 
     let mut best_individual = U::new();
@@ -104,4 +111,32 @@ fn get_best_individual<T:GeneT, U:GenotypeT<T>>(individual_1: &U, individual_2: 
     }
 
     best_individual
+}
+
+/**
+ * Function to indentify if the limit has been reached or not in the current generation
+ */
+fn limit_reached<T:GeneT, U:GenotypeT<T>>(limit: LimitConfiguration, individuals: &Vec<U>)->bool{
+
+    let mut result = false;
+
+    if limit.problem_solving == ProblemSolving::Minimization{
+        //If the problem solving is minimization, fitness must be 0
+        for genotype in individuals {
+            if genotype.get_fitness() == &0.0 {
+                result = true;
+                break;
+            }
+        }
+    }else if limit.problem_solving == ProblemSolving::FixedFitness{
+        //If the problem solving is a fixed fitness
+        for genotype in individuals {
+            if genotype.get_fitness() == &limit.fitness_target.unwrap() {
+                result = true;
+                break;
+            }
+        }
+    }
+
+    return result;
 }

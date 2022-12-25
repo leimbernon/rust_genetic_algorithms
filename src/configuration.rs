@@ -5,6 +5,7 @@ use crate::{operations::{Crossover, Selection, Mutation, Survivor}};
 pub enum ProblemSolving {
     Minimization,
     Maximization,
+    FixedFitness,
 }
 
 #[derive(Copy, Clone)]

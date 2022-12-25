@@ -21,6 +21,11 @@ pub fn fitness_based<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec<U>, populati
                     individuals.remove(0);
                 }
             },
+            ProblemSolving::FixedFitness => {
+                for _i in 0..individuals_to_remove{
+                    individuals.remove(0);
+                }
+            },
         }
     }
 }
