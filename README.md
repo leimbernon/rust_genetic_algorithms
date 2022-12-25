@@ -75,8 +75,8 @@ Within this library you can configure the way to run genetic algorithms through 
 This structure contains the following attributes:
 - `problem_solving`: You can select from a Minimization problem or a Maximization problem.
 - `max_generations`: In case of not getting the optimal result, this attribute indicates the maximum number of generations to execute before stopping.
-- `selection_configuration`: It configures the selection method with the `SelectionConfiguration` structure.
-- `crossover_configuration`: It configures the crossover method with the `CrossoverConfiguration` structure.
+- `selection_configuration`: Optional. It configures the selection method with the `SelectionConfiguration` structure.
+- `crossover_configuration`: Optional. It configures the crossover method with the `CrossoverConfiguration` structure.
 - `selection`: Indicates what selection operator to use.
 - `crossover`: Indicates what crossover operator to use.
 - `mutation`: Indicates what mutation operator to use.
