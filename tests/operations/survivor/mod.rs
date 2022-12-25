@@ -1,5 +1,5 @@
 use crate::structures::{Gene, Genotype};
-use genetic_algorithms::{operations::{survivor::{fitness, age}}, traits::GenotypeT, ga, configuration::ProblemSolving};
+use genetic_algorithms::{operations::{survivor::{fitness, age}}, traits::GenotypeT, configuration::ProblemSolving};
 
 #[test]
 fn test_fitness_survivor_minization(){
