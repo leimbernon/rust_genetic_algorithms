@@ -18,7 +18,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
         *individual.get_age_mut() = age;
         
         if !initial_individual {
-            best_individual = get_best_individual(&best_individual, &individual, configuration.problem_solving);
+            best_individual = get_best_individual(&best_individual, &individual, configuration.limit_configuration.problem_solving);
         } else{
             *best_individual.get_dna_mut() = individual.get_dna().clone();
             *best_individual.get_fitness_mut() = individual.get_fitness().clone();
@@ -59,8 +59,8 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
             *child_2.get_age_mut() = age;
 
             //Sets the best individual
-            best_individual = get_best_individual(&best_individual, &child_1, configuration.problem_solving);
-            best_individual = get_best_individual(&best_individual, &child_2, configuration.problem_solving);
+            best_individual = get_best_individual(&best_individual, &child_1, configuration.limit_configuration.problem_solving);
+            best_individual = get_best_individual(&best_individual, &child_2, configuration.limit_configuration.problem_solving);
 
             //Insert the children in the population
             population.individuals.push(child_1);
@@ -68,7 +68,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
         }
 
         //5- Survivor selection
-        survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.problem_solving);
+        survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration.problem_solving);
     }
 
     return Population::new(vec![best_individual]);

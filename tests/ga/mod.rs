@@ -6,8 +6,7 @@ fn test_ga_start_maximize(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
-        problem_solving: ProblemSolving::Maximization,
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None},
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization},
         selection_configuration: None,
         crossover_configuration: None,
         selection: Selection::Random,
@@ -46,8 +45,7 @@ fn test_ga_start_minimize(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
-        problem_solving: ProblemSolving::Minimization,
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None},
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization},
         selection_configuration: None,
         crossover_configuration: None,
         selection: Selection::Random,

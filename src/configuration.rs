@@ -19,13 +19,13 @@ pub struct CrossoverConfiguration{
 
 #[derive(Copy, Clone)]
 pub struct LimitConfiguration{
+    pub problem_solving: ProblemSolving,
     pub max_generations: i32,
     pub fitness_target: Option<f64>, 
 }
 
 #[derive(Copy, Clone)]
 pub struct GaConfiguration {
-    pub problem_solving: ProblemSolving,
     pub limit_configuration: LimitConfiguration,
     pub selection_configuration: Option<SelectionConfiguration>,
     pub crossover_configuration: Option<CrossoverConfiguration>,

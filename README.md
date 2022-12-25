@@ -73,7 +73,6 @@ This function will need the `GaConfiguration` structure which contains the opera
 
 Within this library you can configure the way to run genetic algorithms through the configuration structure `GaConfiguration`.
 This structure contains the following attributes:
-- `problem_solving`: You can select from a Minimization problem or a Maximization problem.
 - `limit_configuration`: It configures the limits of the Genetic Algorithms with the `LimitConfiguration` structure.
 - `selection_configuration`: Optional. It configures the selection method with the `SelectionConfiguration` structure.
 - `crossover_configuration`: Optional. It configures the crossover method with the `CrossoverConfiguration` structure.
@@ -89,6 +88,7 @@ This structure contains the following attributes:
 - `number_of_points`: This attribute is only valid for crossover multipoint, and it indicates how many points will be made within the dna in crossover operations.
 
 `LimitConfiguration`:
+- `problem_solving`: You can select from a Minimization problem or a Maximization problem.
 - `max_generations`: In case of not getting the optimal result, this attribute indicates the maximum number of generations to execute before stopping.
 - `fitness_target`: Optional. The fitness of the best individual.
 
