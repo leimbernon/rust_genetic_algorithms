@@ -168,8 +168,7 @@ Define the configuration of the GA.
 
 ```
 let configuration = GaConfiguration{
-        problem_solving: ProblemSolving::Minimization,
-        max_generations: 100,
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization},
         selection_configuration: SelectionConfiguration{number_of_couples: 10},
         crossover_configuration: None,
         selection: Selection::Random,
