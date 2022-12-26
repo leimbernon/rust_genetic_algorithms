@@ -1,30 +1,22 @@
+use std::{sync::{mpsc::{sync_channel}, Mutex, Arc}, thread, collections::HashMap};
+
 use crate::{population::{Population}, traits::{GenotypeT, GeneT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
 use crate::configuration::GaConfiguration;
 
 /**
  * Function to run the genetic algorithms cycle
  */
-pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configuration: GaConfiguration)->Population<T,U>
+pub fn run<T,U>(mut population: Population<T,U>, configuration: GaConfiguration)->Population<T,U>
+where 
+T:GeneT + Send + Sync, 
+U:GenotypeT<T> + Send + Sync + 'static + Clone
 {
     //Best individual within the generations and population returned
-    let mut best_individual = U::new();
-    let mut initial_individual = true;
     let initial_population_size = population.size();
     let mut age = 0;
 
-    //We first calculate the phenotype of the population, set the age of each parent and set the best individual
-    for individual in &mut population.individuals{
-        individual.calculate_fitness();
-        *individual.get_age_mut() = age;
-        
-        if !initial_individual {
-            best_individual = get_best_individual(&best_individual, &individual, configuration.limit_configuration.problem_solving);
-        } else{
-            *best_individual.get_dna_mut() = individual.get_dna().clone();
-            *best_individual.get_fitness_mut() = individual.get_fitness().clone();
-            initial_individual = true;
-        }
-    }
+    //Calculation of the fitness and the best individual
+    let mut best_individual = population_fitness_calculation_multithread(&mut population.individuals, configuration);
 
     //We start the cycles
     for i in 0..configuration.limit_configuration.max_generations {
@@ -33,7 +25,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
         age += 1;
 
         //1- Parent selection for reproduction
-        let parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration);
+        let parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
 
         //2- Reproduce the parents
         for j in parents.keys() {
@@ -43,7 +35,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
             let parent_1 = population.individuals.get(*index_parent_1).unwrap().clone();
             let parent_2 = population.individuals.get(*index_parent_2).unwrap().clone();
 
-            let mut offspring = crossover::factory(configuration.crossover, parent_1, parent_2, configuration.crossover_configuration).unwrap();
+            let mut offspring = crossover::factory(configuration.crossover, &parent_1, &parent_2, configuration.crossover_configuration).unwrap();
             let mut child_1 = offspring.pop().unwrap();
             let mut child_2 = offspring.pop().unwrap();
 
@@ -51,7 +43,7 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
             mutation::factory(configuration.mutation, &mut child_1);
             mutation::factory(configuration.mutation, &mut child_2);
 
-            //4- Calculate the phenotype of both children and set their age
+            //4- Calculate the fitness of both children and set their age
             child_1.calculate_fitness();
             child_2.calculate_fitness();
 
@@ -82,13 +74,17 @@ pub fn run<T:GeneT, U:GenotypeT<T>>(mut population: Population<T,U>, configurati
 /**
  * Function to determine which of the individuals is the best individual and return the best of them
  */
-fn get_best_individual<T:GeneT, U:GenotypeT<T>>(individual_1: &U, individual_2: &U, problem_solving: ProblemSolving) -> U{
+fn get_best_individual<T,U>(individual_1: &U, individual_2: &U, problem_solving: ProblemSolving) -> U
+where
+T:GeneT, 
+U:GenotypeT<T>
+{
 
     let mut best_individual = U::new();
 
     if problem_solving == ProblemSolving::Maximization {
 
-        //We check if the phenotype is the best and store it if it's the case
+        //We check if the fitness is the best and store it if it's the case
         if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_1.get_dna().clone();
             *best_individual.get_fitness_mut() = individual_1.get_fitness().clone();
@@ -99,7 +95,7 @@ fn get_best_individual<T:GeneT, U:GenotypeT<T>>(individual_1: &U, individual_2: 
 
     } else {
 
-        //We check if the phenotype is the best and store it if it's the case
+        //We check if the fitness is the best and store it if it's the case
         if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_2.get_dna().clone();
             *best_individual.get_fitness_mut() = individual_2.get_fitness().clone();
@@ -116,7 +112,11 @@ fn get_best_individual<T:GeneT, U:GenotypeT<T>>(individual_1: &U, individual_2: 
 /**
  * Function to indentify if the limit has been reached or not in the current generation
  */
-fn limit_reached<T:GeneT, U:GenotypeT<T>>(limit: LimitConfiguration, individuals: &Vec<U>)->bool{
+fn limit_reached<T,U>(limit: LimitConfiguration, individuals: &Vec<U>)->bool
+where 
+T:GeneT, 
+U:GenotypeT<T>
+{
 
     let mut result = false;
 
@@ -139,4 +139,92 @@ fn limit_reached<T:GeneT, U:GenotypeT<T>>(limit: LimitConfiguration, individuals
     }
 
     return result;
+}
+
+/**
+ * Sets the population fitness, age and the best individual
+ */
+fn population_fitness_calculation_multithread<T, U>(individuals: &mut Vec<U>, configuration: GaConfiguration) -> U
+where
+T:GeneT, 
+U:GenotypeT<T> + Send + Sync + 'static + Clone
+{
+
+    let mut number_of_threads = configuration.number_of_threads.unwrap_or(1);
+    let (tx, rx) = sync_channel(number_of_threads as usize);
+
+    //Division of the individuals in different threads
+    number_of_threads = if number_of_threads > individuals.len() as i32 {individuals.len() as i32} else {number_of_threads};
+
+    //Setting the starting point and the jump
+    let mut start_index = 0;
+    let mut jump = individuals.len() as i32 / number_of_threads;
+
+    //Cloning the individuals for multithreading
+    let individuals_t = Vec::from_iter(individuals[..].iter().cloned());
+    let individuals_t = Arc::new(Mutex::new(individuals_t));
+
+    let best_individual_t = Arc::new(Mutex::new(U::new()));
+
+    //Walking through the threads
+    for _ in 0..number_of_threads {
+
+        //We calculate the next jump
+        if jump > individuals.len() as i32 - (start_index + jump) {
+            jump += individuals.len() as i32 - (start_index + jump);
+        }
+
+        //Cloning the information from the main thread
+        let (start_index_t, tx, jump_t, individuals_t, best_individual_t) = (start_index.clone(), tx.clone(),  jump.clone(), Arc::clone(&individuals_t), Arc::clone(&best_individual_t));
+
+        //Starting the thread management
+        thread::spawn(move || {
+
+            let mut fitness_map = HashMap::new();
+            let mut best_individual = U::new();
+
+            //Calculates the fitness from the corresponding population
+            for i in start_index_t..(start_index_t + jump_t){
+                individuals_t.lock().unwrap()[i as usize].calculate_fitness();
+                fitness_map.insert(i as usize, *individuals_t.lock().unwrap()[i as usize].get_fitness());
+
+                if best_individual.get_dna().len() > 0 {
+                    best_individual = get_best_individual(&best_individual, &individuals_t.lock().unwrap()[i as usize], configuration.limit_configuration.problem_solving);
+                } else{
+                    *best_individual.get_dna_mut() = individuals_t.lock().unwrap()[i as usize].get_dna().clone();
+                    *best_individual.get_fitness_mut() = individuals_t.lock().unwrap()[i as usize].get_fitness().clone();
+                }
+            }
+
+            //Setting the best global individual
+            if best_individual_t.lock().unwrap().get_dna().len() > 0 {
+                let global_best_individual = get_best_individual(&best_individual_t.lock().unwrap().clone(), &best_individual, configuration.limit_configuration.problem_solving);
+                *best_individual_t.lock().unwrap().get_dna_mut() = global_best_individual.get_dna().clone();
+                *best_individual_t.lock().unwrap().get_fitness_mut() = global_best_individual.get_fitness().clone();
+            }else{
+                *best_individual_t.lock().unwrap().get_dna_mut() = best_individual.get_dna().clone();
+                *best_individual_t.lock().unwrap().get_fitness_mut() = best_individual.get_fitness().clone();
+            }
+
+            //Sending the result
+            tx.send(fitness_map).unwrap();
+        });
+
+        start_index += jump;
+    }
+
+    drop(tx);
+
+    //We receive from the threads and set the fitness in individuals
+    for received in rx {
+        for element in received{
+            *individuals[element.0].get_fitness_mut() = element.1;
+        }
+    }
+
+    let mut best_individual = U::new();
+    *best_individual.get_dna_mut() = best_individual_t.lock().unwrap().get_dna().clone();
+    *best_individual.get_fitness_mut() = best_individual_t.lock().unwrap().get_fitness_mut().clone();
+
+    return best_individual;
 }
