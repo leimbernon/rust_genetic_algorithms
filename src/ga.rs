@@ -9,27 +9,11 @@ use crate::configuration::GaConfiguration;
 pub fn run<T:GeneT, U:GenotypeT<T> + Send + Sync + 'static + Clone>(mut population: Population<T,U>, configuration: GaConfiguration)->Population<T,U>
 {
     //Best individual within the generations and population returned
-    let mut best_individual = U::new();
-    let mut initial_individual = true;
     let initial_population_size = population.size();
     let mut age = 0;
 
-    //Calculation of the fitness
-    population_fitness_calculation(&mut population.individuals, configuration);
-
-    //We first calculate the fitness of the population, set the age of each parent and set the best individual
-    for individual in &mut population.individuals{
-        individual.calculate_fitness();
-        *individual.get_age_mut() = age;
-        
-        if !initial_individual {
-            best_individual = get_best_individual(&best_individual, &individual, configuration.limit_configuration.problem_solving);
-        } else{
-            *best_individual.get_dna_mut() = individual.get_dna().clone();
-            *best_individual.get_fitness_mut() = individual.get_fitness().clone();
-            initial_individual = true;
-        }
-    }
+    //Calculation of the fitness and the best individual
+    let mut best_individual = population_fitness_calculation(&mut population.individuals, configuration);
 
     //We start the cycles
     for i in 0..configuration.limit_configuration.max_generations {
@@ -149,7 +133,7 @@ fn limit_reached<T:GeneT, U:GenotypeT<T>>(limit: LimitConfiguration, individuals
 /**
  * Gets the population fitness, age and the best individual
  */
-fn population_fitness_calculation<T:GeneT, U:GenotypeT<T> + Send + Sync + 'static + Clone>(individuals: &mut Vec<U>, configuration: GaConfiguration){
+fn population_fitness_calculation<T:GeneT, U:GenotypeT<T> + Send + Sync + 'static + Clone>(individuals: &mut Vec<U>, configuration: GaConfiguration) -> U{
 
     let mut number_of_threads = configuration.number_of_threads.unwrap_or(1);
     let (tx, rx) = sync_channel(number_of_threads as usize);
@@ -165,6 +149,8 @@ fn population_fitness_calculation<T:GeneT, U:GenotypeT<T> + Send + Sync + 'stati
     let individuals_t = Vec::from_iter(individuals[..].iter().cloned());
     let individuals_t = Arc::new(Mutex::new(individuals_t));
 
+    let best_individual_t = Arc::new(Mutex::new(U::new()));
+
     //Walking through the threads
     for _ in 0..number_of_threads {
 
@@ -174,20 +160,38 @@ fn population_fitness_calculation<T:GeneT, U:GenotypeT<T> + Send + Sync + 'stati
         }
 
         //Cloning the information from the main thread
-        let (start_index_t, tx, jump_t, individuals_t) = (start_index.clone(), tx.clone(),  jump.clone(), Arc::clone(&individuals_t));
+        let (start_index_t, tx, jump_t, individuals_t, best_individual_t) = (start_index.clone(), tx.clone(),  jump.clone(), Arc::clone(&individuals_t), Arc::clone(&best_individual_t));
 
         //Starting the thread management
         thread::spawn(move || {
 
             let mut fitness_map = HashMap::new();
+            let mut best_individual = U::new();
 
             //Calculates the fitness from the corresponding population
             for i in start_index_t..(start_index_t + jump_t){
                 individuals_t.lock().unwrap()[i as usize].calculate_fitness();
                 fitness_map.insert(i as usize, *individuals_t.lock().unwrap()[i as usize].get_fitness());
+
+                if best_individual.get_dna().len() > 0 {
+                    best_individual = get_best_individual(&best_individual, &individuals_t.lock().unwrap()[i as usize], configuration.limit_configuration.problem_solving);
+                } else{
+                    *best_individual.get_dna_mut() = individuals_t.lock().unwrap()[i as usize].get_dna().clone();
+                    *best_individual.get_fitness_mut() = individuals_t.lock().unwrap()[i as usize].get_fitness().clone();
+                }
             }
 
-            //Sending the fitness map
+            //Setting the best global individual
+            if best_individual_t.lock().unwrap().get_dna().len() > 0 {
+                let global_best_individual = get_best_individual(&best_individual_t.lock().unwrap().clone(), &best_individual, configuration.limit_configuration.problem_solving);
+                *best_individual_t.lock().unwrap().get_dna_mut() = global_best_individual.get_dna().clone();
+                *best_individual_t.lock().unwrap().get_fitness_mut() = global_best_individual.get_fitness().clone();
+            }else{
+                *best_individual_t.lock().unwrap().get_dna_mut() = best_individual.get_dna().clone();
+                *best_individual_t.lock().unwrap().get_fitness_mut() = best_individual.get_fitness().clone();
+            }
+
+            //Sending the result
             tx.send(fitness_map).unwrap();
         });
 
@@ -202,4 +206,10 @@ fn population_fitness_calculation<T:GeneT, U:GenotypeT<T> + Send + Sync + 'stati
             *individuals[element.0].get_fitness_mut() = element.1;
         }
     }
+
+    let mut best_individual = U::new();
+    *best_individual.get_dna_mut() = best_individual_t.lock().unwrap().get_dna().clone();
+    *best_individual.get_fitness_mut() = best_individual_t.lock().unwrap().get_fitness_mut().clone();
+
+    return best_individual;
 }

@@ -1,5 +1,6 @@
 use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration}};
 use crate::{structures::{Gene, Genotype}};
+extern crate num_cpus;
 
 #[test]
 fn test_ga_start_maximize(){
@@ -87,7 +88,7 @@ fn test_ga_start_multithread(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
-        number_of_threads: Some(3),
+        number_of_threads: Some(num_cpus::get() as i32),
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization},
         selection_configuration: None,
         crossover_configuration: None,

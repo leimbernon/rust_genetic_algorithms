@@ -13,4 +13,5 @@ categories = ["emulators","development-tools", "science", "simulation"]
 
 [dependencies]
 rand = "0.8.5"
+num_cpus = "1.15.0"
 log = { version = "0.4", features = ["std", "serde"] }
