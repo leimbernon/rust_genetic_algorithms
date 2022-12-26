@@ -4,6 +4,8 @@
 ## Description
 This library provides a simple framework to implement [genetic algorithms (GA)](https://en.wikipedia.org/wiki/Genetic_algorithm) with Rust.
 
+This library also supports multithreading.
+
 ## Table of content
 - [RUST genetic algorithms library](#rust-genetic-algorithms-library)
   - [Description](#description)
@@ -73,6 +75,7 @@ This function will need the `GaConfiguration` structure which contains the opera
 
 Within this library you can configure the way to run genetic algorithms through the configuration structure `GaConfiguration`.
 This structure contains the following attributes:
+- `number_of_threads`: Optional. It indicates how many threads will be executed at the same time.
 - `limit_configuration`: It configures the limits of the Genetic Algorithms with the `LimitConfiguration` structure.
 - `selection_configuration`: Optional. It configures the selection method with the `SelectionConfiguration` structure.
 - `crossover_configuration`: Optional. It configures the crossover method with the `CrossoverConfiguration` structure.
@@ -168,6 +171,7 @@ Define the configuration of the GA.
 
 ```
 let configuration = GaConfiguration{
+        number_of_threads: Some(2),
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization},
         selection_configuration: SelectionConfiguration{number_of_couples: 10},
         crossover_configuration: None,
@@ -210,5 +214,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.4.0"
+genetic_algorithms = "0.5.0"
 ```
