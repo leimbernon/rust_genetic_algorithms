@@ -173,7 +173,7 @@ Define the configuration of the GA.
 let configuration = GaConfiguration{
         number_of_threads: Some(2),
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization},
-        selection_configuration: SelectionConfiguration{number_of_couples: 10},
+        selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
         crossover_configuration: None,
         selection: Selection::Random,
         crossover: Crossover::Cycle,
