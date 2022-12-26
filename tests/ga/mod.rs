@@ -1,4 +1,4 @@
-use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration}};
+use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration}};
 use crate::{structures::{Gene, Genotype}};
 extern crate num_cpus;
 
@@ -88,11 +88,11 @@ fn test_ga_start_multithread(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
-        number_of_threads: Some(num_cpus::get() as i32),
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization},
-        selection_configuration: None,
+        number_of_threads: Some(8 as i32),
+        limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization},
+        selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
         crossover_configuration: None,
-        selection: Selection::Random,
+        selection: Selection::Tournament,
         crossover: Crossover::Cycle,
         mutation: Mutation::Swap,
         survivor: Survivor::Fitness,
@@ -119,6 +119,5 @@ fn test_ga_start_multithread(){
     population = run(population, configuration);
     
     assert_eq!(population.individuals.len(), 1);
-    assert_eq!(population.individuals[0].get_fitness(), &10.0);
-
+    
 }

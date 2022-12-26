@@ -92,6 +92,7 @@ U:GenotypeT<T>+ Send + Sync + 'static + Clone
 {
 
     let mut mating = HashMap::new();
+    let couples = if couples*2 > individuals.len() as i32 {(individuals.len() / 2) as i32}else{couples};
 
     //Sets the indexes
     let mut indexes = Vec::new();
@@ -105,7 +106,9 @@ U:GenotypeT<T>+ Send + Sync + 'static + Clone
     //Variables that will be sent
     let left = Arc::new(Mutex::new(Vec::new()));
     let right = Arc::new(Mutex::new(Vec::new()));
-    let indexes = Arc::new(Mutex::new(indexes));
+    //let indexes = Arc::new(Mutex::new(indexes));
+    let mut start_index = 0;
+    let jump = indexes.len() as i32 / number_of_threads;
     let individuals = Arc::new(Mutex::new(Vec::from_iter(individuals[..].iter().cloned())));
 
     //Running the different threads
@@ -113,36 +116,43 @@ U:GenotypeT<T>+ Send + Sync + 'static + Clone
 
         //Copies of the variables
         let winners = if thread & 1 == 1 {Arc::clone(&left)}else{Arc::clone(&right)};
-        let individuals_per_thread = if (thread + 1)*couples > individuals.lock().unwrap().len() as i32 {individuals.lock().unwrap().len().clone() as i32}else{couples.clone()};
-        let (indexes, individuals) = (Arc::clone(&indexes), Arc::clone(&individuals));
+        let individuals = Arc::clone(&individuals);
+
+        let indexes_len = indexes.len();
+        let end_index = if start_index + jump > indexes_len as i32 {indexes_len as i32}else{start_index + jump};
+        let indexes = Vec::from_iter(indexes[start_index as usize..end_index as usize].iter().cloned());
+        let indexes = Arc::new(Mutex::new(indexes));
 
         //Run the thread
         let handle = thread::spawn(move || {
             
             let mut rng = rand::thread_rng();
-            let individuals_t = individuals.lock().unwrap();
+            let individuals_t = individuals.lock().unwrap().clone();
+            let mut indexes_t = indexes.lock().unwrap().clone();
 
-            for _ in 0..individuals_per_thread{
+            for _ in 0..indexes_t.len(){
 
                 //Gets the indexes for the tournament
-                let index_1 = rng.gen_range(0..indexes.lock().unwrap().len());
-                let final_index_1 = indexes.lock().unwrap()[index_1];
+                let index_1 = rng.gen_range(0..indexes_t.len()) as usize;
+                let final_index_1 = indexes_t[index_1];
 
-                let index_2 = rng.gen_range(0..indexes.lock().unwrap().len());
-                let final_index_2 = indexes.lock().unwrap()[index_2];
+                let index_2 = rng.gen_range(0..indexes_t.len()) as usize;
+                let final_index_2 = indexes_t[index_2];
 
                 //Compare both individuals
                 if individuals_t[final_index_1 as usize].get_fitness() >= individuals_t[final_index_2 as usize].get_fitness(){
                     winners.lock().unwrap().push(final_index_1);
-                    indexes.lock().unwrap().remove(index_1);
+                    indexes_t.remove(index_1);
                 }else{
                     winners.lock().unwrap().push(final_index_2);
-                    indexes.lock().unwrap().remove(index_2);
+                    indexes_t.remove(index_2);
                 }
             }
 
         });
         handles.push(handle);
+
+        start_index = if start_index + jump > indexes_len as i32 {indexes_len as i32}else{start_index + jump};
     }
 
     for handle in handles{
