@@ -1,9 +1,39 @@
 use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 use std::collections::HashMap;
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::thread;
 use rand::Rng;
 
-pub fn tournament<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>{
+/**
+ * Main function for tournament selection
+ */
+pub fn tournament<T,U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
+where
+T:GeneT + Send + Sync, 
+U:GenotypeT<T> + Send + Sync + 'static + Clone
+{
+    
+    if number_of_threads == 1{
+        return tournament_single_thread(individuals, couples);
+    }else{
+        let number_of_threads_t = if number_of_threads > couples {couples}else{number_of_threads};
+        let number_of_threads_t = if number_of_threads_t & 1 == 1 {number_of_threads_t-1}else{number_of_threads_t};
+
+        return tournament_multithread(individuals, couples, number_of_threads_t);
+    }
+}
+
+
+/**
+ * Function for tournament selection in a single thread 
+ */
+fn tournament_single_thread<T,U>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>
+where
+T:GeneT, 
+U:GenotypeT<T>
+{
 
     let mut rng = rand::thread_rng();
     let mut mating = HashMap::new();
@@ -43,6 +73,53 @@ pub fn tournament<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>, couples: i32) -
         }
 
         indexes.remove(index_to_delete);
+    }
+
+    return mating;
+}
+
+/**
+ * Function for tournament selection in multithread 
+ */
+fn tournament_multithread<T,U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
+where
+T:GeneT + Send + Sync,
+U:GenotypeT<T>+ Send + Sync + 'static + Clone
+{
+
+    let mating = HashMap::new();
+
+    //Thread control
+    let mut handles = vec![];
+
+    //Vectors
+    let left = Arc::new(Mutex::new(Vec::new()));
+    let right = Arc::new(Mutex::new(Vec::new()));
+
+    //Running the different threads
+    for thread in 0..number_of_threads{
+
+        //Copies
+        let winners = if thread & 1 == 1 {Arc::clone(&left)}else{Arc::clone(&right)};
+
+        //Run the thread
+        let handle = thread::spawn(move || {
+            winners.lock().unwrap().push(0);
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles{
+        handle.join().unwrap();
+    }
+
+    //Gets the final vectors
+    let left = left.lock().unwrap();
+    let right = right.lock().unwrap();
+
+    for item in 0..left.len() {
+        println!("left: {}", left[item]);
+        println!("right: {}", right[item]);
     }
 
     return mating;

@@ -6,14 +6,17 @@ use crate::configuration::GaConfiguration;
 /**
  * Function to run the genetic algorithms cycle
  */
-pub fn run<T:GeneT, U:GenotypeT<T> + Send + Sync + 'static + Clone>(mut population: Population<T,U>, configuration: GaConfiguration)->Population<T,U>
+pub fn run<T,U>(mut population: Population<T,U>, configuration: GaConfiguration)->Population<T,U>
+where 
+T:GeneT + Send + Sync, 
+U:GenotypeT<T> + Send + Sync + 'static + Clone
 {
     //Best individual within the generations and population returned
     let initial_population_size = population.size();
     let mut age = 0;
 
     //Calculation of the fitness and the best individual
-    let mut best_individual = population_fitness_calculation(&mut population.individuals, configuration);
+    let mut best_individual = population_fitness_calculation_multithread(&mut population.individuals, configuration);
 
     //We start the cycles
     for i in 0..configuration.limit_configuration.max_generations {
@@ -22,7 +25,7 @@ pub fn run<T:GeneT, U:GenotypeT<T> + Send + Sync + 'static + Clone>(mut populati
         age += 1;
 
         //1- Parent selection for reproduction
-        let parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration);
+        let parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
 
         //2- Reproduce the parents
         for j in parents.keys() {
@@ -71,7 +74,11 @@ pub fn run<T:GeneT, U:GenotypeT<T> + Send + Sync + 'static + Clone>(mut populati
 /**
  * Function to determine which of the individuals is the best individual and return the best of them
  */
-fn get_best_individual<T:GeneT, U:GenotypeT<T>>(individual_1: &U, individual_2: &U, problem_solving: ProblemSolving) -> U{
+fn get_best_individual<T,U>(individual_1: &U, individual_2: &U, problem_solving: ProblemSolving) -> U
+where
+T:GeneT, 
+U:GenotypeT<T>
+{
 
     let mut best_individual = U::new();
 
@@ -105,7 +112,11 @@ fn get_best_individual<T:GeneT, U:GenotypeT<T>>(individual_1: &U, individual_2: 
 /**
  * Function to indentify if the limit has been reached or not in the current generation
  */
-fn limit_reached<T:GeneT, U:GenotypeT<T>>(limit: LimitConfiguration, individuals: &Vec<U>)->bool{
+fn limit_reached<T,U>(limit: LimitConfiguration, individuals: &Vec<U>)->bool
+where 
+T:GeneT, 
+U:GenotypeT<T>
+{
 
     let mut result = false;
 
@@ -131,9 +142,13 @@ fn limit_reached<T:GeneT, U:GenotypeT<T>>(limit: LimitConfiguration, individuals
 }
 
 /**
- * Gets the population fitness, age and the best individual
+ * Sets the population fitness, age and the best individual
  */
-fn population_fitness_calculation<T:GeneT, U:GenotypeT<T> + Send + Sync + 'static + Clone>(individuals: &mut Vec<U>, configuration: GaConfiguration) -> U{
+fn population_fitness_calculation_multithread<T, U>(individuals: &mut Vec<U>, configuration: GaConfiguration) -> U
+where
+T:GeneT, 
+U:GenotypeT<T> + Send + Sync + 'static + Clone
+{
 
     let mut number_of_threads = configuration.number_of_threads.unwrap_or(1);
     let (tx, rx) = sync_channel(number_of_threads as usize);
