@@ -1,9 +1,39 @@
 use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 use std::collections::HashMap;
+use std::sync::Arc;
+use std::sync::Mutex;
+use std::thread;
 use rand::Rng;
 
-pub fn tournament<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>{
+/**
+ * Main function for tournament selection
+ */
+pub fn tournament<T,U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
+where
+T:GeneT + Send + Sync, 
+U:GenotypeT<T> + Send + Sync + 'static + Clone
+{
+    
+    if number_of_threads == 1{
+        return tournament_single_thread(individuals, couples);
+    }else{
+        let number_of_threads_t = if number_of_threads > couples {couples}else{number_of_threads};
+        let number_of_threads_t = if number_of_threads_t & 1 == 1 {number_of_threads_t-1}else{number_of_threads_t};
+
+        return tournament_multithread(individuals, couples, number_of_threads_t);
+    }
+}
+
+
+/**
+ * Function for tournament selection in a single thread 
+ */
+fn tournament_single_thread<T,U>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>
+where
+T:GeneT, 
+U:GenotypeT<T>
+{
 
     let mut rng = rand::thread_rng();
     let mut mating = HashMap::new();
@@ -21,16 +51,20 @@ pub fn tournament<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>, couples: i32) -
 
     for _i in 0..indexes.len(){
         let index_1 = rng.gen_range(0..indexes.len());
+        let final_index_1 = indexes[index_1];
+
         let index_2 = rng.gen_range(0..indexes.len());
+        let final_index_2 = indexes[index_2];
+
         let final_index;
         let index_to_delete;
 
         //Fights between both parents
-        if individuals[index_1].get_fitness() >= individuals[index_2].get_fitness() {
-            final_index = indexes[index_1];
+        if individuals[final_index_1 as usize].get_fitness() >= individuals[final_index_2 as usize].get_fitness() {
+            final_index = final_index_1;
             index_to_delete = index_1;
         }else{
-            final_index = indexes[index_2];
+            final_index = final_index_2;
             index_to_delete = index_2;
         }
 
@@ -43,6 +77,85 @@ pub fn tournament<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>, couples: i32) -
         }
 
         indexes.remove(index_to_delete);
+    }
+
+    return mating;
+}
+
+/**
+ * Function for tournament selection in multithread 
+ */
+fn tournament_multithread<T,U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
+where
+T:GeneT + Send + Sync,
+U:GenotypeT<T>+ Send + Sync + 'static + Clone
+{
+
+    let mut mating = HashMap::new();
+
+    //Sets the indexes
+    let mut indexes = Vec::new();
+    for i in 0..couples*2{
+        indexes.push(i);
+    }
+
+    //Thread control
+    let mut handles = vec![];
+
+    //Variables that will be sent
+    let left = Arc::new(Mutex::new(Vec::new()));
+    let right = Arc::new(Mutex::new(Vec::new()));
+    let indexes = Arc::new(Mutex::new(indexes));
+    let individuals = Arc::new(Mutex::new(Vec::from_iter(individuals[..].iter().cloned())));
+
+    //Running the different threads
+    for thread in 0..number_of_threads{
+
+        //Copies of the variables
+        let winners = if thread & 1 == 1 {Arc::clone(&left)}else{Arc::clone(&right)};
+        let individuals_per_thread = if (thread + 1)*couples > individuals.lock().unwrap().len() as i32 {individuals.lock().unwrap().len().clone() as i32}else{couples.clone()};
+        let (indexes, individuals) = (Arc::clone(&indexes), Arc::clone(&individuals));
+
+        //Run the thread
+        let handle = thread::spawn(move || {
+            
+            let mut rng = rand::thread_rng();
+            let individuals_t = individuals.lock().unwrap();
+
+            for _ in 0..individuals_per_thread{
+
+                //Gets the indexes for the tournament
+                let index_1 = rng.gen_range(0..indexes.lock().unwrap().len());
+                let final_index_1 = indexes.lock().unwrap()[index_1];
+
+                let index_2 = rng.gen_range(0..indexes.lock().unwrap().len());
+                let final_index_2 = indexes.lock().unwrap()[index_2];
+
+                //Compare both individuals
+                if individuals_t[final_index_1 as usize].get_fitness() >= individuals_t[final_index_2 as usize].get_fitness(){
+                    winners.lock().unwrap().push(final_index_1);
+                    indexes.lock().unwrap().remove(index_1);
+                }else{
+                    winners.lock().unwrap().push(final_index_2);
+                    indexes.lock().unwrap().remove(index_2);
+                }
+            }
+
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles{
+        handle.join().unwrap();
+    }
+
+    //Gets the final vectors
+    let left = left.lock().unwrap();
+    let right = right.lock().unwrap();
+
+    //Inserts the keys and values into the hashmap
+    for item in 0..left.len() {
+        mating.insert(left[item] as usize, right[item] as usize);
     }
 
     return mating;
