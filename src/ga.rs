@@ -39,16 +39,20 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
             let mut child_1 = offspring.pop().unwrap();
             let mut child_2 = offspring.pop().unwrap();
 
-            //3- Do the mutation of the children           
-            mutation::factory(configuration.mutation, &mut child_1);
-            mutation::factory(configuration.mutation, &mut child_2);
+            //3- Do the mutation of the children
+            if configuration.number_of_threads != None && configuration.number_of_threads.unwrap() > 1 {       
+                mutation::factory(configuration.mutation, &mut child_1);
+                mutation::factory(configuration.mutation, &mut child_2);
 
-            //4- Calculate the fitness of both children and set their age
-            child_1.calculate_fitness();
-            child_2.calculate_fitness();
+                //4- Calculate the fitness of both children and set their age
+                child_1.calculate_fitness();
+                child_2.calculate_fitness();
 
-            *child_1.get_age_mut() = age;
-            *child_2.get_age_mut() = age;
+                *child_1.get_age_mut() = age;
+                *child_2.get_age_mut() = age;
+            }else{
+                individual_mutation_multithread(&mut child_1, &mut child_2, &configuration, age);
+            }
 
             //Sets the best individual
             best_individual = get_best_individual(&best_individual, &child_1, configuration.limit_configuration.problem_solving);
@@ -227,4 +231,35 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
     *best_individual.get_fitness_mut() = best_individual_t.lock().unwrap().get_fitness_mut().clone();
 
     return best_individual;
+}
+
+/**
+ * Function to mutate children in multiple threads
+ */
+fn individual_mutation_multithread<T, U>(child_1: &mut U, child_2: &mut U, configuration: &GaConfiguration, age: i32)
+where
+T:GeneT, 
+U:GenotypeT<T> + Send + Sync + 'static + Clone
+{   
+
+    //Cloning
+    let mut child_1 = child_1.clone();
+    let mut child_2 = child_2.clone();
+    let mutation_configuration = configuration.mutation;
+
+    //Starting threads
+    let thread_1 = thread::spawn(move || {
+        mutation::factory(mutation_configuration, &mut child_1);
+        child_1.calculate_fitness();
+        *child_1.get_age_mut() = age;
+    });
+    let thread_2 = thread::spawn(move || {
+        mutation::factory(mutation_configuration, &mut child_2);
+        child_2.calculate_fitness();
+        *child_2.get_age_mut() = age;
+    });
+
+    //Joining threads
+    thread_1.join().unwrap();
+    thread_2.join().unwrap();
 }
