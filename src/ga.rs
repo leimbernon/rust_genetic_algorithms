@@ -254,7 +254,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
     let(tx_1, tx_2) = (tx.clone(), tx.clone());
 
     //Starting threads
-    let thread_1 = thread::spawn(move || {
+    thread::spawn(move || {
         mutation::factory(mutation_configuration, &mut child_1);
         child_1.calculate_fitness();
         *child_1.get_age_mut() = age;
@@ -264,7 +264,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
         result.insert(0, child_1);
         tx_1.send(result).unwrap();
     });
-    let thread_2 = thread::spawn(move || {
+    thread::spawn(move || {
         mutation::factory(mutation_configuration, &mut child_2);
         child_2.calculate_fitness();
         *child_2.get_age_mut() = age;
