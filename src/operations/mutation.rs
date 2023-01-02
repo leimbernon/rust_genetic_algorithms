@@ -9,7 +9,11 @@ pub mod swap;
 pub mod inversion;
 pub mod scramble;
 
-pub fn factory<T: GeneT, U: GenotypeT<T>>(mutation: Mutation ,individual: &mut U){
+pub fn factory<T,U>(mutation: Mutation ,individual: &mut U)
+where
+T: GeneT, 
+U: GenotypeT<T> + 'static
+{
     match mutation {
         Mutation::Swap => {swap(individual)},
         Mutation::Inversion => {inversion(individual)},
