@@ -40,7 +40,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
             let mut child_2 = offspring.pop().unwrap();
 
             //3- Do the mutation of the children
-            if configuration.number_of_threads != None && configuration.number_of_threads.unwrap() > 1 {       
+            if configuration.number_of_threads != None && configuration.number_of_threads.unwrap() <= 1 {       
                 mutation::factory(configuration.mutation, &mut child_1);
                 mutation::factory(configuration.mutation, &mut child_2);
 
@@ -51,7 +51,9 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 *child_1.get_age_mut() = age;
                 *child_2.get_age_mut() = age;
             }else{
-                individual_mutation_multithread(&mut child_1, &mut child_2, &configuration, age);
+                let children = individual_mutation_multithread(&child_1, &child_2, &configuration, age);
+                child_1 = children[0].clone();
+                child_2 = children[1].clone();
             }
 
             //Sets the best individual
@@ -236,30 +238,60 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 /**
  * Function to mutate children in multiple threads
  */
-fn individual_mutation_multithread<T, U>(child_1: &mut U, child_2: &mut U, configuration: &GaConfiguration, age: i32)
+fn individual_mutation_multithread<T, U>(child_1: &U, child_2: &U, configuration: &GaConfiguration, age: i32)->[U;2]
 where
 T:GeneT, 
 U:GenotypeT<T> + Send + Sync + 'static + Clone
 {   
 
+    //Communication channels
+    let (tx, rx) = sync_channel(2 as usize);
+
     //Cloning
     let mut child_1 = child_1.clone();
     let mut child_2 = child_2.clone();
     let mutation_configuration = configuration.mutation;
+    let(tx_1, tx_2) = (tx.clone(), tx.clone());
 
     //Starting threads
     let thread_1 = thread::spawn(move || {
         mutation::factory(mutation_configuration, &mut child_1);
         child_1.calculate_fitness();
         *child_1.get_age_mut() = age;
+
+        //Create return object
+        let mut result = HashMap::new();
+        result.insert(0, child_1);
+        tx_1.send(result).unwrap();
     });
     let thread_2 = thread::spawn(move || {
         mutation::factory(mutation_configuration, &mut child_2);
         child_2.calculate_fitness();
         *child_2.get_age_mut() = age;
+
+        //Create return object
+        let mut result = HashMap::new();
+        result.insert(1, child_2);
+        tx_2.send(result).unwrap();
     });
 
-    //Joining threads
-    thread_1.join().unwrap();
-    thread_2.join().unwrap();
+    drop(tx);
+
+    //We receive from the threads and set the fitness in individuals
+    let mut child_1 = U::new();
+    let mut child_2 = U::new();
+
+    for received in rx {
+        for element in received{
+            let result = element;
+            if result.0 == 0{
+                child_1 = result.1;
+            }else{
+                child_2 = result.1;
+            }
+        }
+    }
+
+    //Returning the children
+    [child_1, child_2]
 }
