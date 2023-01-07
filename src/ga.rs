@@ -25,10 +25,10 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
         age += 1;
 
         //1- Parent selection for reproduction
-        let parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
+        let mut parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
 
         //2- Getting the offspring from the multithreading function
-        let mut offspring = parent_crossover_multithread(parents, &population.individuals, &configuration, age);
+        let mut offspring = parent_crossover_multithread(&mut parents, &population.individuals, &configuration, age);
 
         //3- Sets the best individual
         for child in &offspring{
@@ -272,7 +272,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 /**
  * Function for parent crossover in multithreading
  */
-fn parent_crossover_multithread<T,U>(parents: HashMap<usize, usize>, individuals: &Vec<U>, configuration: &GaConfiguration, age: i32) -> Vec<U>
+fn parent_crossover_multithread<T,U>(parents: &mut HashMap<usize, usize>, individuals: &Vec<U>, configuration: &GaConfiguration, age: i32) -> Vec<U>
 where 
 T:GeneT, 
 U:GenotypeT<T> + Send + Sync + 'static + Clone
@@ -280,27 +280,39 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
     //Setting the control variables
     let mut number_of_threads = if configuration.number_of_threads == None {1} else {configuration.number_of_threads.unwrap()}; 
     number_of_threads = if number_of_threads > parents.len() as i32 {parents.len() as i32}else{number_of_threads};
+    let jump = parents.len() as i32 / number_of_threads;
 
     let mut handles = Vec::new();
     let offspring = Arc::new(Mutex::new(Vec::new()));
-    let parents = Arc::new(Mutex::new(parents));
 
     //Run all the threads
-    for _ in 0..number_of_threads{
+    for t in 0..number_of_threads{
 
-        //Clonation        
-        let individuals = individuals.clone();
-        let parents = Arc::clone(&parents);
-        let configuration = configuration.clone();
-        let offspring = Arc::clone(&offspring);
+        //We copy the parents that we want to crossover inside the thread
+        let (individuals, configuration, offspring) = (individuals.clone(), configuration.clone(), Arc::clone(&offspring));
+        let mut parents_t = HashMap::new();
+        let parents_c = parents.clone();
+        let mut index = 0;
 
+        for i in parents_c.keys(){
+
+            //If we reach the number of crossovers / thread
+            if t < number_of_threads - 1 && index >= jump {
+                break;
+            }
+
+            let key = *parents.get_key_value(i).unwrap().0;
+            parents_t.insert(key, *parents.get_key_value(i).unwrap().1);
+            parents.remove(&key);
+
+            index +=1;
+        }
+
+        //Starts the thread
         let handle = thread::spawn(move || {
 
-            for(key, value) in parents.lock().unwrap().iter(){
-
-                //Getting the parent 1 and 2 for crossover
-                parents.lock().unwrap().remove(&key);
-                
+            for(key, value) in parents_t.iter(){
+                //Getting the parent 1 and 2 for crossover                
                 let parent_1 = individuals.get(*key).unwrap().clone();
                 let parent_2 = individuals.get(*value).unwrap().clone();
 
@@ -319,12 +331,15 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 *child_1.get_age_mut() = age;
                 *child_2.get_age_mut() = age;
 
+                //Adds the children in the offspring
+                offspring_t.push(child_1);
+                offspring_t.push(child_2);
+
                 //Then sets the offspring in the result vector
                 offspring.lock().unwrap().append(&mut offspring_t);
             }
-
+            
         });
-
         handles.push(handle);
     }
 
