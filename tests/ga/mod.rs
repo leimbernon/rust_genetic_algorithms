@@ -43,7 +43,7 @@ fn test_ga_start_maximize(){
 }
 
 #[test]
-fn test_ga_start_minimize(){
+fn test_ga_run_minimize(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
@@ -84,7 +84,7 @@ fn test_ga_start_minimize(){
 
 
 #[test]
-fn test_ga_start_multithread(){
+fn test_ga_run_multithread(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
