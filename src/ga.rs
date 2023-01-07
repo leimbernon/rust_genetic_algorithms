@@ -209,67 +209,6 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 }
 
 /**
- * Function to mutate children in multiple threads
- */
-fn individual_mutation_multithread<T, U>(child_1: &U, child_2: &U, configuration: &GaConfiguration, age: i32)->[U;2]
-where
-T:GeneT, 
-U:GenotypeT<T> + Send + Sync + 'static + Clone
-{   
-
-    //Communication channels
-    let (tx, rx) = sync_channel(2 as usize);
-
-    //Cloning
-    let mut child_1 = child_1.clone();
-    let mut child_2 = child_2.clone();
-    let mutation_configuration = configuration.mutation;
-    let(tx_1, tx_2) = (tx.clone(), tx.clone());
-
-    //Starting threads
-    thread::spawn(move || {
-        mutation::factory(mutation_configuration, &mut child_1);
-        child_1.calculate_fitness();
-        *child_1.get_age_mut() = age;
-
-        //Create return object
-        let mut result = HashMap::new();
-        result.insert(0, child_1);
-        tx_1.send(result).unwrap();
-    });
-    thread::spawn(move || {
-        mutation::factory(mutation_configuration, &mut child_2);
-        child_2.calculate_fitness();
-        *child_2.get_age_mut() = age;
-
-        //Create return object
-        let mut result = HashMap::new();
-        result.insert(1, child_2);
-        tx_2.send(result).unwrap();
-    });
-
-    drop(tx);
-
-    //We receive from the threads and set the fitness in individuals
-    let mut child_1 = U::new();
-    let mut child_2 = U::new();
-
-    for received in rx {
-        for element in received{
-            let result = element;
-            if result.0 == 0{
-                child_1 = result.1;
-            }else{
-                child_2 = result.1;
-            }
-        }
-    }
-
-    //Returning the children
-    [child_1, child_2]
-}
-
-/**
  * Function for parent crossover in multithreading
  */
 fn parent_crossover_multithread<T,U>(parents: &mut HashMap<usize, usize>, individuals: &Vec<U>, configuration: &GaConfiguration, age: i32) -> Vec<U>
