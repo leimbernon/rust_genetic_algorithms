@@ -27,43 +27,16 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
         //1- Parent selection for reproduction
         let parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
 
-        //2- Reproduce the parents
-        for j in parents.keys() {
-            
-            let index_parent_1 = parents.get_key_value(&j).unwrap().0;
-            let index_parent_2 = parents.get_key_value(&j).unwrap().1;
-            let parent_1 = population.individuals.get(*index_parent_1).unwrap().clone();
-            let parent_2 = population.individuals.get(*index_parent_2).unwrap().clone();
+        //2- Getting the offspring from the multithreading function
+        let mut offspring = parent_crossover_multithread(parents, &population.individuals, &configuration, age);
 
-            let mut offspring = crossover::factory(configuration.crossover, &parent_1, &parent_2, configuration.crossover_configuration).unwrap();
-            let mut child_1 = offspring.pop().unwrap();
-            let mut child_2 = offspring.pop().unwrap();
-
-            //3- Do the mutation of the children
-            if configuration.number_of_threads != None && configuration.number_of_threads.unwrap() <= 1 {       
-                mutation::factory(configuration.mutation, &mut child_1);
-                mutation::factory(configuration.mutation, &mut child_2);
-
-                //4- Calculate the fitness of both children and set their age
-                child_1.calculate_fitness();
-                child_2.calculate_fitness();
-
-                *child_1.get_age_mut() = age;
-                *child_2.get_age_mut() = age;
-            }else{
-                let children = individual_mutation_multithread(&child_1, &child_2, &configuration, age);
-                child_1 = children[0].clone();
-                child_2 = children[1].clone();
-            }
-
-            //Sets the best individual
-            best_individual = get_best_individual(&best_individual, &child_1, configuration.limit_configuration.problem_solving);
-            best_individual = get_best_individual(&best_individual, &child_2, configuration.limit_configuration.problem_solving);
-
-            //Insert the children in the population
-            population.individuals.push(child_1);
-            population.individuals.push(child_2);
+        //3- Sets the best individual
+        for child in &offspring{
+            best_individual = get_best_individual(&best_individual, &child, configuration.limit_configuration.problem_solving);
         }
+
+        //4- Insert the children in the population
+        population.individuals.append(&mut offspring);
 
         //5- Survivor selection
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration);
@@ -294,4 +267,72 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 
     //Returning the children
     [child_1, child_2]
+}
+
+/**
+ * Function for parent crossover in multithreading
+ */
+fn parent_crossover_multithread<T,U>(parents: HashMap<usize, usize>, individuals: &Vec<U>, configuration: &GaConfiguration, age: i32) -> Vec<U>
+where 
+T:GeneT, 
+U:GenotypeT<T> + Send + Sync + 'static + Clone
+{
+    //Setting the control variables
+    let mut number_of_threads = if configuration.number_of_threads == None {1} else {configuration.number_of_threads.unwrap()}; 
+    number_of_threads = if number_of_threads > parents.len() as i32 {parents.len() as i32}else{number_of_threads};
+
+    let mut handles = Vec::new();
+    let offspring = Arc::new(Mutex::new(Vec::new()));
+    let parents = Arc::new(Mutex::new(parents));
+
+    //Run all the threads
+    for _ in 0..number_of_threads{
+
+        //Clonation        
+        let individuals = individuals.clone();
+        let parents = Arc::clone(&parents);
+        let configuration = configuration.clone();
+        let offspring = Arc::clone(&offspring);
+
+        let handle = thread::spawn(move || {
+
+            for(key, value) in parents.lock().unwrap().iter(){
+
+                //Getting the parent 1 and 2 for crossover
+                parents.lock().unwrap().remove(&key);
+                
+                let parent_1 = individuals.get(*key).unwrap().clone();
+                let parent_2 = individuals.get(*value).unwrap().clone();
+
+                let mut offspring_t = crossover::factory(configuration.crossover, &parent_1, &parent_2, configuration.crossover_configuration).unwrap();
+                let mut child_1 = offspring_t.pop().unwrap();
+                let mut child_2 = offspring_t.pop().unwrap();
+
+                //Making the mutation of each child
+                mutation::factory(configuration.mutation, &mut child_1);
+                mutation::factory(configuration.mutation, &mut child_2);
+
+                //Calculate the fitness of both children and set their age
+                child_1.calculate_fitness();
+                child_2.calculate_fitness();
+
+                *child_1.get_age_mut() = age;
+                *child_2.get_age_mut() = age;
+
+                //Then sets the offspring in the result vector
+                offspring.lock().unwrap().append(&mut offspring_t);
+            }
+
+        });
+
+        handles.push(handle);
+    }
+
+    //Joining all the threads
+    for handle in handles{
+        handle.join().unwrap();
+    }
+
+    return offspring.lock().unwrap().to_vec();
+
 }
