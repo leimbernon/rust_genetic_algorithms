@@ -18,6 +18,7 @@ This library also supports multithreading.
     - [GA Configuration](#ga-configuration)
   - [Example](#example)
     - [Creation of the gene and genotype structure](#creation-of-the-gene-and-genotype-structure)
+    - [Other examples](#other-examples)
   - [Usage](#usage)
 
 ## Features
@@ -207,6 +208,10 @@ Finally, run the GA.
 ```
 population = run(population, configuration);
 ```
+
+### Other examples
+- Travelling salesman problem: [https://en.wikipedia.org/wiki/Travelling_salesman_problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem)
+  - See [https://github.com/leimbernon/traveller_problem](https://github.com/leimbernon/traveller_problem)
 
 ## Usage
 
