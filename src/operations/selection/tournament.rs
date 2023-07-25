@@ -2,8 +2,7 @@ use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 use std::collections::HashMap;
 use std::sync::Arc;
-use std::sync::Mutex;
-use std::thread;
+use std::{sync::Mutex, thread};
 use rand::Rng;
 
 /**

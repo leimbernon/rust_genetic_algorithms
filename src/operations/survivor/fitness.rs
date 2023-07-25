@@ -1,4 +1,4 @@
-use crate::{traits::{GeneT, GenotypeT}, configuration::{ProblemSolving, LimitConfiguration}};
+pub(crate) use crate::{traits::{GeneT, GenotypeT}, configuration::{ProblemSolving, LimitConfiguration}};
 
 pub fn fitness_based<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec<U>, population_size: usize, limit_configuration: LimitConfiguration)
 {

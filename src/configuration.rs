@@ -1,4 +1,4 @@
-use crate::{operations::{Crossover, Selection, Mutation, Survivor}};
+use crate::operations::{Crossover, Selection, Mutation, Survivor};
 
 
 #[derive(Copy, Clone, PartialEq)]

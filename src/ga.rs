@@ -1,6 +1,6 @@
-use std::{sync::{mpsc::{sync_channel}, Mutex, Arc}, thread, collections::HashMap};
+use std::{sync::{mpsc::sync_channel, Mutex, Arc}, thread, collections::HashMap};
 
-use crate::{population::{Population}, traits::{GenotypeT, GeneT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
+use crate::{population::Population, traits::{GenotypeT, GeneT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
 use crate::configuration::GaConfiguration;
 
 /**

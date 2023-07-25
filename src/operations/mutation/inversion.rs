@@ -1,4 +1,4 @@
-use crate::traits::{GeneT, GenotypeT};
+pub(crate) use crate::traits::{GeneT, GenotypeT};
 use rand::{Rng};
 
 pub fn inversion<T: GeneT, U: GenotypeT<T>>(individual: &mut U){

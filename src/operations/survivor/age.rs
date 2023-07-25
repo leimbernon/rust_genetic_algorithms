@@ -1,4 +1,4 @@
-use crate::{traits::{GeneT, GenotypeT}};
+pub(crate) use crate::{traits::{GeneT, GenotypeT}};
 
 pub fn age_based<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec<U>, population_size: usize)
 {

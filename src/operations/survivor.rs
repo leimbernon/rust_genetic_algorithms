@@ -1,4 +1,4 @@
-use crate::configuration::LimitConfiguration;
+pub(crate) use crate::configuration::LimitConfiguration;
 use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 use self::fitness::fitness_based;

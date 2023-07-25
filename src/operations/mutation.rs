@@ -1,4 +1,4 @@
-use crate::traits::GeneT;
+pub(crate) use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 use self::swap::swap;
 use self::inversion::inversion;

@@ -1,4 +1,4 @@
-use super::Crossover;
+pub(crate) use super::Crossover;
 use crate::configuration::{CrossoverConfiguration};
 use crate::traits::{GenotypeT, GeneT};
 use self::cycle::cycle;

@@ -1,4 +1,4 @@
-use rand::Rng;
+pub(crate) use rand::Rng;
 use crate::traits::GenotypeT;
 use crate::traits::GeneT;
 
