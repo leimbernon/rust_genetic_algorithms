@@ -95,6 +95,7 @@ This structure contains the following attributes:
 - `problem_solving`: You can select from a Minimization problem or a Maximization problem.
 - `max_generations`: In case of not getting the optimal result, this attribute indicates the maximum number of generations to execute before stopping.
 - `fitness_target`: Optional. The fitness of the best individual.
+- `get_best_individual_by_generation`: Optional. Indicates to the runner to return the best individual by generation.
 
 ## Example
 
@@ -173,7 +174,7 @@ Define the configuration of the GA.
 ```
 let configuration = GaConfiguration{
         number_of_threads: Some(2),
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization},
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: Some(true)},
         selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
         crossover_configuration: None,
         selection: Selection::Random,
@@ -219,5 +220,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.7.3"
+genetic_algorithms = "0.8.0"
 ```

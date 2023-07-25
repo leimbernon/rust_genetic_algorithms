@@ -1,5 +1,5 @@
 use crate::structures::{Gene, Genotype};
-use genetic_algorithms::operations::{mutation::{swap, inversion, scramble}};
+use genetic_algorithms::operations::mutation::{swap, inversion, scramble};
 
 #[test]
 fn test_swap_mutation(){

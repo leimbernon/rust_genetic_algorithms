@@ -17,6 +17,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 
     //Calculation of the fitness and the best individual
     let mut best_individual = population_fitness_calculation_multithread(&mut population.individuals, configuration);
+    let mut best_population: Population<T,U> = Population::new_empty();
 
     //We start the cycles
     for i in 0..configuration.limit_configuration.max_generations {
@@ -35,6 +36,11 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
             best_individual = get_best_individual(&best_individual, &child, configuration.limit_configuration.problem_solving);
         }
 
+        //3.1- If we want to return the best individual by generation
+        if configuration.limit_configuration.get_best_individual_by_generation.is_some()==true {
+            best_population.add_individual_gn(best_individual.clone(), i);
+        }
+
         //4- Insert the children in the population
         population.individuals.append(&mut offspring);
 
@@ -47,7 +53,11 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
         }
     }
 
-    return Population::new(vec![best_individual]);
+    //If it's not required to return the best individuals by generation
+    if configuration.limit_configuration.get_best_individual_by_generation.is_some()!=false || configuration.limit_configuration.get_best_individual_by_generation.is_none() {
+        best_population.add_individual_gn(best_individual, -1);
+    }
+    return best_population;
 }
 
 /**

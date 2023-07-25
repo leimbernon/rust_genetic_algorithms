@@ -1,5 +1,5 @@
 use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration}};
-use crate::{structures::{Gene, Genotype}};
+use crate::structures::{Gene, Genotype};
 extern crate num_cpus;
 
 #[test]
@@ -8,7 +8,7 @@ fn test_ga_start_maximize(){
     //Creates the GA configuration
     let configuration = GaConfiguration{
         number_of_threads: None,
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization},
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: None,
         crossover_configuration: None,
         selection: Selection::Random,
@@ -48,7 +48,7 @@ fn test_ga_run_minimize(){
     //Creates the GA configuration
     let configuration = GaConfiguration{
         number_of_threads: None,
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization},
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization, get_best_individual_by_generation: None},
         selection_configuration: None,
         crossover_configuration: None,
         selection: Selection::Random,
@@ -89,7 +89,7 @@ fn test_ga_run_multithread(){
     //Creates the GA configuration
     let configuration = GaConfiguration{
         number_of_threads: Some(8 as i32),
-        limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization},
+        limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
         crossover_configuration: None,
         selection: Selection::Tournament,
