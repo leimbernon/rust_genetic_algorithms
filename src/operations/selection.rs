@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+pub(crate) use std::collections::HashMap;
 
 use crate::configuration::SelectionConfiguration;
 use crate::traits::GeneT;
