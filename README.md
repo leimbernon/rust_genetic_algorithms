@@ -219,5 +219,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.7.2"
+genetic_algorithms = "0.7.3"
 ```
