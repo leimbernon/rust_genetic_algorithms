@@ -23,6 +23,7 @@ pub struct LimitConfiguration{
     pub problem_solving: ProblemSolving,
     pub max_generations: i32,
     pub fitness_target: Option<f64>, 
+    pub get_best_fitness_by_generation: Option<bool>,
 }
 
 #[derive(Copy, Clone)]
