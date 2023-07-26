@@ -113,7 +113,7 @@ Use the traits.
 
 Define the gene structure.
 
-```
+```rust
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub struct Gene{
     pub id: i32,
@@ -130,7 +130,7 @@ impl GeneT for Gene{
 
 Define the genotype structure, and the fitness calculation.
 
-```
+```rust
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Genotype<T: GeneT>{
     pub dna: Vec<T>,
@@ -176,7 +176,7 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
 
 Define the configuration of the GA.
 
-```
+```rust
 let configuration = GaConfiguration{
         number_of_threads: Some(2),
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: Some(true)},
@@ -191,7 +191,7 @@ let configuration = GaConfiguration{
 
 Define the DNA, the individuals and the population.
 
-```
+```rust
 let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
     let dna_2 = vec![Gene{id:2}, Gene{id:3}, Gene{id:4}, Gene{id:1}];
     let dna_3 = vec![Gene{id:3}, Gene{id:4}, Gene{id:1}, Gene{id:2}];
@@ -211,7 +211,7 @@ let individuals = vec![Genotype{dna: dna_1, fitness: 1.0, age: 0}, Genotype{dna:
 
 Finally, run the GA.
 
-```
+```rust
 population = run(population, configuration);
 ```
 
