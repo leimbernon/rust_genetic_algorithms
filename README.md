@@ -1,5 +1,6 @@
 # RUST genetic algorithms library
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/a934b8668dbf4412b3c63a7b275ad949)](https://app.codacy.com/gh/leimbernon/rust_genetic_algorithms?utm_source=github.com&utm_medium=referral&utm_content=leimbernon/rust_genetic_algorithms&utm_campaign=Badge_Grade_Settings) [![CircleCI](https://dl.circleci.com/status-badge/img/gh/leimbernon/rust_genetic_algorithms/tree/develop.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/leimbernon/rust_genetic_algorithms/tree/develop)
+[![Rust Unit Tests](https://github.com/leimbernon/rust_genetic_algorithms/actions/workflows/rust-unit-tests.yml/badge.svg)](https://github.com/leimbernon/rust_genetic_algorithms/actions/workflows/rust-unit-tests.yml)
 
 ## Description
 This library provides a simple framework to implement [genetic algorithms (GA)](https://en.wikipedia.org/wiki/Genetic_algorithm) with Rust.
@@ -225,5 +226,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.8.3"
+genetic_algorithms = "0.8.4"
 ```
