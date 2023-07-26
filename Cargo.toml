@@ -2,10 +2,14 @@
 name = "genetic_algorithms"
 description = "Library for solving genetic algorithm problems"
 authors = ["Luis Eduardo Imbernón <imbernon@gmail.com>"]
-version = "0.8.0"
+version = "0.8.1"
 edition = "2021"
+rust-version = "1.60"
+readme = "README.md"
 license = "Apache-2.0"
 repository = "https://github.com/leimbernon/rust_genetic_algorithms.git"
+homepage = "https://github.com/leimbernon/rust_genetic_algorithms.git"
+documentation = "https://docs.rs/genetic_algorithms/latest/genetic_algorithms"
 keywords = ["genetics", "algorithm", "ai", "artificial", "intelligence"]
 categories = ["emulators","development-tools", "science", "simulation"]
 

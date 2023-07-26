@@ -10,6 +10,7 @@ This library also supports multithreading.
 - [RUST genetic algorithms library](#rust-genetic-algorithms-library)
   - [Description](#description)
   - [Table of content](#table-of-content)
+  - [Documentation](#documentation)
   - [Features](#features)
     - [Traits](#traits)
     - [Operators](#operators)
@@ -20,6 +21,10 @@ This library also supports multithreading.
     - [Creation of the gene and genotype structure](#creation-of-the-gene-and-genotype-structure)
     - [Other examples](#other-examples)
   - [Usage](#usage)
+
+## Documentation
+
+See [docs.rs](https://docs.rs/genetic_algorithms/latest/genetic_algorithms)
 
 ## Features
 
