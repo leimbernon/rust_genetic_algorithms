@@ -85,10 +85,9 @@ This structure contains the following attributes:
 - `number_of_threads`: Optional. It indicates how many threads will be executed at the same time.
 - `limit_configuration`: It configures the limits of the Genetic Algorithms with the `LimitConfiguration` structure.
 - `selection_configuration`: Optional. It configures the selection method with the `SelectionConfiguration` structure.
-- `crossover_configuration`: Optional. It configures the crossover method with the `CrossoverConfiguration` structure.
+- `crossover_configuration`: It configures the crossover method with the `CrossoverConfiguration` structure.
 - `mutation_configuration`: It configures the mutation method with the `MutationConfiguration` structure.
 - `selection`: Indicates what selection operator to use.
-- `crossover`: Indicates what crossover operator to use.
 - `survivor`: Indicates what survivor operator to use.
 
 `SelectionConfiguration`:
@@ -96,6 +95,8 @@ This structure contains the following attributes:
 
 `CrossoverConfiguration`:
 - `number_of_points`: This attribute is only valid for crossover multipoint, and it indicates how many points will be made within the dna in crossover operations.
+- `probability`: Indicates the probability of two parents for being crossed. This number must be between 0.0 and 1.0 both inclusive.
+- `method`: Indicates what crossover operator to use.
 
 `MutationConfiguration`:
 - `probability`: Indicates the probability for a given child to be mutated. This number must be between 0.0 and 1.0 both inclusive.
@@ -186,10 +187,9 @@ let configuration = GaConfiguration{
         number_of_threads: Some(2),
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: Some(true)},
         selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
-        crossover_configuration: None,
+        crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
         selection: Selection::Random,
-        crossover: Crossover::Cycle,
         survivor: Survivor::Fitness,
     };
 ```

@@ -1,4 +1,4 @@
-use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration, MutationConfiguration}};
+use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration, MutationConfiguration, CrossoverConfiguration}};
 use crate::structures::{Gene, Genotype};
 extern crate num_cpus;
 
@@ -10,10 +10,9 @@ fn test_ga_start_maximize(){
         number_of_threads: None,
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: None,
-        crossover_configuration: None,
+        crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: None, method: Mutation::Swap },
         selection: Selection::Random,
-        crossover: Crossover::Cycle,
         survivor: Survivor::Fitness,
     };
 
@@ -50,10 +49,9 @@ fn test_ga_run_minimize(){
         number_of_threads: None,
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization, get_best_individual_by_generation: None},
         selection_configuration: None,
-        crossover_configuration: None,
+        crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
         selection: Selection::Random,
-        crossover: Crossover::Cycle,
         survivor: Survivor::Fitness,
     };
 
@@ -91,10 +89,9 @@ fn test_ga_run_multithread(){
         number_of_threads: Some(8 as i32),
         limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
-        crossover_configuration: None,
+        crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration{method: Mutation::Swap, probability: None},
         selection: Selection::Tournament,
-        crossover: Crossover::Cycle,
         survivor: Survivor::Fitness,
     };
 

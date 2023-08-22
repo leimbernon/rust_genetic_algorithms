@@ -269,11 +269,24 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 let parent_1 = individuals.get(*key).unwrap().clone();
                 let parent_2 = individuals.get(*value).unwrap().clone();
 
-                let mut offspring_t = crossover::factory(configuration.crossover, &parent_1, &parent_2, configuration.crossover_configuration).unwrap();
-                let mut child_1 = offspring_t.pop().unwrap();
-                let mut child_2 = offspring_t.pop().unwrap();
+                //Making the crossover of the parents when the random number is below or equal to the given probability
+                let crossover_probability = rng.gen_range(0.0..1.0);
+                let crossover_probability_config = if configuration.crossover_configuration.probability.is_none(){1.0}else{configuration.crossover_configuration.probability.unwrap()};
+                
+                let mut child_1: U;
+                let mut child_2: U;
+                let mut offspring_t: Vec<U> = vec![];
 
-                //Making the mutation of each child when the random number is below the given probability
+                if crossover_probability <= crossover_probability_config {
+                    offspring_t = crossover::factory(configuration.crossover_configuration.method, &parent_1, &parent_2, configuration.crossover_configuration).unwrap();
+                    child_1 = offspring_t.pop().unwrap();
+                    child_2 = offspring_t.pop().unwrap();
+                }else{
+                    child_1 = parent_1;
+                    child_2 = parent_2;
+                }
+
+                //Making the mutation of each child when the random number is below or equal the given probability
                 let mut mutation_probability = rng.gen_range(0.0..1.0);
                 let mutation_probability_config = if configuration.mutation_configuration.probability.is_none(){1.0}else{configuration.mutation_configuration.probability.unwrap()};
                 if mutation_probability < mutation_probability_config {
@@ -295,7 +308,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 //Adds the children in the offspring
                 offspring_t.push(child_1);
                 offspring_t.push(child_2);
-
+                
                 //Then sets the offspring in the result vector
                 offspring.lock().unwrap().append(&mut offspring_t);
             }
