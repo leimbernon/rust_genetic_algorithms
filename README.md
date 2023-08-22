@@ -86,9 +86,9 @@ This structure contains the following attributes:
 - `limit_configuration`: It configures the limits of the Genetic Algorithms with the `LimitConfiguration` structure.
 - `selection_configuration`: Optional. It configures the selection method with the `SelectionConfiguration` structure.
 - `crossover_configuration`: Optional. It configures the crossover method with the `CrossoverConfiguration` structure.
+- `mutation_configuration`: It configures the mutation method with the `MutationConfiguration` structure.
 - `selection`: Indicates what selection operator to use.
 - `crossover`: Indicates what crossover operator to use.
-- `mutation`: Indicates what mutation operator to use.
 - `survivor`: Indicates what survivor operator to use.
 
 `SelectionConfiguration`:
@@ -96,6 +96,10 @@ This structure contains the following attributes:
 
 `CrossoverConfiguration`:
 - `number_of_points`: This attribute is only valid for crossover multipoint, and it indicates how many points will be made within the dna in crossover operations.
+
+`MutationConfiguration`:
+- `probability`: Indicates the probability for a given child to be mutated. This number must be between 0.0 and 1.0 both inclusive.
+- `method`: Indicates what mutation operator to use.
 
 `LimitConfiguration`:
 - `problem_solving`: You can select from a Minimization problem or a Maximization problem.
@@ -183,9 +187,9 @@ let configuration = GaConfiguration{
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: Some(true)},
         selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
         crossover_configuration: None,
+        mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
         selection: Selection::Random,
         crossover: Crossover::Cycle,
-        mutation: Mutation::Swap,
         survivor: Survivor::Fitness,
     };
 ```
@@ -226,5 +230,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.8.4"
+genetic_algorithms = "0.9.0"
 ```

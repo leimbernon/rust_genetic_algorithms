@@ -1,4 +1,5 @@
 use std::{sync::{mpsc::sync_channel, Mutex, Arc}, thread, collections::HashMap};
+use rand::Rng;
 
 use crate::{population::Population, traits::{GenotypeT, GeneT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
 use crate::configuration::GaConfiguration;
@@ -260,6 +261,9 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
         //Starts the thread
         let handle = thread::spawn(move || {
 
+            //Getting random numbers in this thread
+            let mut rng = rand::thread_rng();
+
             for(key, value) in parents_t.iter(){
                 //Getting the parent 1 and 2 for crossover                
                 let parent_1 = individuals.get(*key).unwrap().clone();
@@ -269,9 +273,17 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 let mut child_1 = offspring_t.pop().unwrap();
                 let mut child_2 = offspring_t.pop().unwrap();
 
-                //Making the mutation of each child
-                mutation::factory(configuration.mutation, &mut child_1);
-                mutation::factory(configuration.mutation, &mut child_2);
+                //Making the mutation of each child when the random number is below the given probability
+                let mut mutation_probability = rng.gen_range(0.0..1.0);
+                let mutation_probability_config = if configuration.mutation_configuration.probability.is_none(){1.0}else{configuration.mutation_configuration.probability.unwrap()};
+                if mutation_probability < mutation_probability_config {
+                    mutation::factory(configuration.mutation_configuration.method, &mut child_1);
+                }
+
+                mutation_probability = rng.gen_range(0.0..1.0);
+                if mutation_probability <= mutation_probability_config {
+                    mutation::factory(configuration.mutation_configuration.method, &mut child_2);
+                }
 
                 //Calculate the fitness of both children and set their age
                 child_1.calculate_fitness();

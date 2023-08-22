@@ -1,4 +1,4 @@
-use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration}};
+use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration, MutationConfiguration}};
 use crate::structures::{Gene, Genotype};
 extern crate num_cpus;
 
@@ -11,9 +11,9 @@ fn test_ga_start_maximize(){
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: None,
         crossover_configuration: None,
+        mutation_configuration: MutationConfiguration { probability: None, method: Mutation::Swap },
         selection: Selection::Random,
         crossover: Crossover::Cycle,
-        mutation: Mutation::Swap,
         survivor: Survivor::Fitness,
     };
 
@@ -51,9 +51,9 @@ fn test_ga_run_minimize(){
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization, get_best_individual_by_generation: None},
         selection_configuration: None,
         crossover_configuration: None,
+        mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
         selection: Selection::Random,
         crossover: Crossover::Cycle,
-        mutation: Mutation::Swap,
         survivor: Survivor::Fitness,
     };
 
@@ -92,9 +92,9 @@ fn test_ga_run_multithread(){
         limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
         crossover_configuration: None,
+        mutation_configuration: MutationConfiguration{method: Mutation::Swap, probability: None},
         selection: Selection::Tournament,
         crossover: Crossover::Cycle,
-        mutation: Mutation::Swap,
         survivor: Survivor::Fitness,
     };
 

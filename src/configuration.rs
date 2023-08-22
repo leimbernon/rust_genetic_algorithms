@@ -17,6 +17,12 @@ pub struct SelectionConfiguration{
 pub struct CrossoverConfiguration{
     pub number_of_points: i32,
 }
+#[derive(Copy, Clone)]
+pub struct MutationConfiguration{
+    pub probability: Option<f64>,
+    pub method: Mutation,
+}
+
 
 #[derive(Copy, Clone)]
 pub struct LimitConfiguration{
@@ -32,8 +38,8 @@ pub struct GaConfiguration {
     pub limit_configuration: LimitConfiguration,
     pub selection_configuration: Option<SelectionConfiguration>,
     pub crossover_configuration: Option<CrossoverConfiguration>,
+    pub mutation_configuration: MutationConfiguration,
     pub selection: Selection,
     pub crossover: Crossover,
-    pub mutation: Mutation,
     pub survivor: Survivor,
 }
