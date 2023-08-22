@@ -68,7 +68,7 @@ U:GenotypeT<T>
         }
 
         //Sets the mating
-        if parent_1 == None {
+        if parent_1.is_none() {
             parent_1 = Some(final_index);
         }else{
             mating.insert(parent_1.unwrap() as usize, final_index as usize);
@@ -132,10 +132,10 @@ U:GenotypeT<T>+ Send + Sync + 'static + Clone
             for _ in 0..indexes_t.len(){
 
                 //Gets the indexes for the tournament
-                let index_1 = rng.gen_range(0..indexes_t.len()) as usize;
+                let index_1 = rng.gen_range(0..indexes_t.len());
                 let final_index_1 = indexes_t[index_1];
 
-                let index_2 = rng.gen_range(0..indexes_t.len()) as usize;
+                let index_2 = rng.gen_range(0..indexes_t.len());
                 let final_index_2 = indexes_t[index_2];
 
                 //Compare both individuals
@@ -167,5 +167,5 @@ U:GenotypeT<T>+ Send + Sync + 'static + Clone
         mating.insert(left[item] as usize, right[item] as usize);
     }
 
-    return mating;
+    mating
 }
