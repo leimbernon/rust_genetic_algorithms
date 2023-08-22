@@ -15,12 +15,12 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 {
     
     if number_of_threads == 1{
-        return tournament_single_thread(individuals, couples);
+        tournament_single_thread(individuals, couples)
     }else{
         let number_of_threads_t = if number_of_threads > couples {couples}else{number_of_threads};
         let number_of_threads_t = if number_of_threads_t & 1 == 1 {number_of_threads_t-1}else{number_of_threads_t};
 
-        return tournament_multithread(individuals, couples, number_of_threads_t);
+        tournament_multithread(individuals, couples, number_of_threads_t)
     }
 }
 
@@ -78,7 +78,7 @@ U:GenotypeT<T>
         indexes.remove(index_to_delete);
     }
 
-    return mating;
+    mating
 }
 
 /**

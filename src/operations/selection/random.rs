@@ -16,11 +16,11 @@ pub fn random<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>) -> HashMap<usize, u
     let mut i = 0;
     while i < individuals.len() {
         indexes.push(i);
-        i = i + 1;
+        i += 1;
     }
 
     //In this loop we create the mating map
-    while indexes.len() > 0 {
+    while !indexes.is_empty() {
 
         //Getting the individual 1
         //We must have at least 2 remaining elements

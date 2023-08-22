@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 pub(crate) use crate::traits::{GeneT, GenotypeT};
 use rand::Rng;
 
@@ -7,18 +9,20 @@ pub fn inversion<T: GeneT, U: GenotypeT<T>>(individual: &mut U){
     let mut rng = rand::thread_rng();
     let index_1: usize = rng.gen_range(0..individual.get_dna().len());
     let index_2: usize = rng.gen_range(0..individual.get_dna().len());
-    let lower_index: usize;
-    let higher_index: usize;
+    let mut lower_index: usize = 0;
+    let mut higher_index: usize = 0;
 
     //We create the indexes that we want extract
-    if index_1 < index_2 {
-        lower_index = index_1;
-        higher_index = index_2;
-    }else if index_1 > index_2 {
-        lower_index = index_2;
-        higher_index = index_1;
-    }else{
-        return;
+    match index_1.cmp(&index_2) {
+        Ordering::Greater => {
+            lower_index = index_2; 
+            higher_index = index_1;
+        },
+        Ordering::Less => {
+            lower_index = index_1;
+            higher_index = index_2;
+        },
+        Ordering::Equal => {}
     }
 
     //Changes the dna

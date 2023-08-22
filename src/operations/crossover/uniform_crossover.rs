@@ -35,5 +35,5 @@ pub fn uniform<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<
     *child_1.get_dna_mut() = dna_child_1;
     *child_2.get_dna_mut() = dna_child_2;
 
-    return Some(vec![child_1, child_2]);
+    Some(vec![child_1, child_2])
 }
