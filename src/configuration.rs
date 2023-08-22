@@ -10,7 +10,8 @@ pub enum ProblemSolving {
 
 #[derive(Copy, Clone)]
 pub struct SelectionConfiguration{
-    pub number_of_couples: i32,
+    pub number_of_couples: Option<i32>,
+    pub method: Selection,
 }
 
 #[derive(Copy, Clone)]
@@ -38,9 +39,8 @@ pub struct LimitConfiguration{
 pub struct GaConfiguration {
     pub number_of_threads: Option<i32>,
     pub limit_configuration: LimitConfiguration,
-    pub selection_configuration: Option<SelectionConfiguration>,
+    pub selection_configuration: SelectionConfiguration,
     pub crossover_configuration: CrossoverConfiguration,
     pub mutation_configuration: MutationConfiguration,
-    pub selection: Selection,
     pub survivor: Survivor,
 }

@@ -9,10 +9,9 @@ fn test_ga_start_maximize(){
     let configuration = GaConfiguration{
         number_of_threads: None,
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
-        selection_configuration: None,
+        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: None, method: Mutation::Swap },
-        selection: Selection::Random,
         survivor: Survivor::Fitness,
     };
 
@@ -48,10 +47,9 @@ fn test_ga_run_minimize(){
     let configuration = GaConfiguration{
         number_of_threads: None,
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization, get_best_individual_by_generation: None},
-        selection_configuration: None,
+        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
-        selection: Selection::Random,
         survivor: Survivor::Fitness,
     };
 
@@ -88,10 +86,9 @@ fn test_ga_run_multithread(){
     let configuration = GaConfiguration{
         number_of_threads: Some(8 as i32),
         limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
-        selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
+        selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration{method: Mutation::Swap, probability: None},
-        selection: Selection::Tournament,
         survivor: Survivor::Fitness,
     };
 

@@ -9,8 +9,8 @@ pub mod cycle;
 pub mod multipoint;
 pub mod uniform_crossover;
 
-pub fn factory<T: GeneT, U: GenotypeT<T>>(crossover: Crossover, parent_1: &U, parent_2: &U, configuration: CrossoverConfiguration) -> Option<Vec<U>>{
-    match crossover {
+pub fn factory<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U, configuration: CrossoverConfiguration) -> Option<Vec<U>>{
+    match configuration.method {
         Crossover::Cycle => {cycle(parent_1, parent_2)},
         Crossover::MultiPoint => {multipoint_crossover(parent_1, parent_2, &configuration.number_of_points.unwrap())},
         Crossover::Uniform => {uniform(parent_1, parent_2)},

@@ -27,7 +27,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
         age += 1;
 
         //1- Parent selection for reproduction
-        let mut parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
+        let mut parents = selection::factory(&population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
 
         //2- Getting the offspring from the multithreading function
         let mut offspring = parent_crossover_multithread(&mut parents, &population.individuals, &configuration, age);
@@ -278,7 +278,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 let mut offspring_t: Vec<U> = vec![];
 
                 if crossover_probability <= crossover_probability_config {
-                    offspring_t = crossover::factory(configuration.crossover_configuration.method, &parent_1, &parent_2, configuration.crossover_configuration).unwrap();
+                    offspring_t = crossover::factory(&parent_1, &parent_2, configuration.crossover_configuration).unwrap();
                     child_1 = offspring_t.pop().unwrap();
                     child_2 = offspring_t.pop().unwrap();
                 }else{
