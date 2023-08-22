@@ -77,10 +77,10 @@ U:GenotypeT<T>
         //We check if the fitness is the best and store it if it's the case
         if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_1.get_dna().clone();
-            *best_individual.get_fitness_mut() = individual_1.get_fitness().clone();
+            *best_individual.get_fitness_mut() = *individual_1.get_fitness();
         }else{
             *best_individual.get_dna_mut() = individual_2.get_dna().clone();
-            *best_individual.get_fitness_mut() = individual_2.get_fitness().clone();
+            *best_individual.get_fitness_mut() = *individual_2.get_fitness();
         }
 
     } else {
@@ -88,10 +88,10 @@ U:GenotypeT<T>
         //We check if the fitness is the best and store it if it's the case
         if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_2.get_dna().clone();
-            *best_individual.get_fitness_mut() = individual_2.get_fitness().clone();
+            *best_individual.get_fitness_mut() = *individual_2.get_fitness();
         }else{
             *best_individual.get_dna_mut() = individual_1.get_dna().clone();
-            *best_individual.get_fitness_mut() = individual_1.get_fitness().clone();
+            *best_individual.get_fitness_mut() = *individual_1.get_fitness();
         }
 
     }
@@ -165,7 +165,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
         }
 
         //Cloning the information from the main thread
-        let (start_index_t, tx, jump_t, individuals_t, best_individual_t) = (start_index.clone(), tx.clone(),  jump.clone(), Arc::clone(&individuals_t), Arc::clone(&best_individual_t));
+        let (start_index_t, tx, jump_t, individuals_t, best_individual_t) = (start_index, tx.clone(),  jump, Arc::clone(&individuals_t), Arc::clone(&best_individual_t));
 
         //Starting the thread management
         thread::spawn(move || {
@@ -182,7 +182,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                     best_individual = get_best_individual(&best_individual, &individuals_t.lock().unwrap()[i as usize], configuration.limit_configuration.problem_solving);
                 } else{
                     *best_individual.get_dna_mut() = individuals_t.lock().unwrap()[i as usize].get_dna().clone();
-                    *best_individual.get_fitness_mut() = individuals_t.lock().unwrap()[i as usize].get_fitness().clone();
+                    *best_individual.get_fitness_mut() = *individuals_t.lock().unwrap()[i as usize].get_fitness();
                 }
             }
 
@@ -190,10 +190,10 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
             if !best_individual_t.lock().unwrap().get_dna().is_empty() {
                 let global_best_individual = get_best_individual(&best_individual_t.lock().unwrap().clone(), &best_individual, configuration.limit_configuration.problem_solving);
                 *best_individual_t.lock().unwrap().get_dna_mut() = global_best_individual.get_dna().clone();
-                *best_individual_t.lock().unwrap().get_fitness_mut() = global_best_individual.get_fitness().clone();
+                *best_individual_t.lock().unwrap().get_fitness_mut() = *global_best_individual.get_fitness();
             }else{
                 *best_individual_t.lock().unwrap().get_dna_mut() = best_individual.get_dna().clone();
-                *best_individual_t.lock().unwrap().get_fitness_mut() = best_individual.get_fitness().clone();
+                *best_individual_t.lock().unwrap().get_fitness_mut() = *best_individual.get_fitness();
             }
 
             //Sending the result
@@ -214,7 +214,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 
     let mut best_individual = U::new();
     *best_individual.get_dna_mut() = best_individual_t.lock().unwrap().get_dna().clone();
-    *best_individual.get_fitness_mut() = best_individual_t.lock().unwrap().get_fitness_mut().clone();
+    *best_individual.get_fitness_mut() = *best_individual_t.lock().unwrap().get_fitness_mut();
 
     best_individual
 }
@@ -230,7 +230,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
     //Setting the control variables
     let mut number_of_threads = if configuration.number_of_threads.is_none() {1} else {configuration.number_of_threads.unwrap()}; 
     number_of_threads = if number_of_threads > parents.len() as i32 {parents.len() as i32}else{number_of_threads};
-    let jump = parents.len() as i32 / number_of_threads;
+    let jump = parents.len() / number_of_threads as usize;
 
     let mut handles = Vec::new();
     let offspring = Arc::new(Mutex::new(Vec::new()));
@@ -239,12 +239,11 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
     for t in 0..number_of_threads{
 
         //We copy the parents that we want to crossover inside the thread
-        let (individuals, configuration, offspring) = (individuals.clone(), configuration.clone(), Arc::clone(&offspring));
+        let (individuals, configuration, offspring) = (individuals.clone(), *configuration, Arc::clone(&offspring));
         let mut parents_t = HashMap::new();
         let parents_c = parents.clone();
-        let mut index = 0;
 
-        for i in parents_c.keys(){
+        for (index, i) in parents_c.keys().enumerate(){
 
             //If we reach the number of crossovers / thread
             if t < number_of_threads - 1 && index >= jump {
@@ -254,8 +253,6 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
             let key = *parents.get_key_value(i).unwrap().0;
             parents_t.insert(key, *parents.get_key_value(i).unwrap().1);
             parents.remove(&key);
-
-            index +=1;
         }
 
         //Starts the thread

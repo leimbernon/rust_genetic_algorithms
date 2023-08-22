@@ -23,7 +23,7 @@ pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<Ve
     //We loop until having all the elements from the parent 1
     while indexes.len() <= parent_1.get_dna().len() {
 
-        let cycle_indexes = local_cycle(&indexes, &parent_1.get_dna(), &parent_2.get_dna());
+        let cycle_indexes = local_cycle(&indexes, parent_1.get_dna(), parent_2.get_dna());
         indexes.extend(cycle_indexes.iter().copied());
 
         let is_odd_cycle = cycle_number & 1 == 1;
@@ -46,7 +46,7 @@ pub fn cycle<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<Ve
     *child_1.get_dna_mut() = dna_child_1;
     *child_2.get_dna_mut() = dna_child_2;
 
-    return Some(vec![child_1, child_2]);
+    Some(vec![child_1, child_2])
 }
 
 
@@ -86,12 +86,12 @@ fn local_cycle<T: GeneT>(indexes: &Vec<usize>, dna_parent_1: &Vec<T>, dna_parent
 
         //Now, we search the index in the parent 2 of the value get in the parent 1
         let position_found = dna_parent_1.iter().position(|g| g.get_id() == &value_parent_2);
-        if !position_found.is_none(){
-            index = position_found.unwrap();
+        if let Some(value) = position_found {
+            index = value;
         }else{
             panic!("Error finding {} of parent 2 in parent 1", value_parent_2);
         }
      }
 
-    return cycle_indexes;
+    cycle_indexes
 }
