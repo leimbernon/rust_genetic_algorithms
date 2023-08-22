@@ -86,8 +86,8 @@ fn local_cycle<T: GeneT>(indexes: &Vec<usize>, dna_parent_1: &Vec<T>, dna_parent
 
         //Now, we search the index in the parent 2 of the value get in the parent 1
         let position_found = dna_parent_1.iter().position(|g| g.get_id() == &value_parent_2);
-        if position_found.is_some(){
-            index = position_found.unwrap();
+        if let Some(value) = position_found {
+            index = value;
         }else{
             panic!("Error finding {} of parent 2 in parent 1", value_parent_2);
         }
