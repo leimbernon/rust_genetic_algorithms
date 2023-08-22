@@ -34,11 +34,11 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 
         //3- Sets the best individual
         for child in &offspring{
-            best_individual = get_best_individual(&best_individual, &child, configuration.limit_configuration.problem_solving);
+            best_individual = get_best_individual(&best_individual, child, configuration.limit_configuration.problem_solving);
         }
 
         //3.1- If we want to return the best individual by generation
-        if configuration.limit_configuration.get_best_individual_by_generation.is_some()==true {
+        if configuration.limit_configuration.get_best_individual_by_generation.is_some() {
             best_population.add_individual_gn(best_individual.clone(), i);
         }
 
@@ -55,10 +55,10 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
     }
 
     //If it's not required to return the best individuals by generation
-    if configuration.limit_configuration.get_best_individual_by_generation.is_some()!=false || configuration.limit_configuration.get_best_individual_by_generation.is_none() {
+    if configuration.limit_configuration.get_best_individual_by_generation.is_some() || configuration.limit_configuration.get_best_individual_by_generation.is_none() {
         best_population.add_individual_gn(best_individual, -1);
     }
-    return best_population;
+    best_population
 }
 
 /**
@@ -128,7 +128,7 @@ U:GenotypeT<T>
         }
     }
 
-    return result;
+    result
 }
 
 /**
@@ -178,7 +178,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 individuals_t.lock().unwrap()[i as usize].calculate_fitness();
                 fitness_map.insert(i as usize, *individuals_t.lock().unwrap()[i as usize].get_fitness());
 
-                if best_individual.get_dna().len() > 0 {
+                if !best_individual.get_dna().is_empty() {
                     best_individual = get_best_individual(&best_individual, &individuals_t.lock().unwrap()[i as usize], configuration.limit_configuration.problem_solving);
                 } else{
                     *best_individual.get_dna_mut() = individuals_t.lock().unwrap()[i as usize].get_dna().clone();
@@ -187,7 +187,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
             }
 
             //Setting the best global individual
-            if best_individual_t.lock().unwrap().get_dna().len() > 0 {
+            if !best_individual_t.lock().unwrap().get_dna().is_empty() {
                 let global_best_individual = get_best_individual(&best_individual_t.lock().unwrap().clone(), &best_individual, configuration.limit_configuration.problem_solving);
                 *best_individual_t.lock().unwrap().get_dna_mut() = global_best_individual.get_dna().clone();
                 *best_individual_t.lock().unwrap().get_fitness_mut() = global_best_individual.get_fitness().clone();
@@ -216,7 +216,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
     *best_individual.get_dna_mut() = best_individual_t.lock().unwrap().get_dna().clone();
     *best_individual.get_fitness_mut() = best_individual_t.lock().unwrap().get_fitness_mut().clone();
 
-    return best_individual;
+    best_individual
 }
 
 /**
@@ -228,7 +228,7 @@ T:GeneT,
 U:GenotypeT<T> + Send + Sync + 'static + Clone
 {
     //Setting the control variables
-    let mut number_of_threads = if configuration.number_of_threads == None {1} else {configuration.number_of_threads.unwrap()}; 
+    let mut number_of_threads = if configuration.number_of_threads.is_none() {1} else {configuration.number_of_threads.unwrap()}; 
     number_of_threads = if number_of_threads > parents.len() as i32 {parents.len() as i32}else{number_of_threads};
     let jump = parents.len() as i32 / number_of_threads;
 
