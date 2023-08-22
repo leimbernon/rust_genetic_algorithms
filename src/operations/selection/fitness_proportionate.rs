@@ -24,7 +24,7 @@ pub fn roulette_wheel_selection<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>) -
         //We get the probability
         if &rng.gen_range(0.0..total_fitness) >= individuals.get(index).unwrap().get_fitness(){
 
-            if parent_1 == None {
+            if parent_1.is_none() {
                 //If parent 1 is not set, we set it
                 parent_1 = Some(index);
             }else{
@@ -36,7 +36,7 @@ pub fn roulette_wheel_selection<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>) -
         }
     }
 
-    return mating;
+    mating
 }
 
 
@@ -82,8 +82,8 @@ pub fn stochastic_universal_sampling<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<
         }
 
         //We check if the pointer is between the current and the next individual
-        if !end_of_individuals && current_point >= selection_probabilities[i] as f64 && 
-            current_point < selection_probabilities[next_individual] as f64 {
+        if !end_of_individuals && current_point >= selection_probabilities[i] && 
+            current_point < selection_probabilities[next_individual] {
 
             if couple_completed {
                 mating.insert(first_mate, i);
@@ -93,7 +93,7 @@ pub fn stochastic_universal_sampling<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<
 
             couple_completed = !couple_completed;
 
-        } else if end_of_individuals && current_point >= selection_probabilities[i] as f64 {
+        } else if end_of_individuals && current_point >= selection_probabilities[i] {
             if couple_completed {
                 mating.insert(first_mate, i);
                 couple_completed = !couple_completed;
@@ -102,9 +102,9 @@ pub fn stochastic_universal_sampling<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<
             }
         }
 
-        current_point = current_point + pointer_distance;
+        current_point += pointer_distance;
         next_individual += 1;
     }
 
-    return mating;
+    mating
 }

@@ -13,15 +13,9 @@ pub fn multipoint_crossover<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &
 
     let mut dna_child_1 = Vec::new();
     let mut dna_child_2 = Vec::new();
-    let number_of_blocks;
-
 
     //We check if the number of points are higher than the dna, we take the dna lenght
-    if (*crossover_number_of_points as usize) + 1 > parent_1.get_dna().len() {
-        number_of_blocks = parent_1.get_dna().len();
-    }else{
-        number_of_blocks = (*crossover_number_of_points as usize) + 1;
-    }
+    let number_of_blocks = if (*crossover_number_of_points as usize) + 1 > parent_1.get_dna().len(){parent_1.get_dna().len()}else{(*crossover_number_of_points as usize) + 1};
 
     //We get the number of genes per block
     let number_of_genes_per_block = (parent_1.get_dna().len() / number_of_blocks) as i64;
@@ -53,5 +47,5 @@ pub fn multipoint_crossover<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &
     *child_1.get_dna_mut() = dna_child_1;
     *child_2.get_dna_mut() = dna_child_2;
 
-    return Some(vec![child_1, child_2]);
+    Some(vec![child_1, child_2])
 }
