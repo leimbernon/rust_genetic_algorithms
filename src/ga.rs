@@ -1,4 +1,5 @@
 use std::{sync::{mpsc::sync_channel, Mutex, Arc}, thread, collections::HashMap};
+use rand::Rng;
 
 use crate::{population::Population, traits::{GenotypeT, GeneT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
 use crate::configuration::GaConfiguration;
@@ -26,7 +27,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
         age += 1;
 
         //1- Parent selection for reproduction
-        let mut parents = selection::factory(configuration.selection, &population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
+        let mut parents = selection::factory(&population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
 
         //2- Getting the offspring from the multithreading function
         let mut offspring = parent_crossover_multithread(&mut parents, &population.individuals, &configuration, age);
@@ -260,18 +261,42 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
         //Starts the thread
         let handle = thread::spawn(move || {
 
+            //Getting random numbers in this thread
+            let mut rng = rand::thread_rng();
+
             for(key, value) in parents_t.iter(){
                 //Getting the parent 1 and 2 for crossover                
                 let parent_1 = individuals.get(*key).unwrap().clone();
                 let parent_2 = individuals.get(*value).unwrap().clone();
 
-                let mut offspring_t = crossover::factory(configuration.crossover, &parent_1, &parent_2, configuration.crossover_configuration).unwrap();
-                let mut child_1 = offspring_t.pop().unwrap();
-                let mut child_2 = offspring_t.pop().unwrap();
+                //Making the crossover of the parents when the random number is below or equal to the given probability
+                let crossover_probability = rng.gen_range(0.0..1.0);
+                let crossover_probability_config = if configuration.crossover_configuration.probability.is_none(){1.0}else{configuration.crossover_configuration.probability.unwrap()};
+                
+                let mut child_1: U;
+                let mut child_2: U;
+                let mut offspring_t: Vec<U> = vec![];
 
-                //Making the mutation of each child
-                mutation::factory(configuration.mutation, &mut child_1);
-                mutation::factory(configuration.mutation, &mut child_2);
+                if crossover_probability <= crossover_probability_config {
+                    offspring_t = crossover::factory(&parent_1, &parent_2, configuration.crossover_configuration).unwrap();
+                    child_1 = offspring_t.pop().unwrap();
+                    child_2 = offspring_t.pop().unwrap();
+                }else{
+                    child_1 = parent_1;
+                    child_2 = parent_2;
+                }
+
+                //Making the mutation of each child when the random number is below or equal the given probability
+                let mut mutation_probability = rng.gen_range(0.0..1.0);
+                let mutation_probability_config = if configuration.mutation_configuration.probability.is_none(){1.0}else{configuration.mutation_configuration.probability.unwrap()};
+                if mutation_probability < mutation_probability_config {
+                    mutation::factory(configuration.mutation_configuration.method, &mut child_1);
+                }
+
+                mutation_probability = rng.gen_range(0.0..1.0);
+                if mutation_probability <= mutation_probability_config {
+                    mutation::factory(configuration.mutation_configuration.method, &mut child_2);
+                }
 
                 //Calculate the fitness of both children and set their age
                 child_1.calculate_fitness();
@@ -283,7 +308,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 //Adds the children in the offspring
                 offspring_t.push(child_1);
                 offspring_t.push(child_2);
-
+                
                 //Then sets the offspring in the result vector
                 offspring.lock().unwrap().append(&mut offspring_t);
             }

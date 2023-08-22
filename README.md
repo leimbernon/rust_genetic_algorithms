@@ -84,18 +84,23 @@ Within this library you can configure the way to run genetic algorithms through 
 This structure contains the following attributes:
 - `number_of_threads`: Optional. It indicates how many threads will be executed at the same time.
 - `limit_configuration`: It configures the limits of the Genetic Algorithms with the `LimitConfiguration` structure.
-- `selection_configuration`: Optional. It configures the selection method with the `SelectionConfiguration` structure.
-- `crossover_configuration`: Optional. It configures the crossover method with the `CrossoverConfiguration` structure.
-- `selection`: Indicates what selection operator to use.
-- `crossover`: Indicates what crossover operator to use.
-- `mutation`: Indicates what mutation operator to use.
+- `selection_configuration`: It configures the selection method with the `SelectionConfiguration` structure.
+- `crossover_configuration`: It configures the crossover method with the `CrossoverConfiguration` structure.
+- `mutation_configuration`: It configures the mutation method with the `MutationConfiguration` structure.
 - `survivor`: Indicates what survivor operator to use.
 
 `SelectionConfiguration`:
-- `number_of_couples`: This attribute is only valid for stochastic universal sampling. It indicates the number of couples to select from the population.
+- `number_of_couples`: Optional. This attribute is only valid for stochastic universal sampling. It indicates the number of couples to select from the population.
+- `method`: Indicates what selection operator to use.
 
 `CrossoverConfiguration`:
-- `number_of_points`: This attribute is only valid for crossover multipoint, and it indicates how many points will be made within the dna in crossover operations.
+- `number_of_points`: Optional. This attribute is only valid for crossover multipoint, and it indicates how many points will be made within the dna in crossover operations.
+- `probability`: Optional. Indicates the probability of two parents for being crossed. This number must be between 0.0 and 1.0 both inclusive.
+- `method`: Indicates what crossover operator to use.
+
+`MutationConfiguration`:
+- `probability`: Optional. Indicates the probability for a given child to be mutated. This number must be between 0.0 and 1.0 both inclusive.
+- `method`: Indicates what mutation operator to use.
 
 `LimitConfiguration`:
 - `problem_solving`: You can select from a Minimization problem or a Maximization problem.
@@ -181,11 +186,9 @@ Define the configuration of the GA.
 let configuration = GaConfiguration{
         number_of_threads: Some(2),
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: Some(true)},
-        selection_configuration: Some(SelectionConfiguration{number_of_couples: 10}),
-        crossover_configuration: None,
-        selection: Selection::Random,
-        crossover: Crossover::Cycle,
-        mutation: Mutation::Swap,
+        selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
+        crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
+        mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
         survivor: Survivor::Fitness,
     };
 ```
@@ -226,5 +229,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.8.4"
+genetic_algorithms = "0.9.0"
 ```
