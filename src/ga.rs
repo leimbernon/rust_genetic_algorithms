@@ -299,8 +299,8 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 child_1.calculate_fitness();
                 child_2.calculate_fitness();
 
-                *child_1.get_age_mut() = age;
-                *child_2.get_age_mut() = age;
+                child_1.set_age(age);
+                child_2.set_age(age);
 
                 //Adds the children in the offspring
                 offspring_t.push(child_1);
