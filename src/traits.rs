@@ -1,6 +1,6 @@
 pub trait GeneT: Default + Clone + Copy {
     fn new() -> Self;
-    fn get_id(&self) -> i32;
+    fn get_id(&self) -> i32{0}
 }
 
 pub trait GenotypeT<T: GeneT + Default>{
