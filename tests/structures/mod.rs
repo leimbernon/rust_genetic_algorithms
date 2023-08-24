@@ -9,8 +9,8 @@ impl GeneT for Gene{
     fn new()->Gene{
         return Gene{id: -1};
     }
-    fn get_id(&self) -> &i32{
-        return &self.id;
+    fn get_id(&self) -> i32{
+        return self.id;
     }
 }
 
