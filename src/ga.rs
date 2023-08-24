@@ -77,10 +77,10 @@ U:GenotypeT<T>
         //We check if the fitness is the best and store it if it's the case
         if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_1.get_dna().clone();
-            *best_individual.get_fitness_mut() = *individual_1.get_fitness();
+            best_individual.set_fitness(*individual_1.get_fitness());
         }else{
             *best_individual.get_dna_mut() = individual_2.get_dna().clone();
-            *best_individual.get_fitness_mut() = *individual_2.get_fitness();
+            best_individual.set_fitness(*individual_2.get_fitness());
         }
 
     } else {
@@ -88,10 +88,10 @@ U:GenotypeT<T>
         //We check if the fitness is the best and store it if it's the case
         if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_2.get_dna().clone();
-            *best_individual.get_fitness_mut() = *individual_2.get_fitness();
+            best_individual.set_fitness(*individual_2.get_fitness());
         }else{
             *best_individual.get_dna_mut() = individual_1.get_dna().clone();
-            *best_individual.get_fitness_mut() = *individual_1.get_fitness();
+            best_individual.set_fitness(*individual_1.get_fitness());
         }
 
     }
@@ -182,7 +182,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                     best_individual = get_best_individual(&best_individual, &individuals_t.lock().unwrap()[i as usize], configuration.limit_configuration.problem_solving);
                 } else{
                     *best_individual.get_dna_mut() = individuals_t.lock().unwrap()[i as usize].get_dna().clone();
-                    *best_individual.get_fitness_mut() = *individuals_t.lock().unwrap()[i as usize].get_fitness();
+                    best_individual.set_fitness(*individuals_t.lock().unwrap()[i as usize].get_fitness());
                 }
             }
 
@@ -190,10 +190,10 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
             if !best_individual_t.lock().unwrap().get_dna().is_empty() {
                 let global_best_individual = get_best_individual(&best_individual_t.lock().unwrap().clone(), &best_individual, configuration.limit_configuration.problem_solving);
                 *best_individual_t.lock().unwrap().get_dna_mut() = global_best_individual.get_dna().clone();
-                *best_individual_t.lock().unwrap().get_fitness_mut() = *global_best_individual.get_fitness();
+                best_individual_t.lock().unwrap().set_fitness(*global_best_individual.get_fitness());
             }else{
                 *best_individual_t.lock().unwrap().get_dna_mut() = best_individual.get_dna().clone();
-                *best_individual_t.lock().unwrap().get_fitness_mut() = *best_individual.get_fitness();
+                best_individual_t.lock().unwrap().set_fitness(*best_individual.get_fitness());
             }
 
             //Sending the result
@@ -208,13 +208,13 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
     //We receive from the threads and set the fitness in individuals
     for received in rx {
         for element in received{
-            *individuals[element.0].get_fitness_mut() = element.1;
+            individuals[element.0].set_fitness(element.1);
         }
     }
 
     let mut best_individual = U::new();
     *best_individual.get_dna_mut() = best_individual_t.lock().unwrap().get_dna().clone();
-    *best_individual.get_fitness_mut() = *best_individual_t.lock().unwrap().get_fitness_mut();
+    best_individual.set_fitness(*best_individual_t.lock().unwrap().get_fitness());
 
     best_individual
 }
@@ -299,8 +299,8 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
                 child_1.calculate_fitness();
                 child_2.calculate_fitness();
 
-                *child_1.get_age_mut() = age;
-                *child_2.get_age_mut() = age;
+                child_1.set_age(age);
+                child_2.set_age(age);
 
                 //Adds the children in the offspring
                 offspring_t.push(child_1);
