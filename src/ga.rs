@@ -77,10 +77,10 @@ U:GenotypeT<T>
         //We check if the fitness is the best and store it if it's the case
         if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_1.get_dna().clone();
-            best_individual.set_fitness(*individual_1.get_fitness());
+            best_individual.set_fitness(individual_1.get_fitness());
         }else{
             *best_individual.get_dna_mut() = individual_2.get_dna().clone();
-            best_individual.set_fitness(*individual_2.get_fitness());
+            best_individual.set_fitness(individual_2.get_fitness());
         }
 
     } else {
@@ -88,10 +88,10 @@ U:GenotypeT<T>
         //We check if the fitness is the best and store it if it's the case
         if individual_1.get_fitness() >= individual_2.get_fitness(){
             *best_individual.get_dna_mut() = individual_2.get_dna().clone();
-            best_individual.set_fitness(*individual_2.get_fitness());
+            best_individual.set_fitness(individual_2.get_fitness());
         }else{
             *best_individual.get_dna_mut() = individual_1.get_dna().clone();
-            best_individual.set_fitness(*individual_1.get_fitness());
+            best_individual.set_fitness(individual_1.get_fitness());
         }
 
     }
@@ -113,7 +113,7 @@ U:GenotypeT<T>
     if limit.problem_solving == ProblemSolving::Minimization{
         //If the problem solving is minimization, fitness must be 0
         for genotype in individuals {
-            if genotype.get_fitness() == &0.0 {
+            if genotype.get_fitness() == 0.0 {
                 result = true;
                 break;
             }
@@ -121,7 +121,7 @@ U:GenotypeT<T>
     }else if limit.problem_solving == ProblemSolving::FixedFitness{
         //If the problem solving is a fixed fitness
         for genotype in individuals {
-            if genotype.get_fitness() == &limit.fitness_target.unwrap() {
+            if genotype.get_fitness() == limit.fitness_target.unwrap() {
                 result = true;
                 break;
             }
@@ -176,13 +176,13 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
             //Calculates the fitness from the corresponding population
             for i in start_index_t..(start_index_t + jump_t){
                 individuals_t.lock().unwrap()[i as usize].calculate_fitness();
-                fitness_map.insert(i as usize, *individuals_t.lock().unwrap()[i as usize].get_fitness());
+                fitness_map.insert(i as usize, individuals_t.lock().unwrap()[i as usize].get_fitness());
 
                 if !best_individual.get_dna().is_empty() {
                     best_individual = get_best_individual(&best_individual, &individuals_t.lock().unwrap()[i as usize], configuration.limit_configuration.problem_solving);
                 } else{
                     *best_individual.get_dna_mut() = individuals_t.lock().unwrap()[i as usize].get_dna().clone();
-                    best_individual.set_fitness(*individuals_t.lock().unwrap()[i as usize].get_fitness());
+                    best_individual.set_fitness(individuals_t.lock().unwrap()[i as usize].get_fitness());
                 }
             }
 
@@ -190,10 +190,10 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
             if !best_individual_t.lock().unwrap().get_dna().is_empty() {
                 let global_best_individual = get_best_individual(&best_individual_t.lock().unwrap().clone(), &best_individual, configuration.limit_configuration.problem_solving);
                 *best_individual_t.lock().unwrap().get_dna_mut() = global_best_individual.get_dna().clone();
-                best_individual_t.lock().unwrap().set_fitness(*global_best_individual.get_fitness());
+                best_individual_t.lock().unwrap().set_fitness(global_best_individual.get_fitness());
             }else{
                 *best_individual_t.lock().unwrap().get_dna_mut() = best_individual.get_dna().clone();
-                best_individual_t.lock().unwrap().set_fitness(*best_individual.get_fitness());
+                best_individual_t.lock().unwrap().set_fitness(best_individual.get_fitness());
             }
 
             //Sending the result
@@ -214,7 +214,7 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 
     let mut best_individual = U::new();
     *best_individual.get_dna_mut() = best_individual_t.lock().unwrap().get_dna().clone();
-    best_individual.set_fitness(*best_individual_t.lock().unwrap().get_fitness());
+    best_individual.set_fitness(best_individual_t.lock().unwrap().get_fitness());
 
     best_individual
 }

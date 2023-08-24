@@ -9,8 +9,8 @@ impl GeneT for Gene{
     fn new()->Gene{
         return Gene{id: -1};
     }
-    fn get_id(&self) -> &i32{
-        return &self.id;
+    fn get_id(&self) -> i32{
+        return self.id;
     }
 }
 
@@ -27,8 +27,8 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_dna_mut(&mut self) -> &mut Vec<T> {
         &mut self.dna
     }
-    fn get_fitness(&self) -> &f64 {
-        return &self.fitness;
+    fn get_fitness(&self) -> f64 {
+        return self.fitness;
     }
     fn set_fitness(&mut self, fitness: f64) {
         self.fitness = fitness;
@@ -36,8 +36,8 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn set_age(&mut self, age:i32){
         self.age = age;
     }
-    fn get_age(&self) -> &i32 {
-        &self.age
+    fn get_age(&self) -> i32 {
+        self.age
     }
     fn calculate_fitness(&mut self) {
         

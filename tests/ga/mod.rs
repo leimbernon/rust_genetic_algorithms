@@ -36,7 +36,7 @@ fn test_ga_start_maximize(){
     population = run(population, configuration);
     
     assert_eq!(population.individuals.len(), 1);
-    assert_eq!(population.individuals[0].get_fitness(), &20.0);
+    assert_eq!(population.individuals[0].get_fitness(), 20.0);
 
 }
 
@@ -74,7 +74,7 @@ fn test_ga_run_minimize(){
     population = run(population, configuration);
     
     assert_eq!(population.individuals.len(), 1);
-    assert_eq!(population.individuals[0].get_fitness(), &10.0);
+    assert_eq!(population.individuals[0].get_fitness(), 10.0);
 
 }
 
