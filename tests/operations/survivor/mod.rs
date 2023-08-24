@@ -133,12 +133,12 @@ fn test_age_based_survivor(){
 
     //Tests that the population has 6 individuals
     assert_eq!(population.len(), 6);
-    assert_eq!(*population[0].get_age(), 3);
-    assert_eq!(*population[1].get_age(), 3);
-    assert_eq!(*population[2].get_age(), 2);
-    assert_eq!(*population[3].get_age(), 2);
-    assert_eq!(*population[4].get_age(), 2);
-    assert_eq!(*population[5].get_age(), 2);
+    assert_eq!(population[0].get_age(), 3);
+    assert_eq!(population[1].get_age(), 3);
+    assert_eq!(population[2].get_age(), 2);
+    assert_eq!(population[3].get_age(), 2);
+    assert_eq!(population[4].get_age(), 2);
+    assert_eq!(population[5].get_age(), 2);
 
 }
 

@@ -36,8 +36,8 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn set_age(&mut self, age:i32){
         self.age = age;
     }
-    fn get_age(&self) -> &i32 {
-        &self.age
+    fn get_age(&self) -> i32 {
+        self.age
     }
     fn calculate_fitness(&mut self) {
         
