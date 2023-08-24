@@ -27,8 +27,8 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
     fn get_dna_mut(&mut self) -> &mut Vec<T> {
         &mut self.dna
     }
-    fn get_fitness(&self) -> &f64 {
-        return &self.fitness;
+    fn get_fitness(&self) -> f64 {
+        return self.fitness;
     }
     fn set_fitness(&mut self, fitness: f64) {
         self.fitness = fitness;
