@@ -1,4 +1,3 @@
-pub(crate) use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 use self::swap::swap;
 use self::inversion::inversion;
@@ -9,10 +8,9 @@ pub mod swap;
 pub mod inversion;
 pub mod scramble;
 
-pub fn factory<T,U>(mutation: Mutation ,individual: &mut U)
+pub fn factory<U>(mutation: Mutation ,individual: &mut U)
 where
-T: GeneT, 
-U: GenotypeT<T> + 'static
+U: GenotypeT + 'static
 {
     match mutation {
         Mutation::Swap => {swap(individual)},

@@ -3,10 +3,14 @@ pub trait GeneT: Default + Clone + Copy {
     fn get_id(&self) -> i32{0}
 }
 
-pub trait GenotypeT<T: GeneT + Default>{
+pub trait GenotypeT: Clone{
+
+    type Gene: GeneT;
+    
     fn new() -> Self;
-    fn get_dna(&self) -> &Vec<T>;
-    fn get_dna_mut(&mut self) -> &mut Vec<T>;
+    fn new_gene() -> Self::Gene;
+    fn get_dna(&self) -> &Vec<Self::Gene>;
+    fn get_dna_mut(&mut self) -> &mut Vec<Self::Gene>;
     fn calculate_fitness(&mut self);
     fn get_fitness(&self) -> f64;
     fn set_fitness(&mut self, fitness: f64);

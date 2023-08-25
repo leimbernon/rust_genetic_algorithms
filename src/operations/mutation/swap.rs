@@ -1,8 +1,7 @@
 pub(crate) use rand::Rng;
 use crate::traits::GenotypeT;
-use crate::traits::GeneT;
 
-pub fn swap<T: GeneT, U: GenotypeT<T>>(individual: &mut U){
+pub fn swap<U: GenotypeT>(individual: &mut U){
 
     //Getting two random genes from the dna of the individual
     let mut rng = rand::thread_rng();

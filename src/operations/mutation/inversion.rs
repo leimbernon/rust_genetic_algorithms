@@ -1,9 +1,9 @@
 use std::cmp::Ordering;
 
-pub(crate) use crate::traits::{GeneT, GenotypeT};
+pub(crate) use crate::traits::GenotypeT;
 use rand::Rng;
 
-pub fn inversion<T: GeneT, U: GenotypeT<T>>(individual: &mut U){
+pub fn inversion<U: GenotypeT>(individual: &mut U){
 
     //Getting two random genes from the dna of the individual
     let mut rng = rand::thread_rng();

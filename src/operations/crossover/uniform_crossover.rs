@@ -1,9 +1,8 @@
 use rand::Rng;
 use crate::traits::GenotypeT;
-use crate::traits::GeneT;
 
-pub fn uniform<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
-    
+pub fn uniform<U: GenotypeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
+
     //Before doing the operation, we check that the dna in the parent 1 has the same length of the dna in the parent 2
     if parent_1.get_dna().len() != parent_2.get_dna().len() {
         panic!("parent 1 and parent 2 must have the same dna length");
@@ -12,8 +11,8 @@ pub fn uniform<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U) -> Option<
     let mut rng = rand::thread_rng();
 
     //Creation of the children DNA
-    let mut dna_child_1 = vec![T::new(); parent_1.get_dna().len()];
-    let mut dna_child_2 = vec![T::new(); parent_2.get_dna().len()];
+    let mut dna_child_1 = vec![U::new_gene(); parent_1.get_dna().len()];
+    let mut dna_child_2 = vec![U::new_gene(); parent_2.get_dna().len()];
 
     let mut child_1 = U::new();
     let mut child_2 = U::new();
