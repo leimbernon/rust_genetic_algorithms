@@ -1,6 +1,6 @@
-pub(crate) use crate::{traits::{GeneT, GenotypeT}, configuration::{ProblemSolving, LimitConfiguration}};
+pub(crate) use crate::{traits::GenotypeT, configuration::{ProblemSolving, LimitConfiguration}};
 
-pub fn fitness_based<T:GeneT, U:GenotypeT<T>>(individuals: &mut Vec<U>, population_size: usize, limit_configuration: LimitConfiguration)
+pub fn fitness_based<U:GenotypeT>(individuals: &mut Vec<U>, population_size: usize, limit_configuration: LimitConfiguration)
 {
     if limit_configuration.problem_solving != ProblemSolving::FixedFitness {
         //We sort the individuals by their fitness if there is not a fixed fitness problem

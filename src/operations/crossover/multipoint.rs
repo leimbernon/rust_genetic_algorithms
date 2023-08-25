@@ -1,7 +1,6 @@
 use crate::traits::GenotypeT;
-use crate::traits::GeneT;
 
-pub fn multipoint_crossover<T: GeneT, U: GenotypeT<T>>(parent_1: &U, parent_2: &U, crossover_number_of_points: &i32) -> Option<Vec<U>>{
+pub fn multipoint_crossover<U: GenotypeT>(parent_1: &U, parent_2: &U, crossover_number_of_points: &i32) -> Option<Vec<U>>{
 
     //Before doing the operation, we check that the dna in parent 1 has the same length of the dna in parent 2
     if parent_1.get_dna().len() != parent_2.get_dna().len() {

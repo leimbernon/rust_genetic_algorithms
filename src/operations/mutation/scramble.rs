@@ -1,8 +1,7 @@
 pub(crate) use rand::Rng;
 use crate::traits::GenotypeT;
-use crate::traits::GeneT;
 
-pub fn scramble<T: GeneT, U: GenotypeT<T>>(individual: &mut U){
+pub fn scramble<U: GenotypeT>(individual: &mut U){
 
     //Getting two random genes from the dna of the individual
     let mut rng = rand::thread_rng();

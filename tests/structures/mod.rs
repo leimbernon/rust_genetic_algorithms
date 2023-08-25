@@ -15,16 +15,17 @@ impl GeneT for Gene{
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct Genotype<T: GeneT>{
-    pub dna: Vec<T>,
+pub struct Genotype{
+    pub dna: Vec<Gene>,
     pub fitness: f64,
     pub age: i32,
 }
-impl <T: GeneT> GenotypeT<T> for Genotype<T>{
-    fn get_dna(&self) -> &Vec<T> {
+impl GenotypeT for Genotype{
+    type Gene = Gene;
+    fn get_dna(&self) -> &Vec<Self::Gene> {
         &self.dna
     }
-    fn get_dna_mut(&mut self) -> &mut Vec<T> {
+    fn get_dna_mut(&mut self) -> &mut Vec<Self::Gene> {
         &mut self.dna
     }
     fn get_fitness(&self) -> f64 {
@@ -56,5 +57,8 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
             fitness: 0.0,
             age: 0,
         }
+    }
+    fn new_gene() -> Self::Gene {
+        Gene::new()
     }
 }
