@@ -43,14 +43,14 @@ pub fn cycle<U: GenotypeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
     }
 
     //Setting the DNA to the children
-    *child_1.get_dna_mut() = dna_child_1;
-    *child_2.get_dna_mut() = dna_child_2;
+    child_1.set_dna(dna_child_1.as_slice());
+    child_2.set_dna(dna_child_2.as_slice());
 
     Some(vec![child_1, child_2])
 }
 
 
-fn local_cycle<T: GeneT>(indexes: &Vec<usize>, dna_parent_1: &Vec<T>, dna_parent_2: &Vec<T>) -> Vec<usize>{
+fn local_cycle<T: GeneT>(indexes: &Vec<usize>, dna_parent_1: &[T], dna_parent_2: &[T]) -> Vec<usize>{
 
     let mut index = 0;
 

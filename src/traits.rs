@@ -9,8 +9,9 @@ pub trait GenotypeT: Clone{
     
     fn new() -> Self;
     fn new_gene() -> Self::Gene;
-    fn get_dna(&self) -> &Vec<Self::Gene>;
+    fn get_dna(&self) -> &[Self::Gene];
     fn get_dna_mut(&mut self) -> &mut Vec<Self::Gene>;
+    fn set_dna(&mut self, dna: &[Self::Gene]);
     fn calculate_fitness(&mut self);
     fn get_fitness(&self) -> f64;
     fn set_fitness(&mut self, fitness: f64);
