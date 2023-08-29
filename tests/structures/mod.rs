@@ -55,9 +55,6 @@ impl GenotypeT for Genotype{
             age: 0,
         }
     }
-    fn new_gene() -> Self::Gene {
-        Gene::new()
-    }
     fn set_dna(&mut self, dna: &[Self::Gene]){
         self.dna = dna.to_vec();
     }

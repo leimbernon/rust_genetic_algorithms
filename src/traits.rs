@@ -8,7 +8,9 @@ pub trait GenotypeT: Clone{
     type Gene: GeneT;
     
     fn new() -> Self;
-    fn new_gene() -> Self::Gene;
+    fn new_gene() -> Self::Gene{
+        Self::Gene::new()
+    }
     fn get_dna(&self) -> &[Self::Gene];
     fn set_dna(&mut self, dna: &[Self::Gene]);
     fn set_gene(&mut self, gene_index: usize, gene: Self::Gene){
