@@ -22,11 +22,8 @@ pub struct Genotype{
 }
 impl GenotypeT for Genotype{
     type Gene = Gene;
-    fn get_dna(&self) -> &Vec<Self::Gene> {
+    fn get_dna(&self) -> &[Self::Gene] {
         &self.dna
-    }
-    fn get_dna_mut(&mut self) -> &mut Vec<Self::Gene> {
-        &mut self.dna
     }
     fn get_fitness(&self) -> f64 {
         return self.fitness;
@@ -58,7 +55,7 @@ impl GenotypeT for Genotype{
             age: 0,
         }
     }
-    fn new_gene() -> Self::Gene {
-        Gene::new()
+    fn set_dna(&mut self, dna: &[Self::Gene]){
+        self.dna = dna.to_vec();
     }
 }

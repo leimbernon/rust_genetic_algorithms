@@ -37,15 +37,19 @@ These traits are within the `traits` module:
 
 - `GeneT`: This trait must be implemented on your own gene representation.
   - `new()`: This is the constructor function.
-  - `get_id()`: This function must return the id of the gene.
+  - `get_id()`: Optional. This function must return the id of the gene.
 - `GenotypeT`: This trait must be implemented on your own genotype representation.
+  - `Gene`: This is the `GeneT` associated type.
   - `new()`: This is the constructor function.
-  - `get_dna()`: Must return the vector of genes (`GeneT`).
-  - `get_dna_mut()`: Must return the mutable vector of genes (`GeneT`), manily for the mutation operator.
-  - `calculate_fitness()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
+  - `new_gene()`: Optional. Must return `Self::Gene`.
+  - `get_dna()`: Must return the array of genes (`GeneT`).
+  - `set_dna(dna: &[Self::Gene])`: Must set the array of genes (`GeneT`).
+  - `set_gene(gene_index: usize, gene: Self::Gene)`: Optional. This method will replace a gene in the defined gene_index position.
+  - `calculate_fitness()`: Optional. This function must calculate the fitness of the indivudual (or the genotype) in f64.
   - `get_fitness()`: Returns the fitness previously calculated by `calculate_fitness()`.
+  - `set_fitness(fitness: f64)`: Sets the fitness value.
   - `get_age()`: Returns the age of the genotype.
-  - `get_age_mut()`: Must return the mutable age of the genotype.
+  - `set_age()`: Sets the age of the genotype.
 
 ### Operators
 
@@ -137,6 +141,19 @@ impl GeneT for Gene{
 Define the genotype structure, and the fitness calculation.
 
 ```rust
+#[derive(Debug, Copy, Clone, Default, PartialEq)]
+pub struct Gene{
+    pub id: i32,
+}
+impl GeneT for Gene{
+    fn new()->Gene{
+        return Gene{id: -1};
+    }
+    fn get_id(&self) -> i32{
+        return self.id;
+    }
+}
+
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Genotype{
     pub dna: Vec<Gene>,
@@ -145,11 +162,8 @@ pub struct Genotype{
 }
 impl GenotypeT for Genotype{
     type Gene = Gene;
-    fn get_dna(&self) -> &Vec<Self::Gene> {
+    fn get_dna(&self) -> &[Self::Gene] {
         &self.dna
-    }
-    fn get_dna_mut(&mut self) -> &mut Vec<Self::Gene> {
-        &mut self.dna
     }
     fn get_fitness(&self) -> f64 {
         return self.fitness;
@@ -181,8 +195,8 @@ impl GenotypeT for Genotype{
             age: 0,
         }
     }
-    fn new_gene() -> Self::Gene {
-        Gene::new()
+    fn set_dna(&mut self, dna: &[Self::Gene]){
+        self.dna = dna.to_vec();
     }
 }
 ```
