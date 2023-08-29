@@ -15,7 +15,7 @@ pub fn scramble<U: GenotypeT>(individual: &mut U){
         let current_gene = *individual.get_dna().get(i).unwrap();
         let random_gene = *individual.get_dna().get(random_index).unwrap();
 
-        individual.get_dna_mut()[i] = random_gene;
-        individual.get_dna_mut()[random_index] = current_gene;
+        individual.set_gene(i, random_gene);
+        individual.set_gene(random_index, current_gene);
     }
 }

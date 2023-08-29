@@ -33,7 +33,7 @@ pub fn inversion<U: GenotypeT>(individual: &mut U){
         let gene_start = individual.get_dna().get(lower_index + i).copied().unwrap();
 
         //Switches both genes
-        individual.get_dna_mut()[lower_index + i] = gene_end;
-        individual.get_dna_mut()[higher_index - i] = gene_start;
+        individual.set_gene(lower_index + i, gene_end);
+        individual.set_gene(higher_index - i, gene_start);
     }
 }

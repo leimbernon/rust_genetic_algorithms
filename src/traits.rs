@@ -10,7 +10,6 @@ pub trait GenotypeT: Clone{
     fn new() -> Self;
     fn new_gene() -> Self::Gene;
     fn get_dna(&self) -> &[Self::Gene];
-    fn get_dna_mut(&mut self) -> &mut Vec<Self::Gene>;
     fn set_dna(&mut self, dna: &[Self::Gene]);
     fn set_gene(&mut self, gene_index: usize, gene: Self::Gene){
         let mut dna_temp = self.get_dna().to_vec();

@@ -12,6 +12,6 @@ pub fn swap<U: GenotypeT>(individual: &mut U){
     let gene_2 = individual.get_dna().get(index_2).copied().unwrap();
 
     //Swapping both genes
-    individual.get_dna_mut()[index_1] = gene_2;
-    individual.get_dna_mut()[index_2] = gene_1;
+    individual.set_gene(index_1, gene_2);
+    individual.set_gene(index_2, gene_1);
 }

@@ -25,9 +25,6 @@ impl GenotypeT for Genotype{
     fn get_dna(&self) -> &[Self::Gene] {
         &self.dna
     }
-    fn get_dna_mut(&mut self) -> &mut Vec<Self::Gene> {
-        &mut self.dna
-    }
     fn get_fitness(&self) -> f64 {
         return self.fitness;
     }
