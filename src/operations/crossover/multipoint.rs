@@ -43,8 +43,8 @@ pub fn multipoint_crossover<U: GenotypeT>(parent_1: &U, parent_2: &U, crossover_
     }
 
     //Sets the dna into the children and return them
-    *child_1.get_dna_mut() = dna_child_1;
-    *child_2.get_dna_mut() = dna_child_2;
+    child_1.set_dna(dna_child_1.as_slice());
+    child_2.set_dna(dna_child_2.as_slice());
 
     Some(vec![child_1, child_2])
 }
