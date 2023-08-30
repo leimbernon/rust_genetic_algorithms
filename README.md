@@ -49,7 +49,7 @@ These traits are within the `traits` module:
   - `get_fitness()`: Returns the fitness previously calculated by `calculate_fitness()`.
   - `set_fitness(fitness: f64)`: Sets the fitness value.
   - `get_age()`: Returns the age of the genotype.
-  - `set_age()`: Sets the age of the genotype.
+  - `set_age(age: i32)`: Sets the age of the genotype.
 
 ### Operators
 
