@@ -1,9 +1,8 @@
-pub(crate) use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 use std::collections::HashMap;
 use rand::Rng;
 
-pub fn roulette_wheel_selection<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>) -> HashMap<usize, usize>{
+pub fn roulette_wheel_selection<U:GenotypeT>(individuals: &Vec<U>) -> HashMap<usize, usize>{
 
     let mut mating = HashMap::new();
 
@@ -22,7 +21,7 @@ pub fn roulette_wheel_selection<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>) -
     for index in  0..individuals.len(){
 
         //We get the probability
-        if &rng.gen_range(0.0..total_fitness) >= individuals.get(index).unwrap().get_fitness(){
+        if rng.gen_range(0.0..total_fitness) >= individuals.get(index).unwrap().get_fitness(){
 
             if parent_1.is_none() {
                 //If parent 1 is not set, we set it
@@ -40,7 +39,7 @@ pub fn roulette_wheel_selection<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>) -
 }
 
 
-pub fn stochastic_universal_sampling<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>{
+pub fn stochastic_universal_sampling<U:GenotypeT>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>{
     
     let mut mating = HashMap::new();
     let individual_couples = (couples*2) as usize;
@@ -52,10 +51,10 @@ pub fn stochastic_universal_sampling<T:GeneT, U:GenotypeT<T>>(individuals: &Vec<
     let mut rng = rand::thread_rng();
 
     for genotype in individuals{ 
-        total += *genotype.get_fitness();
+        total += genotype.get_fitness();
     }
     for genotype in individuals{
-        let selection_probability = (*genotype.get_fitness() / total) + last_selection_value;
+        let selection_probability = (genotype.get_fitness() / total) + last_selection_value;
         last_selection_value = selection_probability;
         selection_probabilities.push(selection_probability);
     }

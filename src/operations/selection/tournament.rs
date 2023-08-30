@@ -1,4 +1,3 @@
-use crate::traits::GeneT;
 use crate::traits::GenotypeT;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -8,10 +7,9 @@ use rand::Rng;
 /**
  * Main function for tournament selection
  */
-pub fn tournament<T,U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
+pub fn tournament<U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
 where
-T:GeneT + Send + Sync, 
-U:GenotypeT<T> + Send + Sync + 'static + Clone
+U:GenotypeT + Send + Sync + 'static + Clone
 {
     
     if number_of_threads == 1{
@@ -28,10 +26,9 @@ U:GenotypeT<T> + Send + Sync + 'static + Clone
 /**
  * Function for tournament selection in a single thread 
  */
-fn tournament_single_thread<T,U>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>
+fn tournament_single_thread<U>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>
 where
-T:GeneT, 
-U:GenotypeT<T>
+U:GenotypeT
 {
 
     let mut rng = rand::thread_rng();
@@ -84,10 +81,9 @@ U:GenotypeT<T>
 /**
  * Function for tournament selection in multithread 
  */
-fn tournament_multithread<T,U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
+fn tournament_multithread<U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
 where
-T:GeneT + Send + Sync,
-U:GenotypeT<T>+ Send + Sync + 'static + Clone
+U:GenotypeT+ Send + Sync + 'static + Clone
 {
 
     let mut mating = HashMap::new();
