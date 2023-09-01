@@ -54,7 +54,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
     }
 
     //If it's not required to return the best individuals by generation
-    if configuration.limit_configuration.get_best_individual_by_generation.is_some() || configuration.limit_configuration.get_best_individual_by_generation.is_none() {
+    if (configuration.limit_configuration.get_best_individual_by_generation.is_some() && !configuration.limit_configuration.get_best_individual_by_generation.unwrap()) || configuration.limit_configuration.get_best_individual_by_generation.is_none() {
         best_population.add_individual_gn(best_individual, -1);
     }
     best_population
