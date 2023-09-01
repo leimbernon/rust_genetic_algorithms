@@ -58,8 +58,8 @@ fn local_cycle<T: GeneT>(indexes: &Vec<usize>, dna_parent_1: &[T], dna_parent_2:
     for i in 0..dna_parent_1.len(){
         let mut repeated = false;
 
-        for j in 0..indexes.len(){
-            if i == indexes[j]{
+        for j in indexes{
+            if i == *j{
                 repeated = true;
                 break;
             }
