@@ -7,10 +7,10 @@ pub struct Gene{
 }
 impl GeneT for Gene{
     fn new()->Gene{
-        return Gene{id: -1};
+        Gene{id: -1}
     }
     fn get_id(&self) -> i32{
-        return self.id;
+        self.id
     }
 }
 
@@ -26,7 +26,7 @@ impl GenotypeT for Genotype{
         &self.dna
     }
     fn get_fitness(&self) -> f64 {
-        return self.fitness;
+        self.fitness
     }
     fn set_fitness(&mut self, fitness: f64) {
         self.fitness = fitness;
@@ -40,16 +40,14 @@ impl GenotypeT for Genotype{
     fn calculate_fitness(&mut self) {
         
         self.fitness = 0.0;
-        let mut position = 0;
 
-        for i in &self.dna{
-            let fitness = f64::from(i.get_id()*position);
+        for (i, gene) in self.dna.iter().enumerate() {
+            let fitness = f64::from(gene.get_id()*i as i32);
             self.fitness += fitness;
-            position += 1;
         }
     }
     fn new() -> Self {
-        return Genotype{
+        Genotype{
             dna: Vec::new(),
             fitness: 0.0,
             age: 0,
