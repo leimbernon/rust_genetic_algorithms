@@ -141,19 +141,6 @@ impl GeneT for Gene{
 Define the genotype structure, and the fitness calculation.
 
 ```rust
-#[derive(Debug, Copy, Clone, Default, PartialEq)]
-pub struct Gene{
-    pub id: i32,
-}
-impl GeneT for Gene{
-    fn new()->Gene{
-        return Gene{id: -1};
-    }
-    fn get_id(&self) -> i32{
-        return self.id;
-    }
-}
-
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Genotype{
     pub dna: Vec<Gene>,
