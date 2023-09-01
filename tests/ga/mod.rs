@@ -84,7 +84,7 @@ fn test_ga_run_multithread(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
-        number_of_threads: Some(8 as i32),
+        number_of_threads: Some(8),
         limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
