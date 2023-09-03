@@ -1,6 +1,7 @@
 use crate::traits::GenotypeT;
 use std::collections::HashMap;
 use rand::Rng;
+use log::{trace, debug};
 
 /**
  * Function to make the random parent selection between the list of individuals
@@ -10,6 +11,7 @@ pub fn random<U:GenotypeT>(individuals: &Vec<U>) -> HashMap<usize, usize>{
     let mut mating = HashMap::new();
     let mut indexes = Vec::new();
     let mut rng = rand::thread_rng();
+    debug!(target="selection_events", method="random"; "Starting random selection");
 
     //Setting the indexes of the individuals
     let mut i = 0;
@@ -43,6 +45,8 @@ pub fn random<U:GenotypeT>(individuals: &Vec<U>) -> HashMap<usize, usize>{
         //Adding the two individuals in the hashmap
         mating.insert(index_value_1, indexes[random_index_2]);
         indexes.remove(random_index_2);
+
+        trace!(target="selection_events", method="random"; "Mating index 1 {} with index 2 {}", index_value_1, random_index_2);
     }
 
     mating

@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::{sync::Mutex, thread};
 use rand::Rng;
+use log::{trace, debug};
 
 /**
  * Main function for tournament selection
@@ -13,11 +14,13 @@ U:GenotypeT + Send + Sync + 'static + Clone
 {
     
     if number_of_threads == 1{
+        debug!(target="selection_events", method="tournament"; "Starting tournament selection in single thread");
         tournament_single_thread(individuals, couples)
     }else{
         let number_of_threads_t = if number_of_threads > couples {couples}else{number_of_threads};
         let number_of_threads_t = if number_of_threads_t & 1 == 1 {number_of_threads_t-1}else{number_of_threads_t};
 
+        debug!(target="selection_events", method="tournament"; "Starting tournament selection in multiple threads ({})", number_of_threads_t);
         tournament_multithread(individuals, couples, number_of_threads_t)
     }
 }

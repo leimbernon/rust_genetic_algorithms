@@ -1,12 +1,14 @@
 use crate::traits::GenotypeT;
 use std::collections::HashMap;
 use rand::Rng;
+use log::{trace, debug};
 
 pub fn roulette_wheel_selection<U:GenotypeT>(individuals: &Vec<U>) -> HashMap<usize, usize>{
 
     let mut mating = HashMap::new();
 
     //1- Calculate the sum of all fitnesses
+    debug!(target="selection_events", method="roulette_wheel_selection"; "Starting the roulette wheel selection");
     let mut total_fitness = 0.0;
     let mut rng = rand::thread_rng();
 
@@ -14,6 +16,7 @@ pub fn roulette_wheel_selection<U:GenotypeT>(individuals: &Vec<U>) -> HashMap<us
     { 
         total_fitness += genotype.get_fitness(); 
     }
+    trace!(target="selection_events", method="roulette_wheel_selection"; "Total fitness: {}", total_fitness);
 
     //2- Identifies what individuals will be parents
     let mut parent_1 = None;
@@ -35,14 +38,17 @@ pub fn roulette_wheel_selection<U:GenotypeT>(individuals: &Vec<U>) -> HashMap<us
         }
     }
 
+    debug!(target="selection_events", method="roulette_wheel_selection"; "Roulette wheel selection finished");
     mating
 }
 
 
 pub fn stochastic_universal_sampling<U:GenotypeT>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>{
     
+    debug!(target="selection_events", method="stochastic_universal_sampling"; "Starting the stochastic universal sampling selection");
     let mut mating = HashMap::new();
     let individual_couples = (couples*2) as usize;
+    trace!(target="selection_events", method="stochastic_universal_sampling"; "Individual couples: {}", individual_couples);
 
     //1- Calculate the selection probabilities
     let mut total = 0.0;
@@ -53,15 +59,18 @@ pub fn stochastic_universal_sampling<U:GenotypeT>(individuals: &Vec<U>, couples:
     for genotype in individuals{ 
         total += genotype.get_fitness();
     }
+    trace!(target="selection_events", method="stochastic_universal_sampling"; "Total fitness: {}", total);
     for genotype in individuals{
         let selection_probability = (genotype.get_fitness() / total) + last_selection_value;
         last_selection_value = selection_probability;
         selection_probabilities.push(selection_probability);
+        trace!(target="selection_events", method="stochastic_universal_sampling"; "Selection probability {}", selection_probability);
     }
 
     //2- Calculate the pointer distance and the starting point between 0 and the pointer distance
     let pointer_distance = 1.0 / individual_couples as f64;
     let starting_point = rng.gen_range(0.0..pointer_distance);
+    trace!(target="selection_events", method="stochastic_universal_sampling"; "pointer distance {} - starting point {}", pointer_distance, starting_point);
 
     //3- Parent identification
     let mut current_point = starting_point;
@@ -105,5 +114,6 @@ pub fn stochastic_universal_sampling<U:GenotypeT>(individuals: &Vec<U>, couples:
         next_individual += 1;
     }
 
+    debug!(target="mutation_events", method="stochastic_universal_sampling"; "Stochastic universal sampling finished");
     mating
 }
