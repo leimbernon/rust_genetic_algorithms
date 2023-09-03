@@ -1,5 +1,6 @@
 use std::{sync::{mpsc::sync_channel, Mutex, Arc}, thread, collections::HashMap};
 use rand::Rng;
+use log::{trace, debug, info};
 
 use crate::{population::Population, traits::GenotypeT, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
 use crate::configuration::GaConfiguration;
@@ -22,19 +23,22 @@ U:GenotypeT + Send + Sync + 'static + Clone
     //We start the cycles
     for i in 0..configuration.limit_configuration.max_generations {
 
-        println!("Generation number: {}", i+1);
+        info!(target="ga_events", method="run"; "Generation number: {}", i+1);
         age += 1;
 
         //1- Parent selection for reproduction
         let mut parents = selection::factory(&population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
+        info!(target="ga_events", method="run"; "Parents selected for reproduction");
 
         //2- Getting the offspring from the multithreading function
         let mut offspring = parent_crossover_multithread(&mut parents, &population.individuals, &configuration, age);
+        info!(target="ga_events", method="run"; "Offspring created");
 
         //3- Sets the best individual
         for child in &offspring{
             best_individual = get_best_individual(&best_individual, child, configuration.limit_configuration.problem_solving);
         }
+        info!(target="ga_events", method="run"; "Best individual calculated - generation {}", i+1);
 
         //3.1- If we want to return the best individual by generation
         if configuration.limit_configuration.get_best_individual_by_generation.is_some() {
@@ -46,6 +50,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
         //5- Survivor selection
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration);
+        info!(target="ga_events", method="run"; "Survivors selected");
 
         //6- Identifies if the limit has been reached or not
         if limit_reached(configuration.limit_configuration, &population.individuals){
@@ -68,7 +73,9 @@ where
 U:GenotypeT
 {
 
+    debug!(target="ga_events", method="get_best_individual"; "Started the best individual method");
     let mut best_individual = U::new();
+    trace!(target="ga_events", method="get_best_individual"; "Individual 1 fitness: {} - Individual 2 fitness: {}", individual_1.get_fitness(), individual_2.get_fitness());
 
     if problem_solving == ProblemSolving::Maximization {
 
@@ -94,6 +101,7 @@ U:GenotypeT
 
     }
 
+    debug!(target="ga_events", method="get_best_individual"; "Best individual method finished");
     best_individual
 }
 
@@ -105,12 +113,14 @@ where
 U:GenotypeT
 {
 
+    debug!(target="ga_events", method="limit_reached"; "Started limit reached method");
     let mut result = false;
 
     if limit.problem_solving == ProblemSolving::Minimization{
         //If the problem solving is minimization, fitness must be 0
         for genotype in individuals {
             if genotype.get_fitness() == 0.0 {
+                trace!(target="ga_events", method="limit_reached"; "limit reached for minimization");
                 result = true;
                 break;
             }
@@ -119,12 +129,14 @@ U:GenotypeT
         //If the problem solving is a fixed fitness
         for genotype in individuals {
             if genotype.get_fitness() == limit.fitness_target.unwrap() {
+                trace!(target="ga_events", method="limit_reached"; "limit reached for fixed fitness");
                 result = true;
                 break;
             }
         }
     }
 
+    debug!(target="ga_events", method="limit_reached"; "Limit reached method finished");
     result
 }
 
@@ -136,6 +148,7 @@ where
 U:GenotypeT + Send + Sync + 'static + Clone
 {
 
+    debug!(target="ga_events", method="population_fitness_calculation_multithread"; "Started the population fitness calculation");
     let mut number_of_threads = configuration.number_of_threads.unwrap_or(1);
     let (tx, rx) = sync_channel(number_of_threads as usize);
 
@@ -212,6 +225,8 @@ U:GenotypeT + Send + Sync + 'static + Clone
     best_individual.set_dna(best_individual_t.lock().unwrap().get_dna());
     best_individual.set_fitness(best_individual_t.lock().unwrap().get_fitness());
 
+    debug!(target="ga_events", method="population_fitness_calculation_multithread"; "Population fitness calculation finished");
+
     best_individual
 }
 
@@ -223,6 +238,7 @@ where
 U:GenotypeT + Send + Sync + 'static + Clone
 {
     //Setting the control variables
+    debug!(target="ga_events", method="parent_crossover_multithread"; "Started the parent crossover");
     let mut number_of_threads = if configuration.number_of_threads.is_none() {1} else {configuration.number_of_threads.unwrap()}; 
     number_of_threads = if number_of_threads > parents.len() as i32 {parents.len() as i32}else{number_of_threads};
     let jump = parents.len() / number_of_threads as usize;
@@ -265,6 +281,8 @@ U:GenotypeT + Send + Sync + 'static + Clone
                 let crossover_probability = rng.gen_range(0.0..1.0);
                 let crossover_probability_config = if configuration.crossover_configuration.probability.is_none(){1.0}else{configuration.crossover_configuration.probability.unwrap()};
                 
+                info!(target="ga_events", method="parent_crossover_multithread"; "Started the parent crossover");
+
                 let mut child_1: U;
                 let mut child_2: U;
                 let mut offspring_t: Vec<U> = vec![];
@@ -281,6 +299,8 @@ U:GenotypeT + Send + Sync + 'static + Clone
                 //Making the mutation of each child when the random number is below or equal the given probability
                 let mut mutation_probability = rng.gen_range(0.0..1.0);
                 let mutation_probability_config = if configuration.mutation_configuration.probability.is_none(){1.0}else{configuration.mutation_configuration.probability.unwrap()};
+                info!(target="ga_events", method="parent_crossover_multithread"; "mutation_probability_config {} - mutation probability {}", mutation_probability_config, mutation_probability);
+
                 if mutation_probability < mutation_probability_config {
                     mutation::factory(configuration.mutation_configuration.method, &mut child_1);
                 }
@@ -314,6 +334,6 @@ U:GenotypeT + Send + Sync + 'static + Clone
         handle.join().unwrap();
     }
 
+    debug!(target="ga_events", method="parent_crossover_multithread"; "Parent crossover finished");
     return offspring.lock().unwrap().to_vec();
-
 }
