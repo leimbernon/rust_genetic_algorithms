@@ -13,6 +13,7 @@ fn test_ga_start_maximize(){
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: None, method: Mutation::Swap },
         survivor: Survivor::Fitness,
+        log_level: None,
     };
 
     //Creates the population
@@ -51,6 +52,7 @@ fn test_ga_run_minimize(){
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
         survivor: Survivor::Fitness,
+        log_level: None,
     };
 
     //Creates the population
@@ -90,6 +92,7 @@ fn test_ga_run_multithread(){
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration{method: Mutation::Swap, probability: None},
         survivor: Survivor::Fitness,
+        log_level: None,
     };
 
     //Creates the population
