@@ -1,6 +1,7 @@
 use std::{sync::{mpsc::sync_channel, Mutex, Arc}, thread, collections::HashMap};
 use rand::Rng;
 use log::{trace, debug, info};
+use std::env;
 
 use crate::{population::Population, traits::GenotypeT, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
 use crate::configuration::GaConfiguration;
@@ -12,6 +13,12 @@ pub fn run<U>(mut population: Population<U>, configuration: GaConfiguration)->Po
 where 
 U:GenotypeT + Send + Sync + 'static + Clone
 {
+
+    //We set the environment variable from the configuration value
+    let key = "RUST_LOG";
+    let log_level = if configuration.log_level.is_some(){log::LevelFilter::Off}else{configuration.log_level.unwrap()};
+    env::set_var(key, log_level.as_str());
+
     //Best individual within the generations and population returned
     let initial_population_size = population.size();
     let mut age = 0;
