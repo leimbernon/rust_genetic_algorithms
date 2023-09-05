@@ -36,17 +36,17 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
         //1- Parent selection for reproduction
         let mut parents = selection::factory(&population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
-        info!(target="ga_events", method="run"; "Parents selected for reproduction");
+        debug!(target="ga_events", method="run"; "Parents selected for reproduction");
 
         //2- Getting the offspring from the multithreading function
         let mut offspring = parent_crossover_multithread(&mut parents, &population.individuals, &configuration, age);
-        info!(target="ga_events", method="run"; "Offspring created");
+        debug!(target="ga_events", method="run"; "Offspring created");
 
         //3- Sets the best individual
         for child in &offspring{
             best_individual = get_best_individual(&best_individual, child, configuration.limit_configuration.problem_solving);
         }
-        info!(target="ga_events", method="run"; "Best individual calculated - generation {}", i+1);
+        debug!(target="ga_events", method="run"; "Best individual calculated - generation {}", i+1);
 
         //3.1- If we want to return the best individual by generation
         if configuration.limit_configuration.get_best_individual_by_generation.is_some() {
@@ -58,7 +58,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
         //5- Survivor selection
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration);
-        info!(target="ga_events", method="run"; "Survivors selected");
+        debug!(target="ga_events", method="run"; "Survivors selected");
 
         //6- Identifies if the limit has been reached or not
         if limit_reached(configuration.limit_configuration, &population.individuals){
@@ -289,7 +289,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
                 let crossover_probability = rng.gen_range(0.0..1.0);
                 let crossover_probability_config = if configuration.crossover_configuration.probability.is_none(){1.0}else{configuration.crossover_configuration.probability.unwrap()};
                 
-                info!(target="ga_events", method="parent_crossover_multithread"; "Started the parent crossover");
+                debug!(target="ga_events", method="parent_crossover_multithread"; "Started the parent crossover");
 
                 let mut child_1: U;
                 let mut child_2: U;
@@ -307,7 +307,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
                 //Making the mutation of each child when the random number is below or equal the given probability
                 let mut mutation_probability = rng.gen_range(0.0..1.0);
                 let mutation_probability_config = if configuration.mutation_configuration.probability.is_none(){1.0}else{configuration.mutation_configuration.probability.unwrap()};
-                info!(target="ga_events", method="parent_crossover_multithread"; "mutation_probability_config {} - mutation probability {}", mutation_probability_config, mutation_probability);
+                debug!(target="ga_events", method="parent_crossover_multithread"; "mutation_probability_config {} - mutation probability {}", mutation_probability_config, mutation_probability);
 
                 if mutation_probability < mutation_probability_config {
                     mutation::factory(configuration.mutation_configuration.method, &mut child_1);
