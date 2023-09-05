@@ -224,7 +224,7 @@ let individuals = vec![Genotype{dna: dna_1, fitness: 1.0, age: 0}, Genotype{dna:
 Finally, run the GA.
 
 ```rust
-population = run(population, configuration);
+population = genetic_algorithms::ga::run(population, configuration);
 ```
 
 ### Other examples

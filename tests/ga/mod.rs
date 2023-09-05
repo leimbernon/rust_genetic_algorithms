@@ -1,6 +1,5 @@
 use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration, MutationConfiguration, CrossoverConfiguration}};
 use crate::structures::{Gene, Genotype};
-use log;
 extern crate num_cpus;
 
 #[test]
