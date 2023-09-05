@@ -92,6 +92,7 @@ This structure contains the following attributes:
 - `crossover_configuration`: It configures the crossover method with the `CrossoverConfiguration` structure.
 - `mutation_configuration`: It configures the mutation method with the `MutationConfiguration` structure.
 - `survivor`: Indicates what survivor operator to use.
+- `log_level`: Optional. It configures the maximum log level we want to have. If this value is none, logs are disabled.
 
 `SelectionConfiguration`:
 - `number_of_couples`: Optional. This attribute is only valid for stochastic universal sampling. It indicates the number of couples to select from the population.
@@ -198,6 +199,7 @@ let configuration = GaConfiguration{
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
         survivor: Survivor::Fitness,
+        log_level: Some(log::LevelFilter::Info),
     };
 ```
 
