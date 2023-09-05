@@ -37,15 +37,19 @@ These traits are within the `traits` module:
 
 - `GeneT`: This trait must be implemented on your own gene representation.
   - `new()`: This is the constructor function.
-  - `get_id()`: This function must return the id of the gene.
+  - `get_id()`: Optional. This function must return the id of the gene.
 - `GenotypeT`: This trait must be implemented on your own genotype representation.
+  - `Gene`: This is the `GeneT` associated type.
   - `new()`: This is the constructor function.
-  - `get_dna()`: Must return the vector of genes (`GeneT`).
-  - `get_dna_mut()`: Must return the mutable vector of genes (`GeneT`), manily for the mutation operator.
-  - `calculate_fitness()`: This function must calculate the fitness of the indivudual (or the genotype) in f64.
+  - `new_gene()`: Optional. Must return `Self::Gene`.
+  - `get_dna()`: Must return the array of genes (`GeneT`).
+  - `set_dna(dna: &[Self::Gene])`: Must set the array of genes (`GeneT`).
+  - `set_gene(gene_index: usize, gene: Self::Gene)`: Optional. This method will replace a gene in the defined gene_index position.
+  - `calculate_fitness()`: Optional. This function must calculate the fitness of the indivudual (or the genotype) in f64.
   - `get_fitness()`: Returns the fitness previously calculated by `calculate_fitness()`.
+  - `set_fitness(fitness: f64)`: Sets the fitness value.
   - `get_age()`: Returns the age of the genotype.
-  - `get_age_mut()`: Must return the mutable age of the genotype.
+  - `set_age(age: i32)`: Sets the age of the genotype.
 
 ### Operators
 
@@ -88,6 +92,7 @@ This structure contains the following attributes:
 - `crossover_configuration`: It configures the crossover method with the `CrossoverConfiguration` structure.
 - `mutation_configuration`: It configures the mutation method with the `MutationConfiguration` structure.
 - `survivor`: Indicates what survivor operator to use.
+- `log_level`: Optional. It configures the maximum log level we want to have. If this value is none, logs are disabled.
 
 `SelectionConfiguration`:
 - `number_of_couples`: Optional. This attribute is only valid for stochastic universal sampling. It indicates the number of couples to select from the population.
@@ -138,26 +143,27 @@ Define the genotype structure, and the fitness calculation.
 
 ```rust
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct Genotype<T: GeneT>{
-    pub dna: Vec<T>,
+pub struct Genotype{
+    pub dna: Vec<Gene>,
     pub fitness: f64,
     pub age: i32,
 }
-impl <T: GeneT> GenotypeT<T> for Genotype<T>{
-    fn get_dna(&self) -> &Vec<T> {
+impl GenotypeT for Genotype{
+    type Gene = Gene;
+    fn get_dna(&self) -> &[Self::Gene] {
         &self.dna
     }
-    fn get_dna_mut(&mut self) -> &mut Vec<T> {
-        &mut self.dna
+    fn get_fitness(&self) -> f64 {
+        return self.fitness;
     }
-    fn get_fitness(&self) -> &f64 {
-        return &self.fitness;
+    fn set_fitness(&mut self, fitness: f64) {
+        self.fitness = fitness;
     }
-     fn get_age_mut(&mut self) -> &mut i32 {
-        &mut self.age
+    fn set_age(&mut self, age:i32){
+        self.age = age;
     }
-    fn get_age(&self) -> &i32 {
-        &self.age
+    fn get_age(&self) -> i32 {
+        self.age
     }
     fn calculate_fitness(&mut self) {
         
@@ -177,6 +183,9 @@ impl <T: GeneT> GenotypeT<T> for Genotype<T>{
             age: 0,
         }
     }
+    fn set_dna(&mut self, dna: &[Self::Gene]){
+        self.dna = dna.to_vec();
+    }
 }
 ```
 
@@ -190,6 +199,7 @@ let configuration = GaConfiguration{
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
         survivor: Survivor::Fitness,
+        log_level: Some(log::LevelFilter::Info),
     };
 ```
 
@@ -216,7 +226,7 @@ let individuals = vec![Genotype{dna: dna_1, fitness: 1.0, age: 0}, Genotype{dna:
 Finally, run the GA.
 
 ```rust
-population = run(population, configuration);
+population = genetic_algorithms::ga::run(population, configuration);
 ```
 
 ### Other examples
@@ -229,5 +239,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "0.9.2"
+genetic_algorithms = "1.0.0"
 ```

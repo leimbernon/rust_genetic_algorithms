@@ -13,6 +13,7 @@ fn test_ga_start_maximize(){
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: None, method: Mutation::Swap },
         survivor: Survivor::Fitness,
+        log_level: Some(log::LevelFilter::Info),
     };
 
     //Creates the population
@@ -36,7 +37,7 @@ fn test_ga_start_maximize(){
     population = run(population, configuration);
     
     assert_eq!(population.individuals.len(), 1);
-    assert_eq!(population.individuals[0].get_fitness(), &20.0);
+    assert_eq!(population.individuals[0].get_fitness(), 20.0);
 
 }
 
@@ -51,6 +52,7 @@ fn test_ga_run_minimize(){
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
         survivor: Survivor::Fitness,
+        log_level: None,
     };
 
     //Creates the population
@@ -74,7 +76,7 @@ fn test_ga_run_minimize(){
     population = run(population, configuration);
     
     assert_eq!(population.individuals.len(), 1);
-    assert_eq!(population.individuals[0].get_fitness(), &10.0);
+    assert_eq!(population.individuals[0].get_fitness(), 10.0);
 
 }
 
@@ -84,12 +86,13 @@ fn test_ga_run_multithread(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
-        number_of_threads: Some(8 as i32),
+        number_of_threads: Some(8),
         limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration{method: Mutation::Swap, probability: None},
         survivor: Survivor::Fitness,
+        log_level: None,
     };
 
     //Creates the population

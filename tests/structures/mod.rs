@@ -7,54 +7,53 @@ pub struct Gene{
 }
 impl GeneT for Gene{
     fn new()->Gene{
-        return Gene{id: -1};
+        Gene{id: -1}
     }
-    fn get_id(&self) -> &i32{
-        return &self.id;
+    fn get_id(&self) -> i32{
+        self.id
     }
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct Genotype<T: GeneT>{
-    pub dna: Vec<T>,
+pub struct Genotype{
+    pub dna: Vec<Gene>,
     pub fitness: f64,
     pub age: i32,
 }
-impl <T: GeneT> GenotypeT<T> for Genotype<T>{
-    fn get_dna(&self) -> &Vec<T> {
+impl GenotypeT for Genotype{
+    type Gene = Gene;
+    fn get_dna(&self) -> &[Self::Gene] {
         &self.dna
     }
-    fn get_dna_mut(&mut self) -> &mut Vec<T> {
-        &mut self.dna
+    fn get_fitness(&self) -> f64 {
+        self.fitness
     }
-    fn get_fitness(&self) -> &f64 {
-        return &self.fitness;
+    fn set_fitness(&mut self, fitness: f64) {
+        self.fitness = fitness;
     }
-    fn get_fitness_mut(&mut self) -> &mut f64 {
-        &mut self.fitness
+    fn set_age(&mut self, age:i32){
+        self.age = age;
     }
-    fn get_age_mut(&mut self) -> &mut i32 {
-        &mut self.age
-    }
-    fn get_age(&self) -> &i32 {
-        &self.age
+    fn get_age(&self) -> i32 {
+        self.age
     }
     fn calculate_fitness(&mut self) {
         
         self.fitness = 0.0;
-        let mut position = 0;
 
-        for i in &self.dna{
-            let fitness = f64::from(i.get_id()*position);
+        for (i, gene) in self.dna.iter().enumerate() {
+            let fitness = f64::from(gene.get_id()*i as i32);
             self.fitness += fitness;
-            position += 1;
         }
     }
     fn new() -> Self {
-        return Genotype{
+        Genotype{
             dna: Vec::new(),
             fitness: 0.0,
             age: 0,
         }
+    }
+    fn set_dna(&mut self, dna: &[Self::Gene]){
+        self.dna = dna.to_vec();
     }
 }
