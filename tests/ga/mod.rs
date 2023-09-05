@@ -1,5 +1,6 @@
 use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration, MutationConfiguration, CrossoverConfiguration}};
 use crate::structures::{Gene, Genotype};
+use log;
 extern crate num_cpus;
 
 #[test]
@@ -13,7 +14,7 @@ fn test_ga_start_maximize(){
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: None, method: Mutation::Swap },
         survivor: Survivor::Fitness,
-        log_level: None,
+        log_level: Some(log::LevelFilter::Info),
     };
 
     //Creates the population
