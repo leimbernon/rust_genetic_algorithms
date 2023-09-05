@@ -43,4 +43,5 @@ pub struct GaConfiguration {
     pub crossover_configuration: CrossoverConfiguration,
     pub mutation_configuration: MutationConfiguration,
     pub survivor: Survivor,
+    pub log_level: Option<log::LevelFilter>,
 }

@@ -1,5 +1,6 @@
 use crate::traits::GenotypeT;
 use crate::traits::GeneT;
+use log::{trace, debug};
 
 
 pub fn cycle<U: GenotypeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
@@ -16,6 +17,7 @@ pub fn cycle<U: GenotypeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
     //Creation of the children DNA
     let mut dna_child_1 = vec![U::Gene::new(); parent_1.get_dna().len()];
     let mut dna_child_2 = vec![U::Gene::new(); parent_2.get_dna().len()];
+    debug!(target="crossover_events", method="cycle"; "Starting the crossover");
 
     let mut child_1 = U::new();
     let mut child_2 = U::new();
@@ -23,8 +25,10 @@ pub fn cycle<U: GenotypeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
     //We loop until having all the elements from the parent 1
     while indexes.len() <= parent_1.get_dna().len() {
 
+        trace!(target="crossover_events", method="cycle"; "Getting the cycle indexes in the cycle number {}", cycle_number);
         let cycle_indexes = local_cycle(&indexes, parent_1.get_dna(), parent_2.get_dna());
         indexes.extend(cycle_indexes.iter().copied());
+        trace!(target="crossover_events", method="cycle"; "Cycle indexes calculated in the cycle number {}", cycle_number);
 
         let is_odd_cycle = cycle_number & 1 == 1;
 
@@ -45,6 +49,7 @@ pub fn cycle<U: GenotypeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
     //Setting the DNA to the children
     child_1.set_dna(dna_child_1.as_slice());
     child_2.set_dna(dna_child_2.as_slice());
+    debug!(target="crossover_events", method="cycle"; "Crossover finished");
 
     Some(vec![child_1, child_2])
 }

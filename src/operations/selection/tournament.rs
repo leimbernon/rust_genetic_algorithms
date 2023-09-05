@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::{sync::Mutex, thread};
 use rand::Rng;
+use log::{trace, debug};
 
 /**
  * Main function for tournament selection
@@ -17,7 +18,6 @@ U:GenotypeT + Send + Sync + 'static + Clone
     }else{
         let number_of_threads_t = if number_of_threads > couples {couples}else{number_of_threads};
         let number_of_threads_t = if number_of_threads_t & 1 == 1 {number_of_threads_t-1}else{number_of_threads_t};
-
         tournament_multithread(individuals, couples, number_of_threads_t)
     }
 }
@@ -31,6 +31,7 @@ where
 U:GenotypeT
 {
 
+    debug!(target="selection_events", method="tournament"; "Starting tournament selection in single thread");
     let mut rng = rand::thread_rng();
     let mut mating = HashMap::new();
     let individual_couples = couples*2;
@@ -48,9 +49,11 @@ U:GenotypeT
     for _i in 0..indexes.len(){
         let index_1 = rng.gen_range(0..indexes.len());
         let final_index_1 = indexes[index_1];
+        trace!(target="selection_events", method="tournament"; "Index 1: {}, final index 1: {}", index_1, final_index_1);
 
         let index_2 = rng.gen_range(0..indexes.len());
         let final_index_2 = indexes[index_2];
+        trace!(target="selection_events", method="tournament"; "Index 2: {}, final index 2: {}", index_2, final_index_2);
 
         let final_index;
         let index_to_delete;
@@ -68,6 +71,7 @@ U:GenotypeT
         if parent_1.is_none() {
             parent_1 = Some(final_index);
         }else{
+            trace!(target="selection_events", method="tournament"; "Mating index 1: {} - index 2: {}", parent_1.unwrap(), final_index);
             mating.insert(parent_1.unwrap() as usize, final_index as usize);
             parent_1 = None;
         }
@@ -75,6 +79,7 @@ U:GenotypeT
         indexes.remove(index_to_delete);
     }
 
+    debug!(target="selection_events", method="tournament"; "Tournament selection in single thread finished");
     mating
 }
 
@@ -86,6 +91,7 @@ where
 U:GenotypeT+ Send + Sync + 'static + Clone
 {
 
+    debug!(target="selection_events", method="tournament"; "Starting tournament selection in multiple threads ({})", number_of_threads);
     let mut mating = HashMap::new();
     let couples = if couples*2 > individuals.len() as i32 {(individuals.len() / 2) as i32}else{couples};
 
@@ -105,10 +111,11 @@ U:GenotypeT+ Send + Sync + 'static + Clone
     let mut start_index = 0;
     let jump = indexes.len() as i32 / number_of_threads;
     let individuals = Arc::new(Mutex::new(Vec::from_iter(individuals[..].iter().cloned())));
+    trace!(target="selection_events", method="tournament"; "start index: {}, jump: {}", start_index, jump);
 
     //Running the different threads
     for thread in 0..number_of_threads{
-
+        
         //Copies of the variables
         let winners = if thread & 1 == 1 {Arc::clone(&left)}else{Arc::clone(&right)};
         let individuals = Arc::clone(&individuals);
@@ -117,6 +124,8 @@ U:GenotypeT+ Send + Sync + 'static + Clone
         let end_index = if start_index + jump > indexes_len as i32 {indexes_len as i32}else{start_index + jump};
         let indexes = Vec::from_iter(indexes[start_index as usize..end_index as usize].iter().cloned());
         let indexes = Arc::new(Mutex::new(indexes));
+
+        trace!(target="selection_events", method="tournament"; "Thread {} - indexes length {} - end index {}", thread, indexes_len, end_index);
 
         //Run the thread
         let handle = thread::spawn(move || {
@@ -133,6 +142,7 @@ U:GenotypeT+ Send + Sync + 'static + Clone
 
                 let index_2 = rng.gen_range(0..indexes_t.len());
                 let final_index_2 = indexes_t[index_2];
+                trace!(target="selection_events", method="tournament"; "Thread {} - indexes 1 {} - final index 1 {} - index 2 {} - final index 2 {} ", thread, index_1, final_index_1, index_2, final_index_2);
 
                 //Compare both individuals
                 if individuals_t[final_index_1 as usize].get_fitness() >= individuals_t[final_index_2 as usize].get_fitness(){
@@ -148,6 +158,7 @@ U:GenotypeT+ Send + Sync + 'static + Clone
         handles.push(handle);
 
         start_index = if start_index + jump > indexes_len as i32 {indexes_len as i32}else{start_index + jump};
+        trace!(target="selection_events", method="tournament"; "Thread {} - start index {}", thread, start_index);
     }
 
     for handle in handles{
@@ -161,7 +172,9 @@ U:GenotypeT+ Send + Sync + 'static + Clone
     //Inserts the keys and values into the hashmap
     for item in 0..left.len() {
         mating.insert(left[item] as usize, right[item] as usize);
+        trace!(target="selection_events", method="tournament"; "Mating index 1: {} - index 2: {} ", left[item], right[item]);
     }
 
+    debug!(target="selection_events", method="tournament"; "Tournament selection in multiple threads finished");
     mating
 }
