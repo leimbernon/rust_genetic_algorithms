@@ -3,7 +3,7 @@ use rand::Rng;
 use log::{trace, debug, info};
 use std::env;
 
-use crate::{population::Population, traits::GenotypeT, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration}};
+use crate::{population::Population, traits::GenotypeT, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}};
 use crate::configuration::GaConfiguration;
 
 /**
@@ -16,7 +16,14 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
     //We set the environment variable from the configuration value
     let key = "RUST_LOG";
-    let log_level = if configuration.log_level.is_none(){log::LevelFilter::Off}else{configuration.log_level.unwrap()};
+    let log_level = if configuration.log_level.is_none(){log::LevelFilter::Off}else{match configuration.log_level.unwrap(){
+        LogLevel::Off => log::LevelFilter::Off,
+        LogLevel::Error => log::LevelFilter::Error,
+        LogLevel::Warn => log::LevelFilter::Warn,
+        LogLevel::Info => log::LevelFilter::Info,
+        LogLevel::Debug => log::LevelFilter::Debug,
+        LogLevel::Trace => log::LevelFilter::Trace,
+    }};
     env::set_var(key, log_level.as_str());
     let _ = env_logger::try_init();
 
