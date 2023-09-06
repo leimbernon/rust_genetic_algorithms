@@ -141,6 +141,12 @@ U:GenotypeT
             }
         }
     }else if limit.problem_solving == ProblemSolving::FixedFitness{
+
+        //We check that fitness target is not none
+        if limit.fitness_target.is_none(){
+            panic!("For FixedFitness problems, fitness_target must be set.");
+        }
+
         //If the problem solving is a fixed fitness
         for genotype in individuals {
             if genotype.get_fitness() == limit.fitness_target.unwrap() {
