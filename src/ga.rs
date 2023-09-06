@@ -3,7 +3,7 @@ use rand::Rng;
 use log::{trace, debug, info};
 use std::env;
 
-use crate::{population::Population, traits::GenotypeT, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}};
+use crate::{population::Population, traits::GenotypeT, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::condition_checker_factory};
 use crate::configuration::GaConfiguration;
 
 /**
@@ -13,6 +13,9 @@ pub fn run<U>(mut population: Population<U>, configuration: GaConfiguration)->Po
 where 
 U:GenotypeT + Send + Sync + 'static + Clone
 {
+
+    //Before starting the run, we will check the conditions
+    condition_checker_factory(configuration, &population);
 
     //We set the environment variable from the configuration value
     let key = "RUST_LOG";
@@ -121,7 +124,7 @@ U:GenotypeT
 }
 
 /**
- * Function to indentify if the limit has been reached or not in the current generation
+ * Function to identify if the limit has been reached or not in the current generation
  */
 fn limit_reached<U>(limit: LimitConfiguration, individuals: &Vec<U>)->bool
 where
@@ -141,11 +144,6 @@ U:GenotypeT
             }
         }
     }else if limit.problem_solving == ProblemSolving::FixedFitness{
-
-        //We check that fitness target is not none
-        if limit.fitness_target.is_none(){
-            panic!("For FixedFitness problems, fitness_target must be set.");
-        }
 
         //If the problem solving is a fixed fitness
         for genotype in individuals {
