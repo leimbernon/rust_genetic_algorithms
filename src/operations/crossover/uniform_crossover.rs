@@ -6,7 +6,7 @@ pub fn uniform<U: GenotypeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
 
     //Before doing the operation, we check that the dna in the parent 1 has the same length of the dna in the parent 2
     if parent_1.get_dna().len() != parent_2.get_dna().len() {
-        panic!("parent 1 and parent 2 must have the same dna length");
+        panic!("parent 1 and parent 2 must have the same dna length. Currently parent 1 has a length of {} and parent 2 {}", parent_1.get_dna().len(), parent_2.get_dna().len());
     }
 
     let mut rng = rand::thread_rng();

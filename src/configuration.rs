@@ -1,3 +1,5 @@
+use std::fmt;
+
 use crate::operations::{Crossover, Selection, Mutation, Survivor};
 
 
@@ -6,6 +8,15 @@ pub enum ProblemSolving {
     Minimization,
     Maximization,
     FixedFitness,
+}
+impl fmt::Display for ProblemSolving {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            ProblemSolving::Minimization => write!(f, "Minimization"),
+            ProblemSolving::Maximization => write!(f, "Maximization"),
+            ProblemSolving::FixedFitness => write!(f, "FixedFitness"),
+        }
+    }
 }
 
 #[derive(Copy, Clone)]

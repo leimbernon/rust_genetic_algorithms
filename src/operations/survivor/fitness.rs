@@ -7,12 +7,9 @@ pub fn fitness_based<U:GenotypeT>(individuals: &mut Vec<U>, population_size: usi
     if limit_configuration.problem_solving != ProblemSolving::FixedFitness {
         //We sort the individuals by their fitness if there is not a fixed fitness problem
         individuals.sort_by(|a, b| b.get_fitness().partial_cmp(&a.get_fitness()).unwrap());
-    }else if limit_configuration.fitness_target.is_some(){
+    }else{
         //We sort the individuals by their distance with the fitness target in a fixed fitness problem
         individuals.sort_by(|a, b| b.get_fitness_distance(&limit_configuration.fitness_target.unwrap()).partial_cmp(&a.get_fitness_distance(&limit_configuration.fitness_target.unwrap())).unwrap());
-    }else{
-        //If we are solving a fixed fitness problem, without a fitness target, we should stop the run.
-        panic!("For FixedFitness problems, fitness_target must be set.");
     }
 
     //If there is more individuals than the defined population number
