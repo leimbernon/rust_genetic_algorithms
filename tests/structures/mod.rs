@@ -12,6 +12,9 @@ impl GeneT for Gene{
     fn get_id(&self) -> i32{
         self.id
     }
+    fn set_id(&mut self, id: i32) {
+        self.id = id;
+    }
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
