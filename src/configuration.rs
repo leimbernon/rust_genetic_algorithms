@@ -9,6 +9,16 @@ pub enum ProblemSolving {
 }
 
 #[derive(Copy, Clone)]
+pub enum LogLevel {
+    Off,
+    Error,
+    Warn,
+    Info,
+    Debug,
+    Trace,
+}
+
+#[derive(Copy, Clone)]
 pub struct SelectionConfiguration{
     pub number_of_couples: Option<i32>,
     pub method: Selection,
@@ -43,5 +53,5 @@ pub struct GaConfiguration {
     pub crossover_configuration: CrossoverConfiguration,
     pub mutation_configuration: MutationConfiguration,
     pub survivor: Survivor,
-    pub log_level: Option<log::LevelFilter>,
+    pub log_level: Option<LogLevel>,
 }
