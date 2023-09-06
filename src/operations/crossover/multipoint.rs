@@ -5,7 +5,7 @@ pub fn multipoint_crossover<U: GenotypeT>(parent_1: &U, parent_2: &U, crossover_
 
     //Before doing the operation, we check that the dna in parent 1 has the same length of the dna in parent 2
     if parent_1.get_dna().len() != parent_2.get_dna().len() {
-        panic!("parent 1 and parent 2 must have the same dna length");
+        panic!("Parent 1 and parent 2 must have the same dna length. Parent 1 has a length of {} and parent 2 has a length of {}", parent_1.get_dna().len(), parent_2.get_dna().len());
     }
 
     let mut child_1 = U::new();
