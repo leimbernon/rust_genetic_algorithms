@@ -3,7 +3,7 @@ use rand::Rng;
 use log::{trace, debug, info};
 use std::env;
 
-use crate::{population::Population, traits::GenotypeT, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::condition_checker_factory};
+use crate::{population::Population, traits::GenotypeT, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
 use crate::configuration::GaConfiguration;
 
 /**
@@ -81,6 +81,78 @@ U:GenotypeT + Send + Sync + 'static + Clone
         best_population.add_individual_gn(best_individual, -1);
     }
     best_population
+}
+
+/*
+ * Function to randomly initialize the population
+ */
+pub fn random_initialization_multithread<U>(alleles: &[U::Gene], population_size: i32, genes_per_individual:i32, 
+                                            needs_unique_ids: bool, alleles_can_be_repeated: bool, number_of_threads: i32)->Population<U>
+where U:GenotypeT + Send + Sync + 'static + Clone + Copy
+{
+    info!("Random initialization started");
+    //let mut individuals = Vec::new();
+    let (tx, rx) = sync_channel(number_of_threads as usize);
+
+    //Setting the number of individuals per thread
+    let individuals_per_thread = population_size / number_of_threads;
+
+    //Cloning the individuals for multithreading
+    let alleles_t = Arc::new(Mutex::new(alleles.to_vec()));
+
+    //Walking through the threads
+    for _ in 0..number_of_threads {
+
+        //Cloning the information from the main thread
+        let (tx, 
+             alleles_t, 
+             alleles_can_be_repeated_t, 
+             genes_per_individual_t, 
+             individuals_per_thread_t,
+             needs_unique_ids_t) = (tx.clone(), Arc::clone(&alleles_t), alleles_can_be_repeated, genes_per_individual, individuals_per_thread, needs_unique_ids);
+
+         //Starting the thread management
+         thread::spawn(move || {
+
+            let mut individuals = Vec::new();
+
+            for _ in 0..individuals_per_thread_t{
+
+                let mut individual = U::new();
+
+                //Gets the dna randomly
+                let dna_individual: Vec<U::Gene>;
+                if alleles_can_be_repeated_t {
+                    dna_individual = helpers::initialize_dna::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                }else{
+                    dna_individual = helpers::initialize_dna_without_repeated_alleles::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                }
+
+                //Sets the dna of the individual, the age, and calculates fitness
+                individual.set_dna(dna_individual.as_slice());
+                individual.set_age(0);
+                individual.calculate_fitness();
+
+                //Adds the individual in the vector
+                individuals.push(individual);
+
+            }
+            
+            //we send the individuals randomly initialized
+            tx.send(individuals).unwrap();
+         });
+    }
+
+    drop(tx);
+
+    // We receive from the threads and add them into individuals
+    let mut individuals = Vec::new();
+    for mut received in rx {
+        individuals.append(&mut received);
+    }
+
+    return Population::new(individuals);
+
 }
 
 /**

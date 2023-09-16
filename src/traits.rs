@@ -1,4 +1,4 @@
-pub trait GeneT: Default + Clone + Copy {
+pub trait GeneT: Default + Clone + Copy + Sync + Send {
     fn new() -> Self;
     fn get_id(&self) -> i32{0}
     fn set_id(&mut self, id: i32);
