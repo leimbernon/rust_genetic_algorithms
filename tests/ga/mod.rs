@@ -13,7 +13,7 @@ fn test_ga_start_maximize(){
         crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
         mutation_configuration: MutationConfiguration { probability: None, method: Mutation::Swap },
         survivor: Survivor::Fitness,
-        log_level: Some(LogLevel::Info),
+        log_level: None,
     };
 
     //Creates the population
