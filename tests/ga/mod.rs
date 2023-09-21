@@ -1,4 +1,4 @@
-use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration, MutationConfiguration, CrossoverConfiguration, LogLevel}};
+use genetic_algorithms::{ga::{run, self}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration, MutationConfiguration, CrossoverConfiguration}};
 use crate::structures::{Gene, Genotype};
 extern crate num_cpus;
 
@@ -117,4 +117,43 @@ fn test_ga_run_multithread(){
     
     assert_eq!(population.individuals.len(), 1);
     
+}
+
+#[test]
+fn test_parent_crossover_multithread_repeating_alleles(){
+
+    //Setup the alleles and initialize the population randomly
+    let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
+                                   Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
+    let alleles = binding.as_slice();
+    static GENES_PER_INDIVIDUAL: i32 = 6;
+    let population = ga::random_initialization_multithread::<Genotype>(alleles, 100, GENES_PER_INDIVIDUAL, false, true, 8);
+
+    //Once population has been initialized, we check for each individual in the population the number of genes in the dna
+    for individual in population.individuals{
+        assert!(individual.dna.len() == GENES_PER_INDIVIDUAL.try_into().unwrap());
+    }
+}
+
+#[test]
+fn test_parent_crossover_multithread_without_repeating_alleles(){
+
+    //Setup the alleles and initialize the population randomly
+    let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
+                                   Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
+    let alleles = binding.as_slice();
+    static GENES_PER_INDIVIDUAL: i32 = 6;
+    let population = ga::random_initialization_multithread::<Genotype>(alleles, 100, GENES_PER_INDIVIDUAL, false, false, 8);
+
+    //Once population has been initialized, we check for each individual we check that genes are not repeated
+    for individual in population.individuals{
+        let mut gene_ids = Vec::new();
+
+        for gene in individual.dna{
+            if !gene_ids.is_empty(){
+                assert!(!gene_ids.contains(&gene.id));
+            }
+            gene_ids.push(gene.id);
+        }
+    }
 }

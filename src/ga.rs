@@ -88,7 +88,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
  */
 pub fn random_initialization_multithread<U>(alleles: &[U::Gene], population_size: i32, genes_per_individual:i32, 
                                             needs_unique_ids: bool, alleles_can_be_repeated: bool, number_of_threads: i32)->Population<U>
-where U:GenotypeT + Send + Sync + 'static + Clone + Copy
+where U:GenotypeT + Send + Sync + 'static + Clone
 {
     info!("Random initialization started");
     //let mut individuals = Vec::new();
