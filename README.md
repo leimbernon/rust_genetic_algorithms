@@ -96,7 +96,7 @@ static NEEDS_UNIQUE_IDS: bool = false;
 static ALLELES_CAN_BE_REPEATED: bool = true;
 static NUMBER_OF_THREADS: i32 = 8;
 
-let population = ga::random_initialization_multithread::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
+let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 ```
 
 

@@ -82,7 +82,7 @@ fn test_ga_run_minimize(){
 
 
 #[test]
-fn test_ga_run_multithread(){
+fn test_ga_run(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
@@ -120,7 +120,7 @@ fn test_ga_run_multithread(){
 }
 
 #[test]
-fn test_parent_crossover_multithread_repeating_alleles(){
+fn test_parent_crossover_repeating_alleles(){
 
     //Setup the alleles and initialize the population randomly
     let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
@@ -132,7 +132,7 @@ fn test_parent_crossover_multithread_repeating_alleles(){
     static ALLELES_CAN_BE_REPEATED: bool = true;
     static NUMBER_OF_THREADS: i32 = 8;
 
-    let population = ga::random_initialization_multithread::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
+    let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 
     //Once population has been initialized, we check for each individual in the population the number of genes in the dna
     for individual in population.individuals{
@@ -141,7 +141,7 @@ fn test_parent_crossover_multithread_repeating_alleles(){
 }
 
 #[test]
-fn test_parent_crossover_multithread_without_repeating_alleles(){
+fn test_parent_crossover_without_repeating_alleles(){
 
     //Setup the alleles and initialize the population randomly
     let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
@@ -153,7 +153,7 @@ fn test_parent_crossover_multithread_without_repeating_alleles(){
     static ALLELES_CAN_BE_REPEATED: bool = false;
     static NUMBER_OF_THREADS: i32 = 8;
 
-    let population = ga::random_initialization_multithread::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
+    let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 
     //Once population has been initialized, we check for each individual we check that genes are not repeated
     for individual in population.individuals{
