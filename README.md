@@ -17,6 +17,7 @@ This library also supports multithreading.
     - [Operators](#operators)
     - [Population](#population)
     - [Runner](#runner)
+    - [Initialization](#initialization)
     - [GA Configuration](#ga-configuration)
   - [Example](#example)
     - [Creation of the gene and genotype structure](#creation-of-the-gene-and-genotype-structure)
@@ -81,6 +82,23 @@ Within the `population` module, the `Population` structure will define the popul
 
 Since genetic algorithms run over several generations, there is a `start` function in this library within the `ga` module that facilitates the process.
 This function needs the `GaConfiguration` structure, which contains the operators to be used, the maximum number of generations, the problem solver (Maximization or Minimization), etc., and the `Population` structure, which is in the `population` module.
+
+### Initialization
+
+If it is desired to perform the initialization of the population randomly through this library, it can be done as follows:
+```rust
+let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
+                                   Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
+let alleles = binding.as_slice();
+static GENES_PER_INDIVIDUAL: i32 = 6;
+static POPULATION_SIZE: i32 = 100;
+static NEEDS_UNIQUE_IDS: bool = false;
+static ALLELES_CAN_BE_REPEATED: bool = true;
+static NUMBER_OF_THREADS: i32 = 8;
+
+let population = ga::random_initialization_multithread::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
+```
+
 
 ### GA Configuration
 

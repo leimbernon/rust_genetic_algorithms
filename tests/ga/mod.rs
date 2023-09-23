@@ -127,7 +127,12 @@ fn test_parent_crossover_multithread_repeating_alleles(){
                                    Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
     let alleles = binding.as_slice();
     static GENES_PER_INDIVIDUAL: i32 = 6;
-    let population = ga::random_initialization_multithread::<Genotype>(alleles, 100, GENES_PER_INDIVIDUAL, false, true, 8);
+    static POPULATION_SIZE: i32 = 100;
+    static NEEDS_UNIQUE_IDS: bool = false;
+    static ALLELES_CAN_BE_REPEATED: bool = true;
+    static NUMBER_OF_THREADS: i32 = 8;
+
+    let population = ga::random_initialization_multithread::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 
     //Once population has been initialized, we check for each individual in the population the number of genes in the dna
     for individual in population.individuals{
@@ -143,7 +148,12 @@ fn test_parent_crossover_multithread_without_repeating_alleles(){
                                    Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
     let alleles = binding.as_slice();
     static GENES_PER_INDIVIDUAL: i32 = 6;
-    let population = ga::random_initialization_multithread::<Genotype>(alleles, 100, GENES_PER_INDIVIDUAL, false, false, 8);
+    static POPULATION_SIZE: i32 = 100;
+    static NEEDS_UNIQUE_IDS: bool = false;
+    static ALLELES_CAN_BE_REPEATED: bool = false;
+    static NUMBER_OF_THREADS: i32 = 8;
+
+    let population = ga::random_initialization_multithread::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 
     //Once population has been initialized, we check for each individual we check that genes are not repeated
     for individual in population.individuals{
