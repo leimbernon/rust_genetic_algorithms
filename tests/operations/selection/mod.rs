@@ -81,6 +81,8 @@ fn test_stochastic_universal_sampling(){
     let dna_3 = vec![Gene{id:5}, Gene{id:6}];
     let dna_4 = vec![Gene{id:7}, Gene{id:8}];
     let dna_5 = vec![Gene{id:9}, Gene{id:10}];
+    let dna_6 = vec![Gene{id:11}, Gene{id:12}];
+    let dna_7 = vec![Gene{id:13}, Gene{id:14}];
 
     //We create the individuals
     let individual_1 = Genotype{dna: dna_1, fitness: 10.0, age: 0};
@@ -88,10 +90,12 @@ fn test_stochastic_universal_sampling(){
     let individual_3 = Genotype{dna: dna_3, fitness: 30.0, age: 0};
     let individual_4 = Genotype{dna: dna_4, fitness: 40.0, age: 0};
     let individual_5 = Genotype{dna: dna_5, fitness: 50.0, age: 0};
+    let individual_6 = Genotype{dna: dna_6, fitness: 60.0, age: 0};
+    let individual_7 = Genotype{dna: dna_7, fitness: 70.0, age: 0};
 
     //We create the population and create the random mating
-    let population = vec![individual_1, individual_2, individual_3, individual_4, individual_5];
-    let mating_population = fitness_proportionate::stochastic_universal_sampling(&population, 2);
+    let population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6, individual_7];
+    let mating_population = fitness_proportionate::stochastic_universal_sampling(&population, 3);
     assert_ne!(mating_population.len(), 0);
 }
 
