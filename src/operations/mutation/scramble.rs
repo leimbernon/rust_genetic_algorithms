@@ -7,7 +7,7 @@ pub fn scramble<U: GenotypeT>(individual: &mut U){
     //Getting two random genes from the dna of the individual
     debug!(target="mutation_events", method="scramble"; "Starting the scramble mutation");
     let mut rng = rand::thread_rng();
-    let index_1 = rng.gen_range(0..individual.get_dna().len());
+    let index_1 = rng.gen_range(0..individual.get_dna().len()-1);
     let index_2 = rng.gen_range(index_1+1..individual.get_dna().len());
     trace!(target="mutation_events", method="scramble"; "Mutation index 1: {}, mutation index 2: {}", index_1, index_2);
 
