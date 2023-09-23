@@ -54,7 +54,7 @@ U: GenotypeT + Send + Sync + 'static + Clone{
         dna.push(gene);
     }
 
-    return dna;
+    dna
 }
 
 /**
@@ -80,5 +80,5 @@ U: GenotypeT + Send + Sync + 'static + Clone{
         dna.push(gene);
     }
 
-    return dna;
+    dna
 }

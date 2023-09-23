@@ -121,15 +121,15 @@ where U:GenotypeT + Send + Sync + 'static + Clone
                 let mut individual = U::new();
 
                 //Gets the dna randomly
-                let dna_individual: Vec<U::Gene>;
                 if alleles_can_be_repeated_t {
-                    dna_individual = helpers::initialize_dna::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                    let dna_individual = helpers::initialize_dna::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                    individual.set_dna(dna_individual.as_slice());
                 }else{
-                    dna_individual = helpers::initialize_dna_without_repeated_alleles::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                    let dna_individual = helpers::initialize_dna_without_repeated_alleles::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                    individual.set_dna(dna_individual.as_slice());
                 }
 
                 //Sets the dna of the individual, the age, and calculates fitness
-                individual.set_dna(dna_individual.as_slice());
                 individual.set_age(0);
                 individual.calculate_fitness();
 
@@ -151,7 +151,7 @@ where U:GenotypeT + Send + Sync + 'static + Clone
         individuals.append(&mut received);
     }
 
-    return Population::new(individuals);
+    Population::new(individuals)
 
 }
 
