@@ -85,20 +85,12 @@ This function needs the `GaConfiguration` structure, which contains the operator
 
 ### Initialization
 
-If it is desired to perform the initialization of the population randomly through this library, it can be done as follows:
-```rust
-let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
-                                   Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
-let alleles = binding.as_slice();
-static GENES_PER_INDIVIDUAL: i32 = 6;
-static POPULATION_SIZE: i32 = 100;
-static NEEDS_UNIQUE_IDS: bool = false;
-static ALLELES_CAN_BE_REPEATED: bool = true;
-static NUMBER_OF_THREADS: i32 = 8;
-
-let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
-```
-
+If it is desired to perform the initialization of the population randomly through this library, it can be done through the function `random_initialization`. This function requires the following parameters:
+- `alleles`: This is an array containing the elements that can be combined in the population. They have to comply with the `GenotypeT` trait.
+- `population_size`: Indicates the size of the population we want to have.
+- `genes_per_individual`: Sets the number of genes that each individual in the population has.
+- `needs_unique_ids`: This variable indicates whether each gene of each individual has to contain a unique ID. This is useful mainly for the `cycle` crossover method.
+- `alleles_can_be_repeated`: Within an individual, the same allele can be repeated several times. This variable indicates whether this behavior is desired, or whether it is preferred that the alleles be unique within each individual.
 
 ### GA Configuration
 
@@ -221,26 +213,22 @@ let configuration = GaConfiguration{
         survivor: Survivor::Fitness,
         log_level: Some(log::LevelFilter::Info),
     };
+
 ```
 
-Define the DNA, the individuals and the population.
+Define the Alleles, and initialize the population.
 
 ```rust
-let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
-    let dna_2 = vec![Gene{id:2}, Gene{id:3}, Gene{id:4}, Gene{id:1}];
-    let dna_3 = vec![Gene{id:3}, Gene{id:4}, Gene{id:1}, Gene{id:2}];
-    let dna_4 = vec![Gene{id:4}, Gene{id:1}, Gene{id:2}, Gene{id:3}];
-    let dna_5 = vec![Gene{id:2}, Gene{id:1}, Gene{id:3}, Gene{id:4}];
-    let dna_6 = vec![Gene{id:1}, Gene{id:3}, Gene{id:4}, Gene{id:2}];
-    let dna_7 = vec![Gene{id:3}, Gene{id:4}, Gene{id:2}, Gene{id:1}];
-    let dna_8 = vec![Gene{id:4}, Gene{id:2}, Gene{id:1}, Gene{id:3}];
-    let dna_9 = vec![Gene{id:2}, Gene{id:1}, Gene{id:4}, Gene{id:3}];
-    let dna_10 = vec![Gene{id:1}, Gene{id:4}, Gene{id:3}, Gene{id:2}];
+ let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
+                     Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
+  let alleles = binding.as_slice();
+  static GENES_PER_INDIVIDUAL: i32 = 6;
+  static POPULATION_SIZE: i32 = 100;
+  static NEEDS_UNIQUE_IDS: bool = false;
+  static ALLELES_CAN_BE_REPEATED: bool = true;
+  static NUMBER_OF_THREADS: i32 = 8;
 
-let individuals = vec![Genotype{dna: dna_1, fitness: 1.0, age: 0}, Genotype{dna: dna_2, fitness: 2.0, age: 0},
-    Genotype{dna: dna_3, fitness: 3.0, age: 0}, Genotype{dna: dna_4, fitness: 4.0, age: 0}, Genotype{dna: dna_5, fitness: 5.0, age: 0}, Genotype{dna: dna_6, fitness: 6.0, age: 0}, Genotype{dna: dna_7, fitness: 7.0, age: 0}, Genotype{dna: dna_8, fitness: 8.0, age: 0}, Genotype{dna: dna_9, fitness: 9.0, age: 0}, Genotype{dna: dna_10, fitness: 10.0, age: 0}];
-
-    let mut population = Population::new(individuals);
+  let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 ```
 
 Finally, run the GA.
@@ -261,5 +249,3 @@ Add this to your `Cargo.toml`:
 [dependencies]
 genetic_algorithms = "1.1.0"
 ```
-
-[def]: #initializator
