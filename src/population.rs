@@ -9,6 +9,9 @@ where
 
     //The numbers of the generation of this population
     pub generation_numbers: Vec<i32>,
+
+    //Average fitness of the population
+    pub f_avg: f64,
 }
 
 impl<U> Population<U>
@@ -17,18 +20,31 @@ where
 {
     // Creates a new empty `Population`
     pub fn new_empty() -> Population<U> {
-        Population { individuals: vec![], generation_numbers: vec![] }
+        Population { individuals: vec![], generation_numbers: vec![], f_avg: 0.0 }
     }
 
     // Creates a new `Population` with the given individuals as members.
     pub fn new(individuals: Vec<U>) -> Population<U> {
-        Population { individuals, generation_numbers: vec![]}
+        Population { individuals, generation_numbers: vec![], f_avg: 0.0}
     }
 
     // Adds an individual with a generation number.
     pub fn add_individual_gn(&mut self, individual: U, generation_number: i32){
+        self.f_avg *= self.individuals.len() as f64;
+        self.f_avg += individual.get_fitness();
         self.individuals.push(individual);
         self.generation_numbers.push(generation_number);
+        self.f_avg /= self.individuals.len() as f64;
+    }
+
+    //Function to add individuals in the list and recalculate the fitness without going through the entire population
+    pub fn add_individuals(&mut self, individuals: &mut Vec<U>){
+        self.f_avg *= self.individuals.len() as f64;
+        self.individuals.append(individuals);
+        for individual in individuals{
+            self.f_avg += individual.get_fitness();
+        }
+        self.f_avg /= self.individuals.len() as f64;
     }
 
     // Returns the number of individuals in the population.

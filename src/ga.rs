@@ -64,7 +64,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
         }
 
         //4- Insert the children in the population
-        population.individuals.append(&mut offspring);
+        population.add_individuals(&mut offspring);
 
         //5- Survivor selection
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration);
