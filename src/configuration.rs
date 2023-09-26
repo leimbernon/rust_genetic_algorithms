@@ -46,14 +46,16 @@ impl Default for SelectionConfiguration{
 #[derive(Copy, Clone)]
 pub struct CrossoverConfiguration{
     pub number_of_points: Option<i32>,
-    pub probability: Option<f64>,
+    pub probability_max: Option<f64>,
+    pub probability_min: Option<f64>,
     pub method: Crossover,
 }
 impl Default for CrossoverConfiguration{
     fn default() -> Self {
         CrossoverConfiguration { 
             number_of_points: None, 
-            probability: None, 
+            probability_max: None, 
+            probability_min: None,
             method: Crossover::Uniform
         }
     }
