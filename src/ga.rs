@@ -54,7 +54,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
         debug!(target="ga_events", method="run"; "Parents selected for reproduction");
 
         //2- Getting the offspring
-        let mut offspring = parent_crossover(&mut parents, &population.individuals, &configuration, age);
+        let mut offspring = parent_crossover(&mut parents, &population.individuals, &configuration, age, population.f_max, population.f_avg);
         debug!(target="ga_events", method="run"; "Offspring created");
 
         //3- Sets the best individual
@@ -329,7 +329,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 /**
  * Function for parent crossover
  */
-fn parent_crossover<U>(parents: &mut HashMap<usize, usize>, individuals: &Vec<U>, configuration: &GaConfiguration, age: i32) -> Vec<U>
+fn parent_crossover<U>(parents: &mut HashMap<usize, usize>, individuals: &Vec<U>, configuration: &GaConfiguration, age: i32, f_max: f64, f_avg: f64) -> Vec<U>
 where 
 U:GenotypeT + Send + Sync + 'static + Clone
 {
@@ -375,7 +375,16 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
                 //Making the crossover of the parents when the random number is below or equal to the given probability
                 let crossover_probability = rng.gen_range(0.0..1.0);
-                let crossover_probability_config = if configuration.crossover_configuration.probability_max.is_none(){1.0}else{configuration.crossover_configuration.probability_max.unwrap()};
+                let crossover_probability_config = 
+                    if configuration.crossover_configuration.probability_max.is_none(){
+                        1.0
+                    }else if !configuration.adaptive_ga{
+                        configuration.crossover_configuration.probability_max.unwrap()
+                    }else if configuration.crossover_configuration.probability_min.is_some(){
+                        crossover::aga_probability(&parent_1, &parent_2, f_max, f_avg, configuration.crossover_configuration.probability_max.unwrap(), configuration.crossover_configuration.probability_min.unwrap())
+                    }else{
+                        1.0
+                    };
                 
                 debug!(target="ga_events", method="parent_crossover"; "Started the parent crossover");
 
