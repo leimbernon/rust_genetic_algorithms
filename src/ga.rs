@@ -30,6 +30,11 @@ U:GenotypeT + Send + Sync + 'static + Clone
     env::set_var(key, log_level.as_str());
     let _ = env_logger::try_init();
 
+    //Initialize the adaptive ga
+    if configuration.adaptive_ga{
+        population.aga_init();
+    }
+
     //Best individual within the generations and population returned
     let initial_population_size = population.size();
     let mut age = 0;
@@ -60,11 +65,11 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
         //3.1- If we want to return the best individual by generation
         if configuration.limit_configuration.get_best_individual_by_generation.is_some() {
-            best_population.add_individual_gn(best_individual.clone(), i);
+            best_population.add_individual_gn(best_individual.clone(), i, configuration.adaptive_ga);
         }
 
         //4- Insert the children in the population
-        population.add_individuals(&mut offspring);
+        population.add_individuals(&mut offspring, configuration.adaptive_ga);
 
         //5- Survivor selection
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration);
@@ -78,7 +83,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
     //If it's not required to return the best individuals by generation
     if (configuration.limit_configuration.get_best_individual_by_generation.is_some() && !configuration.limit_configuration.get_best_individual_by_generation.unwrap()) || configuration.limit_configuration.get_best_individual_by_generation.is_none() {
-        best_population.add_individual_gn(best_individual, -1);
+        best_population.add_individual_gn(best_individual, -1, configuration.adaptive_ga);
     }
     best_population
 }
