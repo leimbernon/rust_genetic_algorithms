@@ -7,6 +7,7 @@ fn test_ga_start_maximize(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
+        adaptive_ga: false,
         number_of_threads: None,
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
@@ -46,6 +47,7 @@ fn test_ga_run_minimize(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
+        adaptive_ga: false,
         number_of_threads: None,
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization, get_best_individual_by_generation: None},
         selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
@@ -86,6 +88,7 @@ fn test_ga_run(){
 
     //Creates the GA configuration
     let configuration = GaConfiguration{
+        adaptive_ga: false, 
         number_of_threads: Some(8),
         limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
