@@ -375,7 +375,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
                 //Making the crossover of the parents when the random number is below or equal to the given probability
                 let crossover_probability = rng.gen_range(0.0..1.0);
-                let crossover_probability_config = if configuration.crossover_configuration.probability.is_none(){1.0}else{configuration.crossover_configuration.probability.unwrap()};
+                let crossover_probability_config = if configuration.crossover_configuration.probability_max.is_none(){1.0}else{configuration.crossover_configuration.probability_max.unwrap()};
                 
                 debug!(target="ga_events", method="parent_crossover"; "Started the parent crossover");
 
