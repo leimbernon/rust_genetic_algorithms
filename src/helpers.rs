@@ -22,8 +22,14 @@ U: GenotypeT + Send + Sync + 'static + Clone
 
     //3- We call the condition checkers for the cycle crossover operation
     if configuration.crossover_configuration.method == operations::Crossover::Cycle{
-        //1.1- We check that genes ids are uniques for each individual
+        //3.1- We check that genes ids are uniques for each individual
         condition_checker::unique_gene_ids(population);
+    }
+
+    //4- We call the condition checkers for the adaptive genetic algorithms
+    if configuration.adaptive_ga {
+        //4.1- Checks for the crossover parameters
+        condition_checker::aga_crossover_probabilities(configuration);
     }
 }
 

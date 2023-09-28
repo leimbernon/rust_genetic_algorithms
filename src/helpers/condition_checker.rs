@@ -51,3 +51,14 @@ U:GenotypeT + Send + Sync + 'static + Clone{
         }
     }
 }
+
+/**
+ * Checks that for adaptive crossover all the requirements are set
+ */
+pub fn aga_crossover_probabilities(configuration: GaConfiguration){
+    if configuration.crossover_configuration.probability_max.is_none() || configuration.crossover_configuration.probability_min.is_none() {
+        panic!("For Adaptive Genetic Algorithms, the probability_max and probability_min in the crossover_configuration are mandatory.");
+    }else if configuration.crossover_configuration.probability_max <=  configuration.crossover_configuration.probability_min {
+        panic!("For Adaptive Genetic Algorithms, the probability_max must be greater than probability_min in the crossover_configuration.");
+    }
+}
