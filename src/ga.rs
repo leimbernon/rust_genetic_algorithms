@@ -342,11 +342,23 @@ U:GenotypeT + Send + Sync + 'static + Clone
     let mut handles = Vec::new();
     let offspring = Arc::new(Mutex::new(Vec::new()));
 
+    /*Gets the static crossover probability config
+        This way we avoid of passing by these conditions at each thread if it's not necessary
+    */
+    let crossover_probability_config = 
+            if configuration.crossover_configuration.probability_max.is_none(){
+                Some(1.0)
+            }else if !configuration.adaptive_ga{
+                Some(configuration.crossover_configuration.probability_max.unwrap())
+            }else{
+                    None
+            };
+
     //Run all the threads
     for t in 0..number_of_threads{
 
         //We copy the parents that we want to crossover inside the thread
-        let (individuals, configuration, offspring) = (individuals.clone(), *configuration, Arc::clone(&offspring));
+        let (individuals, configuration, offspring, crossover_probability_config) = (individuals.clone(), *configuration, Arc::clone(&offspring), crossover_probability_config.clone());
         let mut parents_t = HashMap::new();
         let parents_c = parents.clone();
 
@@ -376,14 +388,10 @@ U:GenotypeT + Send + Sync + 'static + Clone
                 //Making the crossover of the parents when the random number is below or equal to the given probability
                 let crossover_probability = rng.gen_range(0.0..1.0);
                 let crossover_probability_config = 
-                    if configuration.crossover_configuration.probability_max.is_none(){
-                        1.0
-                    }else if !configuration.adaptive_ga{
-                        configuration.crossover_configuration.probability_max.unwrap()
-                    }else if configuration.crossover_configuration.probability_min.is_some(){
-                        crossover::aga_probability(&parent_1, &parent_2, f_max, f_avg, configuration.crossover_configuration.probability_max.unwrap(), configuration.crossover_configuration.probability_min.unwrap())
+                    if crossover_probability_config.is_some(){
+                        crossover_probability_config.unwrap()
                     }else{
-                        1.0
+                        crossover::aga_probability(&parent_1, &parent_2, f_max, f_avg, configuration.crossover_configuration.probability_max.unwrap(), configuration.crossover_configuration.probability_min.unwrap())
                     };
                 
                 debug!(target="ga_events", method="parent_crossover"; "Started the parent crossover");
