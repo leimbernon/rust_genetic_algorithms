@@ -96,6 +96,7 @@ If it is desired to perform the initialization of the population randomly throug
 
 Within this library, you can configure the way genetic algorithms are executed by using the configuration structure `GaConfiguration`.
 This structure has the following attributes:
+- `adaptive_ga`: Specifies if the Genetic Algorithms are adaptive or not.
 - `number_of_threads`: Optional. Indicates how many threads will be executed simultaneously.
 - `limit_configuration`: It configures the limits of the Genetic Algorithms with the `LimitConfiguration` structure.
 - `selection_configuration`: It configures the selection method with the `SelectionConfiguration` structure.
@@ -110,7 +111,8 @@ This structure has the following attributes:
 
 `CrossoverConfiguration`:
 - `number_of_points`: Optional. This attribute is only valid for crossover multipoint and indicates how many points are made within the DNA during crossover operations.
-- `probability`: Optional. Specifies the probability that two parents are crossed. This number must be between 0.0 and 1.0, both inclusive.
+- `probability_max`: Optional. Specifies the maximum probability that two parents are crossed. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be greater than `probability_min`.
+- `probability_min`: Optional. Specifies the minimum probability that two parents are crossed. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be lower than `probability_max`.
 - `method`: Specifies which crossover operator to use.
 
 `MutationConfiguration`:

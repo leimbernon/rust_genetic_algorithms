@@ -30,6 +30,11 @@ U:GenotypeT + Send + Sync + 'static + Clone
     env::set_var(key, log_level.as_str());
     let _ = env_logger::try_init();
 
+    //Initialize the adaptive ga
+    if configuration.adaptive_ga{
+        population.aga_init();
+    }
+
     //Best individual within the generations and population returned
     let initial_population_size = population.size();
     let mut age = 0;
@@ -49,7 +54,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
         debug!(target="ga_events", method="run"; "Parents selected for reproduction");
 
         //2- Getting the offspring
-        let mut offspring = parent_crossover(&mut parents, &population.individuals, &configuration, age);
+        let mut offspring = parent_crossover(&mut parents, &population.individuals, &configuration, age, population.f_max, population.f_avg);
         debug!(target="ga_events", method="run"; "Offspring created");
 
         //3- Sets the best individual
@@ -60,11 +65,11 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
         //3.1- If we want to return the best individual by generation
         if configuration.limit_configuration.get_best_individual_by_generation.is_some() {
-            best_population.add_individual_gn(best_individual.clone(), i);
+            best_population.add_individual_gn(best_individual.clone(), i, configuration.adaptive_ga);
         }
 
         //4- Insert the children in the population
-        population.individuals.append(&mut offspring);
+        population.add_individuals(&mut offspring, configuration.adaptive_ga);
 
         //5- Survivor selection
         survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration);
@@ -78,7 +83,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
     //If it's not required to return the best individuals by generation
     if (configuration.limit_configuration.get_best_individual_by_generation.is_some() && !configuration.limit_configuration.get_best_individual_by_generation.unwrap()) || configuration.limit_configuration.get_best_individual_by_generation.is_none() {
-        best_population.add_individual_gn(best_individual, -1);
+        best_population.add_individual_gn(best_individual, -1, configuration.adaptive_ga);
     }
     best_population
 }
@@ -324,7 +329,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 /**
  * Function for parent crossover
  */
-fn parent_crossover<U>(parents: &mut HashMap<usize, usize>, individuals: &Vec<U>, configuration: &GaConfiguration, age: i32) -> Vec<U>
+fn parent_crossover<U>(parents: &mut HashMap<usize, usize>, individuals: &Vec<U>, configuration: &GaConfiguration, age: i32, f_max: f64, f_avg: f64) -> Vec<U>
 where 
 U:GenotypeT + Send + Sync + 'static + Clone
 {
@@ -337,11 +342,23 @@ U:GenotypeT + Send + Sync + 'static + Clone
     let mut handles = Vec::new();
     let offspring = Arc::new(Mutex::new(Vec::new()));
 
+    /*Gets the static crossover probability config
+        This way we avoid of passing by these conditions at each thread if it's not necessary
+    */
+    let crossover_probability_config = 
+            if configuration.crossover_configuration.probability_max.is_none(){
+                Some(1.0)
+            }else if !configuration.adaptive_ga{
+                Some(configuration.crossover_configuration.probability_max.unwrap())
+            }else{
+                    None
+            };
+
     //Run all the threads
     for t in 0..number_of_threads{
 
         //We copy the parents that we want to crossover inside the thread
-        let (individuals, configuration, offspring) = (individuals.clone(), *configuration, Arc::clone(&offspring));
+        let (individuals, configuration, offspring, crossover_probability_config) = (individuals.clone(), *configuration, Arc::clone(&offspring), crossover_probability_config);
         let mut parents_t = HashMap::new();
         let parents_c = parents.clone();
 
@@ -370,7 +387,12 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
                 //Making the crossover of the parents when the random number is below or equal to the given probability
                 let crossover_probability = rng.gen_range(0.0..1.0);
-                let crossover_probability_config = if configuration.crossover_configuration.probability.is_none(){1.0}else{configuration.crossover_configuration.probability.unwrap()};
+                let crossover_probability_config = 
+                    if crossover_probability_config.is_some(){
+                        crossover_probability_config.unwrap()
+                    }else{
+                        crossover::aga_probability(&parent_1, &parent_2, f_max, f_avg, configuration.crossover_configuration.probability_max.unwrap(), configuration.crossover_configuration.probability_min.unwrap())
+                    };
                 
                 debug!(target="ga_events", method="parent_crossover"; "Started the parent crossover");
 
