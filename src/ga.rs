@@ -358,7 +358,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
     for t in 0..number_of_threads{
 
         //We copy the parents that we want to crossover inside the thread
-        let (individuals, configuration, offspring, crossover_probability_config) = (individuals.clone(), *configuration, Arc::clone(&offspring), crossover_probability_config.clone());
+        let (individuals, configuration, offspring, crossover_probability_config) = (individuals.clone(), *configuration, Arc::clone(&offspring), crossover_probability_config);
         let mut parents_t = HashMap::new();
         let parents_c = parents.clone();
 
