@@ -15,7 +15,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 {
 
     //Before starting the run, we will check the conditions
-    condition_checker_factory(configuration, &population);
+    condition_checker_factory::<U>(Some(configuration), Some(&population), None, None, None);
 
     //We set the environment variable from the configuration value
     let key = "RUST_LOG";
@@ -95,6 +95,9 @@ pub fn random_initialization<U>(alleles: &[U::Gene], population_size: i32, genes
                                             needs_unique_ids: bool, alleles_can_be_repeated: bool, number_of_threads: i32)->Population<U>
 where U:GenotypeT + Send + Sync + 'static + Clone
 {
+    //Before starting the run, we will check the conditions
+    condition_checker_factory::<U>(None, None, Some(alleles), Some(genes_per_individual), Some(alleles_can_be_repeated));
+
     info!("Random initialization started");
     //let mut individuals = Vec::new();
     let (tx, rx) = sync_channel(number_of_threads as usize);
