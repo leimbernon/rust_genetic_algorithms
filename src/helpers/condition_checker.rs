@@ -62,3 +62,14 @@ pub fn aga_crossover_probabilities(configuration: GaConfiguration){
         panic!("For Adaptive Genetic Algorithms, the probability_max must be greater than probability_min in the crossover_configuration.");
     }
 }
+
+/**
+ * Function to check that the genotype length is not bigger than the alleles
+ */
+pub fn check_genotype_length_not_bigger_than_alleles<U>(alleles: &[U::Gene], genes_per_individual:i32)
+where 
+U:GenotypeT + Send + Sync + 'static + Clone{
+    if genes_per_individual as usize > alleles.len() {
+        panic!("The number of genes within an individual should not be more than the different alleles.");
+    }
+}
