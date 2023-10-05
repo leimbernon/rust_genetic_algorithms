@@ -12,42 +12,47 @@ pub fn condition_checker_factory<U>(configuration: Option<GaConfiguration>, popu
 where
 U: GenotypeT + Send + Sync + 'static + Clone
 {
-
-    //Transforming the structs
-    let configuration_is_some = configuration.is_some();
-    let configuration = if configuration_is_some{configuration.unwrap()} else {Default::default()};
-
-    let population_is_some = population.is_some();
-    let new_population = Population::<U>::new_empty();
-    let population = if population_is_some{population.unwrap()}else{&new_population};
-
     //1- We call the condition for checking the length of every individual
-    if population_is_some {
+    if let Some(population) = population{
         condition_checker::same_dna_length(population);
-    } 
-
-    //2- We call the condition for fixed fitness
-    if configuration_is_some && configuration.limit_configuration.problem_solving == ProblemSolving::FixedFitness{
-        condition_checker::fitness_target_is_some(configuration, configuration.limit_configuration.problem_solving.to_string());
     }
 
-    //3- We call the condition checkers for the cycle crossover operation
-    if configuration_is_some && configuration.crossover_configuration.method == operations::Crossover::Cycle{
-        //3.1- We check that genes ids are uniques for each individual
-        condition_checker::unique_gene_ids(population);
-    }
+    //2- Checks the configuration
+    if let Some(configuration) = configuration {
 
-    //4- We call the condition checkers for the adaptive genetic algorithms
-    if configuration_is_some && configuration.adaptive_ga {
-        //4.1- Checks for the crossover parameters
-        condition_checker::aga_crossover_probabilities(configuration);
+        //2.1- We call the condition for fixed fitness
+        if configuration.limit_configuration.problem_solving == ProblemSolving::FixedFitness{
+            condition_checker::fitness_target_is_some(configuration, configuration.limit_configuration.problem_solving.to_string());
+        }
+
+        //2.2- Checks the population
+        if let Some(population) = population {
+
+            //2.2.1- Checks the conditions for cycle crossover operation
+            if configuration.crossover_configuration.method == operations::Crossover::Cycle{
+                condition_checker::unique_gene_ids(population);
+            }
+        }
+
+        //2.3- Condition checkers for the adaptive genetic algorithms
+        if configuration.adaptive_ga{
+            //2.3.1- Checks for the crossover parameters
+            condition_checker::aga_crossover_probabilities(configuration);
+        }   
     }
 
     //5- We check if we want to not repeat the alleles
-    if alleles_can_be_repeated.is_some() && alleles_can_be_repeated.unwrap() && alleles.is_some() && genes_per_individual.is_some() {
-        condition_checker::check_genotype_length_not_bigger_than_alleles::<U>(alleles.unwrap(), genes_per_individual.unwrap());
-    }
+    if let Some(alleles_can_be_repeated) = alleles_can_be_repeated {
+        if let Some(alleles) = alleles {
+            if let Some(genes_per_individual) = genes_per_individual{
 
+                if alleles_can_be_repeated {
+                    condition_checker::check_genotype_length_not_bigger_than_alleles::<U>(alleles, genes_per_individual);
+                }
+
+            }
+        }
+    }
 }
 
 /**
