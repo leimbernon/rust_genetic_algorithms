@@ -414,7 +414,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
                 //Making the mutation of each child when the random number is below or equal the given probability
                 let mut mutation_probability = rng.gen_range(0.0..1.0);
-                let mutation_probability_config = if configuration.mutation_configuration.probability.is_none(){1.0}else{configuration.mutation_configuration.probability.unwrap()};
+                let mutation_probability_config = if configuration.mutation_configuration.probability_max.is_none(){1.0}else{configuration.mutation_configuration.probability_max.unwrap()};
                 debug!(target="ga_events", method="parent_crossover"; "mutation_probability_config {} - mutation probability {}", mutation_probability_config, mutation_probability);
 
                 if mutation_probability < mutation_probability_config {

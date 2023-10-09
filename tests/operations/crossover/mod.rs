@@ -1,5 +1,5 @@
 use crate::structures::{Gene, Genotype};
-use genetic_algorithms::operations::crossover::{cycle, multipoint::multipoint_crossover, uniform_crossover, self};
+use genetic_algorithms::operations::crossover::{cycle, multipoint::multipoint_crossover, uniform_crossover, aga_probability};
 
 
 #[test]
@@ -151,7 +151,7 @@ fn test_xover_aga_probability_over_avg(){
     let probability_min = 0.25;
 
     //We calculate the Adaptive Genetic Algorithms probability for crossover
-    let aga_xover_probability = crossover::aga_probability(&parent_1, &parent_2, f_max, f_avg, probability_max, probability_min);
+    let aga_xover_probability = aga_probability(&parent_1, &parent_2, f_max, f_avg, probability_max, probability_min);
 
     //We verify the result of the aga crossover probability
     assert_eq!(aga_xover_probability, 0.375);
@@ -169,7 +169,7 @@ fn test_xover_aga_probability_under_avg(){
     let probability_min = 0.25;
 
     //We calculate the Adaptive Genetic Algorithms probability for crossover
-    let aga_xover_probability = crossover::aga_probability(&parent_1, &parent_2, f_max, f_avg, probability_max, probability_min);
+    let aga_xover_probability = aga_probability(&parent_1, &parent_2, f_max, f_avg, probability_max, probability_min);
 
     //We verify the result of the aga crossover probability
     assert_eq!(aga_xover_probability, 0.25);
