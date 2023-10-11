@@ -12,7 +12,7 @@ fn test_ga_start_maximize(){
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
         crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
-        mutation_configuration: MutationConfiguration { probability: None, method: Mutation::Swap },
+        mutation_configuration: MutationConfiguration { method: Mutation::Swap, ..Default::default() },
         survivor: Survivor::Fitness,
         log_level: None,
     };
@@ -52,7 +52,7 @@ fn test_ga_run_minimize(){
         limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization, get_best_individual_by_generation: None},
         selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
         crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
-        mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
+        mutation_configuration: MutationConfiguration { probability_max: Some(0.2), method: Mutation::Swap, ..Default::default() },
         survivor: Survivor::Fitness,
         log_level: None,
     };
@@ -93,7 +93,7 @@ fn test_ga_run(){
         limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
         selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
         crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
-        mutation_configuration: MutationConfiguration{method: Mutation::Swap, probability: None},
+        mutation_configuration: MutationConfiguration{method: Mutation::Swap, ..Default::default()},
         survivor: Survivor::Fitness,
         log_level: None,
     };

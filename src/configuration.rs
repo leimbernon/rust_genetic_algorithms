@@ -63,13 +63,15 @@ impl Default for CrossoverConfiguration{
 
 #[derive(Copy, Clone)]
 pub struct MutationConfiguration{
-    pub probability: Option<f64>,
+    pub probability_max: Option<f64>,
+    pub probability_min: Option<f64>,
     pub method: Mutation,
 }
 impl Default for MutationConfiguration {
     fn default() -> Self {
         MutationConfiguration { 
-            probability: None, 
+            probability_max: None,
+            probability_min: None,
             method: Mutation::Swap, 
         }
     }

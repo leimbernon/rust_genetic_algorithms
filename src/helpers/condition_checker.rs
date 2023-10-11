@@ -64,6 +64,17 @@ pub fn aga_crossover_probabilities(configuration: GaConfiguration){
 }
 
 /**
+ * Checks that for adaptive mutation all the requirements are set
+ */
+pub fn aga_mutation_probabilities(configuration: GaConfiguration){
+    if configuration.mutation_configuration.probability_max.is_none() || configuration.mutation_configuration.probability_min.is_none(){
+        panic!("For Adaptive Genetic Algorithms, the probability_max and probability_min in the mutation_configuration are mandatory.");
+    }else if configuration.mutation_configuration.probability_max <= configuration.mutation_configuration.probability_min {
+        panic!("For Adaptive Genetic Algorithms, the probability_max must be greater than probability_min in the mutation_configuration.");
+    }
+}
+
+/**
  * Function to check that the genotype length is not bigger than the alleles
  */
 pub fn check_genotype_length_not_bigger_than_alleles<U>(alleles: &[U::Gene], genes_per_individual:i32)
