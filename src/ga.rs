@@ -345,7 +345,8 @@ U:GenotypeT + Send + Sync + 'static + Clone
     let mut handles = Vec::new();
     let offspring = Arc::new(Mutex::new(Vec::new()));
 
-    /*Gets the static crossover probability config
+    /*
+        Gets the static crossover probability config and the static mutation probability config
         This way we avoid of passing by these conditions at each thread if it's not necessary
     */
     let crossover_probability_config = 
@@ -357,11 +358,20 @@ U:GenotypeT + Send + Sync + 'static + Clone
                     None
             };
 
+    let mutation_probability_config =
+            if configuration.mutation_configuration.probability_max.is_none(){
+                Some(1.0)
+            }else if !configuration.adaptive_ga{
+                Some(configuration.mutation_configuration.probability_max.unwrap())
+            }else{
+                None
+            };
+
     //Run all the threads
     for t in 0..number_of_threads{
 
         //We copy the parents that we want to crossover inside the thread
-        let (individuals, configuration, offspring, crossover_probability_config) = (individuals.clone(), *configuration, Arc::clone(&offspring), crossover_probability_config);
+        let (individuals, configuration, offspring, crossover_probability_config, mutation_probability_config) = (individuals.clone(), *configuration, Arc::clone(&offspring), crossover_probability_config, mutation_probability_config);
         let mut parents_t = HashMap::new();
         let parents_c = parents.clone();
 
@@ -397,6 +407,16 @@ U:GenotypeT + Send + Sync + 'static + Clone
                         crossover::aga_probability(&parent_1, &parent_2, f_max, f_avg, configuration.crossover_configuration.probability_max.unwrap(), configuration.crossover_configuration.probability_min.unwrap())
                     };
                 
+
+                //Making the mutation of each child when the random number is below or equal the given probability
+                let mut mutation_probability = rng.gen_range(0.0..1.0);
+                let mutation_probability_config = 
+                    if mutation_probability_config.is_some(){
+                        mutation_probability_config.unwrap()
+                    }else{
+                        mutation::aga_probability(&parent_1, &parent_2, f_avg, configuration.mutation_configuration.probability_max.unwrap(), configuration.mutation_configuration.probability_min.unwrap())
+                    };
+
                 debug!(target="ga_events", method="parent_crossover"; "Started the parent crossover");
 
                 let mut child_1: U;
@@ -411,10 +431,8 @@ U:GenotypeT + Send + Sync + 'static + Clone
                     child_1 = parent_1;
                     child_2 = parent_2;
                 }
-
-                //Making the mutation of each child when the random number is below or equal the given probability
-                let mut mutation_probability = rng.gen_range(0.0..1.0);
-                let mutation_probability_config = if configuration.mutation_configuration.probability_max.is_none(){1.0}else{configuration.mutation_configuration.probability_max.unwrap()};
+                
+                if configuration.mutation_configuration.probability_max.is_none(){1.0}else{configuration.mutation_configuration.probability_max.unwrap()};
                 debug!(target="ga_events", method="parent_crossover"; "mutation_probability_config {} - mutation probability {}", mutation_probability_config, mutation_probability);
 
                 if mutation_probability < mutation_probability_config {

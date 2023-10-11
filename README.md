@@ -207,13 +207,14 @@ Define the configuration of the GA.
 
 ```rust
 let configuration = GaConfiguration{
-        number_of_threads: Some(2),
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: Some(true)},
-        selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
-        crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
-        mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
+        adaptive_ga: false,
+        number_of_threads: None,
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
+        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
+        crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
+        mutation_configuration: MutationConfiguration { method: Mutation::Swap, ..Default::default() },
         survivor: Survivor::Fitness,
-        log_level: Some(log::LevelFilter::Info),
+        log_level: None,
     };
 
 ```
@@ -221,16 +222,17 @@ let configuration = GaConfiguration{
 Define the Alleles, and initialize the population.
 
 ```rust
- let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
-                     Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
+  let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
+                                   Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
   let alleles = binding.as_slice();
   static GENES_PER_INDIVIDUAL: i32 = 6;
   static POPULATION_SIZE: i32 = 100;
   static NEEDS_UNIQUE_IDS: bool = false;
-  static ALLELES_CAN_BE_REPEATED: bool = true;
+  static ALLELES_CAN_BE_REPEATED: bool = false;
   static NUMBER_OF_THREADS: i32 = 8;
 
   let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
+
 ```
 
 Finally, run the GA.
