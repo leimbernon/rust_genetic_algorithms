@@ -1,5 +1,5 @@
 use crate::structures::{Gene, Genotype};
-use genetic_algorithms::operations::mutation::{swap, inversion, scramble};
+use genetic_algorithms::operations::mutation::{swap, inversion, scramble, aga_probability};
 
 #[test]
 fn test_swap_mutation(){
@@ -53,4 +53,37 @@ fn test_scramble_mutation(){
     //We mutate the dna
     scramble::scramble(&mut individual_1);
     assert_ne!(individual_1, individual_1_copy);
+}
+
+#[test]
+fn test_mutation_aga_probability_over_avg(){
+
+    let parent_1 = Genotype{dna: Vec::<Gene>::new(), fitness: 25.0, age: 0};
+    let parent_2 = Genotype{dna: Vec::<Gene>::new(), fitness: 100.0, age: 0};
+    let f_avg = 50.0;
+    let probability_max = 0.75;
+    let probability_min = 0.25;
+
+    //We calculate the Adaptive Genetic Algorithms probability for mutation
+    let aga_mutation_probability = aga_probability(&parent_1, &parent_2, f_avg, probability_max, probability_min);
+
+    //We verify the result of the aga mutation probability
+    assert_eq!(aga_mutation_probability, probability_min);
+}
+
+
+#[test]
+fn test_mutation_aga_probability_under_avg(){
+
+    let parent_1 = Genotype{dna: Vec::<Gene>::new(), fitness: 25.0, age: 0};
+    let parent_2 = Genotype{dna: Vec::<Gene>::new(), fitness: 49.0, age: 0};
+    let f_avg = 50.0;
+    let probability_max = 0.75;
+    let probability_min = 0.25;
+
+    //We calculate the Adaptive Genetic Algorithms probability for mutation
+    let aga_mutation_probability = aga_probability(&parent_1, &parent_2, f_avg, probability_max, probability_min);
+
+    //We verify the result of the aga mutation probability
+    assert_eq!(aga_mutation_probability, probability_max);
 }

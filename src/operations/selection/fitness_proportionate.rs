@@ -100,6 +100,7 @@ pub fn stochastic_universal_sampling<U:GenotypeT>(individuals: &Vec<U>, couples:
             }
 
             couple_completed = !couple_completed;
+            current_point += pointer_distance;
 
         } else if end_of_individuals && current_point >= selection_probabilities[i] {
             if couple_completed {
@@ -110,7 +111,6 @@ pub fn stochastic_universal_sampling<U:GenotypeT>(individuals: &Vec<U>, couples:
             }
         }
 
-        current_point += pointer_distance;
         next_individual += 1;
     }
 

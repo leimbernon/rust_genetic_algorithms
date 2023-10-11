@@ -1,5 +1,5 @@
 use crate::structures::{Gene, Genotype};
-use genetic_algorithms::operations::crossover::{cycle, multipoint::multipoint_crossover, uniform_crossover};
+use genetic_algorithms::operations::crossover::{cycle, multipoint::multipoint_crossover, uniform_crossover, aga_probability};
 
 
 #[test]
@@ -138,4 +138,39 @@ fn test_uniform_crossover(){
     assert_eq!(child_1.dna.len(), parent_1.dna.len());
     assert_eq!(child_2.dna.len(), child_2.dna.len());
     assert_eq!(parent_1.dna.len(), parent_2.dna.len());
+}
+
+#[test]
+fn test_xover_aga_probability_over_avg(){
+
+    let parent_1 = Genotype{dna: Vec::<Gene>::new(), fitness: 25.0, age: 0};
+    let parent_2 = Genotype{dna: Vec::<Gene>::new(), fitness: 100.0, age: 0};
+    let f_max = 150.0;
+    let f_avg = 50.0;
+    let probability_max = 0.75;
+    let probability_min = 0.25;
+
+    //We calculate the Adaptive Genetic Algorithms probability for crossover
+    let aga_xover_probability = aga_probability(&parent_1, &parent_2, f_max, f_avg, probability_max, probability_min);
+
+    //We verify the result of the aga crossover probability
+    assert_eq!(aga_xover_probability, 0.375);
+}
+
+
+#[test]
+fn test_xover_aga_probability_under_avg(){
+
+    let parent_1 = Genotype{dna: Vec::<Gene>::new(), fitness: 25.0, age: 0};
+    let parent_2 = Genotype{dna: Vec::<Gene>::new(), fitness: 49.0, age: 0};
+    let f_max = 150.0;
+    let f_avg = 50.0;
+    let probability_max = 0.75;
+    let probability_min = 0.25;
+
+    //We calculate the Adaptive Genetic Algorithms probability for crossover
+    let aga_xover_probability = aga_probability(&parent_1, &parent_2, f_max, f_avg, probability_max, probability_min);
+
+    //We verify the result of the aga crossover probability
+    assert_eq!(aga_xover_probability, 0.25);
 }

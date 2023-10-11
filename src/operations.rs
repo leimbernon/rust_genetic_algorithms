@@ -10,7 +10,7 @@ pub enum Selection {
     StochasticUniversalSampling,
     Tournament
 }
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, PartialEq)]
 pub enum Crossover {
     Cycle,
     MultiPoint,

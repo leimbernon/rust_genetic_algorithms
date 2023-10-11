@@ -1,0 +1,112 @@
+use rand::Rng;
+
+use crate::{configuration::GaConfiguration, population::Population, traits::{GenotypeT, GeneT}, operations::{self, survivor::fitness::ProblemSolving}};
+
+pub mod condition_checker;
+
+/*
+ * Function to call the different condition checkers 
+ */
+pub fn condition_checker_factory<U>(configuration: Option<GaConfiguration>, population: Option<&Population<U>>, 
+                                    alleles: Option<&[U::Gene]>, genes_per_individual: Option<i32>, alleles_can_be_repeated: Option<bool>)
+where
+U: GenotypeT + Send + Sync + 'static + Clone
+{
+    //1- We call the condition for checking the length of every individual
+    if let Some(population) = population{
+        condition_checker::same_dna_length(population);
+    }
+
+    //2- Checks the configuration
+    if let Some(configuration) = configuration {
+
+        //2.1- We call the condition for fixed fitness
+        if configuration.limit_configuration.problem_solving == ProblemSolving::FixedFitness{
+            condition_checker::fitness_target_is_some(configuration, configuration.limit_configuration.problem_solving.to_string());
+        }
+
+        //2.2- Checks the population
+        if let Some(population) = population {
+
+            //2.2.1- Checks the conditions for cycle crossover operation
+            if configuration.crossover_configuration.method == operations::Crossover::Cycle{
+                condition_checker::unique_gene_ids(population);
+            }
+        }
+
+        //2.3- Condition checkers for the adaptive genetic algorithms
+        if configuration.adaptive_ga{
+            //2.3.1- Checks for the crossover parameters
+            condition_checker::aga_crossover_probabilities(configuration);
+        }   
+    }
+
+    //5- We check if we want to not repeat the alleles
+    if let Some(alleles_can_be_repeated) = alleles_can_be_repeated {
+        if let Some(alleles) = alleles {
+            if let Some(genes_per_individual) = genes_per_individual{
+
+                if alleles_can_be_repeated {
+                    condition_checker::check_genotype_length_not_bigger_than_alleles::<U>(alleles, genes_per_individual);
+                }
+
+            }
+        }
+    }
+}
+
+/**
+ * Function to initialize the dna of an individual without repeating an array of alleles
+ */
+pub fn initialize_dna_without_repeated_alleles<U>(alleles: &[U::Gene], genes_per_individual: i32, needs_unique_ids: bool)->Vec<U::Gene>
+where
+U: GenotypeT + Send + Sync + 'static + Clone{
+    
+    let mut rng = rand::thread_rng();
+    let mut dna = Vec::new();
+
+    let mut tmp_alleles = alleles.to_vec().clone();
+
+    //Selects the genes randomly from the vector without repeating them
+    for j in 0..genes_per_individual{
+        let index = rng.gen_range(0..tmp_alleles.len());
+        let mut gene = tmp_alleles.get(index).copied().unwrap();
+
+        //If we need unique ids
+        if needs_unique_ids {
+            gene.set_id(j);
+        }
+
+        tmp_alleles.remove(index);
+
+        dna.push(gene);
+    }
+
+    dna
+}
+
+/**
+ * Function to initialize the dna of an individual
+ */
+pub fn initialize_dna<U>(alleles: &[U::Gene], genes_per_individual: i32, needs_unique_ids: bool)->Vec<U::Gene>
+where
+U: GenotypeT + Send + Sync + 'static + Clone{
+    
+    let mut rng = rand::thread_rng();
+    let mut dna = Vec::new();
+
+    //Selects the genes randomly from the vector without repeating them
+    for j in 0..genes_per_individual{
+        let index = rng.gen_range(0..alleles.len());
+        let mut gene = alleles.get(index).copied().unwrap();
+
+        //If we need unique ids
+        if needs_unique_ids {
+            gene.set_id(j);
+        }
+        
+        dna.push(gene);
+    }
+
+    dna
+}

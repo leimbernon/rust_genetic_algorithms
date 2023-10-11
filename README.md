@@ -3,7 +3,7 @@
 [![Rust Unit Tests](https://github.com/leimbernon/rust_genetic_algorithms/actions/workflows/rust-unit-tests.yml/badge.svg)](https://github.com/leimbernon/rust_genetic_algorithms/actions/workflows/rust-unit-tests.yml)
 
 ## Description
-This library provides a simple framework to implement [genetic algorithms (GA)](https://en.wikipedia.org/wiki/Genetic_algorithm) with Rust.
+This library provides a simple framework for implementing [genetic algorithms (GA)](https://en.wikipedia.org/wiki/Genetic_algorithm) with Rust.
 
 This library also supports multithreading.
 
@@ -17,6 +17,7 @@ This library also supports multithreading.
     - [Operators](#operators)
     - [Population](#population)
     - [Runner](#runner)
+    - [Initialization](#initialization)
     - [GA Configuration](#ga-configuration)
   - [Example](#example)
     - [Creation of the gene and genotype structure](#creation-of-the-gene-and-genotype-structure)
@@ -31,9 +32,9 @@ See [docs.rs](https://docs.rs/genetic_algorithms/latest/genetic_algorithms)
 
 ### Traits
 
-This version uses traits for generic implementations.
+This release uses traits for generic implementations.
 
-These traits are within the `traits` module:
+These traits are inside the `traits` module:
 
 - `GeneT`: This trait must be implemented on your own gene representation.
   - `new()`: This is the constructor function.
@@ -44,8 +45,8 @@ These traits are within the `traits` module:
   - `new_gene()`: Optional. Must return `Self::Gene`.
   - `get_dna()`: Must return the array of genes (`GeneT`).
   - `set_dna(dna: &[Self::Gene])`: Must set the array of genes (`GeneT`).
-  - `set_gene(gene_index: usize, gene: Self::Gene)`: Optional. This method will replace a gene in the defined gene_index position.
-  - `calculate_fitness()`: Optional. This function must calculate the fitness of the indivudual (or the genotype) in f64.
+  - `set_gene(gene_index: usize, gene: Self::Gene)`: Optional. This method replaces a gene at the specified gene_index position.
+  - `calculate_fitness()`: Optional. This function must calculate the fitness of the individual (or the genotype) in f64.
   - `get_fitness()`: Returns the fitness previously calculated by `calculate_fitness()`.
   - `set_fitness(fitness: f64)`: Sets the fitness value.
   - `get_age()`: Returns the age of the genotype.
@@ -53,7 +54,7 @@ These traits are within the `traits` module:
 
 ### Operators
 
-Within the module `operations` we have the following operators:
+Within the `operations` module we have the following operators:
 
 - Crossover
   - Cycle
@@ -75,48 +76,58 @@ Within the module `operations` we have the following operators:
 ### Population
 
 In genetic algorithms, operators are applied over a population of individuals, and over a set of rules (not yet implemented).
-Within the `population` module, `Population` structure will define the population.
+Within the `population` module, the `Population` structure will define the population.
 
 ### Runner
 
-Because genetic algorithms run over different generations, in this library there is a `start` function within module `ga` that facilitates the process.
-This function will need the `GaConfiguration` structure which contains the operators to use, the maximum number of generations, the problem solver (Maximization or Minimization), etc, and the `Population` structure, which is in the `population` module.
+Since genetic algorithms run over several generations, there is a `start` function in this library within the `ga` module that facilitates the process.
+This function needs the `GaConfiguration` structure, which contains the operators to be used, the maximum number of generations, the problem solver (Maximization or Minimization), etc., and the `Population` structure, which is in the `population` module.
+
+### Initialization
+
+If it is desired to perform the initialization of the population randomly through this library, it can be done through the function `random_initialization`. This function requires the following parameters:
+- `alleles`: This is an array containing the elements that can be combined in the population. They have to comply with the `GenotypeT` trait.
+- `population_size`: Indicates the size of the population we want to have.
+- `genes_per_individual`: Sets the number of genes that each individual in the population has.
+- `needs_unique_ids`: This variable indicates whether each gene of each individual has to contain a unique ID. This is useful mainly for the `cycle` crossover method.
+- `alleles_can_be_repeated`: Within an individual, the same allele can be repeated several times. This variable indicates whether this behavior is desired, or whether it is preferred that the alleles be unique within each individual.
 
 ### GA Configuration
 
-Within this library you can configure the way to run genetic algorithms through the configuration structure `GaConfiguration`.
-This structure contains the following attributes:
-- `number_of_threads`: Optional. It indicates how many threads will be executed at the same time.
+Within this library, you can configure the way genetic algorithms are executed by using the configuration structure `GaConfiguration`.
+This structure has the following attributes:
+- `adaptive_ga`: Specifies if the Genetic Algorithms are adaptive or not.
+- `number_of_threads`: Optional. Indicates how many threads will be executed simultaneously.
 - `limit_configuration`: It configures the limits of the Genetic Algorithms with the `LimitConfiguration` structure.
 - `selection_configuration`: It configures the selection method with the `SelectionConfiguration` structure.
 - `crossover_configuration`: It configures the crossover method with the `CrossoverConfiguration` structure.
 - `mutation_configuration`: It configures the mutation method with the `MutationConfiguration` structure.
-- `survivor`: Indicates what survivor operator to use.
-- `log_level`: Optional. It configures the maximum log level we want to have. If this value is none, logs are disabled.
+- `survivor`: Specifies which survivor operator to use.
+- `log_level`: Optional. It configures the maximum log level we want to have. If this value is none, logs will be disabled.
 
 `SelectionConfiguration`:
-- `number_of_couples`: Optional. This attribute is only valid for stochastic universal sampling. It indicates the number of couples to select from the population.
-- `method`: Indicates what selection operator to use.
+- `number_of_couples`: Optional. This attribute applies only to stochastic universal sampling. It specifies the number of pairs to select from the population.
+- `method`: Specifies which selection operator to use.
 
 `CrossoverConfiguration`:
-- `number_of_points`: Optional. This attribute is only valid for crossover multipoint, and it indicates how many points will be made within the dna in crossover operations.
-- `probability`: Optional. Indicates the probability of two parents for being crossed. This number must be between 0.0 and 1.0 both inclusive.
-- `method`: Indicates what crossover operator to use.
+- `number_of_points`: Optional. This attribute is only valid for crossover multipoint and indicates how many points are made within the DNA during crossover operations.
+- `probability_max`: Optional. Specifies the maximum probability that two parents are crossed. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be greater than `probability_min`.
+- `probability_min`: Optional. Specifies the minimum probability that two parents are crossed. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be lower than `probability_max`.
+- `method`: Specifies which crossover operator to use.
 
 `MutationConfiguration`:
-- `probability`: Optional. Indicates the probability for a given child to be mutated. This number must be between 0.0 and 1.0 both inclusive.
-- `method`: Indicates what mutation operator to use.
+- `probability`: Optional. Specifies the probability that a given child will be mutated. This number must be between 0.0 and 1.0, both inclusive.
+- `method`: Specifies which mutation operator to use.
 
 `LimitConfiguration`:
-- `problem_solving`: You can select from a Minimization problem or a Maximization problem.
-- `max_generations`: In case of not getting the optimal result, this attribute indicates the maximum number of generations to execute before stopping.
+- `problem_solving`: You can choose between a minimization problem and a maximization problem.
+- `max_generations`: If the result is not optimal, this attribute indicates the maximum number of generations to run before stopping.
 - `fitness_target`: Optional. The fitness of the best individual.
-- `get_best_individual_by_generation`: Optional. Indicates to the runner to return the best individual by generation.
+- `get_best_individual_by_generation`: Optional. Tells the runner to return the best individual by generation.
 
 ## Example
 
-A simple example of use could be the minimization of a genotype whose gene has only an id.
-
+A simple example of use could be minimizing a genotype whose gene has only one id.
 ### Creation of the gene and genotype structure
 
 Use the traits.
@@ -135,6 +146,9 @@ impl GeneT for Gene{
     }
     fn get_id(&self) -> &i32{
         return &self.id;
+    }
+    fn set_id(&mut self, id: i32) {
+        self.id = id;
     }
 }
 ```
@@ -193,34 +207,32 @@ Define the configuration of the GA.
 
 ```rust
 let configuration = GaConfiguration{
-        number_of_threads: Some(2),
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: Some(true)},
-        selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
-        crossover_configuration: CrossoverConfiguration{probability:Some(1.0), method: Crossover::Cycle, number_of_points: None},
-        mutation_configuration: MutationConfiguration { probability: Some(0.2), method: Mutation::Swap },
+        adaptive_ga: false,
+        number_of_threads: None,
+        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
+        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
+        crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
+        mutation_configuration: MutationConfiguration { method: Mutation::Swap, ..Default::default() },
         survivor: Survivor::Fitness,
-        log_level: Some(log::LevelFilter::Info),
+        log_level: None,
     };
+
 ```
 
-Define the DNA, the individuals and the population.
+Define the Alleles, and initialize the population.
 
 ```rust
-let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
-    let dna_2 = vec![Gene{id:2}, Gene{id:3}, Gene{id:4}, Gene{id:1}];
-    let dna_3 = vec![Gene{id:3}, Gene{id:4}, Gene{id:1}, Gene{id:2}];
-    let dna_4 = vec![Gene{id:4}, Gene{id:1}, Gene{id:2}, Gene{id:3}];
-    let dna_5 = vec![Gene{id:2}, Gene{id:1}, Gene{id:3}, Gene{id:4}];
-    let dna_6 = vec![Gene{id:1}, Gene{id:3}, Gene{id:4}, Gene{id:2}];
-    let dna_7 = vec![Gene{id:3}, Gene{id:4}, Gene{id:2}, Gene{id:1}];
-    let dna_8 = vec![Gene{id:4}, Gene{id:2}, Gene{id:1}, Gene{id:3}];
-    let dna_9 = vec![Gene{id:2}, Gene{id:1}, Gene{id:4}, Gene{id:3}];
-    let dna_10 = vec![Gene{id:1}, Gene{id:4}, Gene{id:3}, Gene{id:2}];
+  let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
+                                   Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
+  let alleles = binding.as_slice();
+  static GENES_PER_INDIVIDUAL: i32 = 6;
+  static POPULATION_SIZE: i32 = 100;
+  static NEEDS_UNIQUE_IDS: bool = false;
+  static ALLELES_CAN_BE_REPEATED: bool = false;
+  static NUMBER_OF_THREADS: i32 = 8;
 
-let individuals = vec![Genotype{dna: dna_1, fitness: 1.0, age: 0}, Genotype{dna: dna_2, fitness: 2.0, age: 0},
-    Genotype{dna: dna_3, fitness: 3.0, age: 0}, Genotype{dna: dna_4, fitness: 4.0, age: 0}, Genotype{dna: dna_5, fitness: 5.0, age: 0}, Genotype{dna: dna_6, fitness: 6.0, age: 0}, Genotype{dna: dna_7, fitness: 7.0, age: 0}, Genotype{dna: dna_8, fitness: 8.0, age: 0}, Genotype{dna: dna_9, fitness: 9.0, age: 0}, Genotype{dna: dna_10, fitness: 10.0, age: 0}];
+  let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 
-    let mut population = Population::new(individuals);
 ```
 
 Finally, run the GA.
@@ -239,5 +251,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "1.0.1"
+genetic_algorithms = "1.1.0"
 ```
