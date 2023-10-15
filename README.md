@@ -208,7 +208,6 @@ impl GenotypeT for Genotype{
 Define the configuration of the GA.
 
 ```rust
-let configuration = GaConfiguration::new()
    let configuration = GaConfiguration::new()
         .with_problem_solving(ProblemSolving::Maximization)
         .with_selection_method(Selection::Random)
