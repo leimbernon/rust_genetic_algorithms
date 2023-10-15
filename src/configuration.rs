@@ -83,7 +83,7 @@ pub struct LimitConfiguration{
     pub problem_solving: ProblemSolving,
     pub max_generations: i32,
     pub fitness_target: Option<f64>, 
-    pub get_best_individual_by_generation: Option<bool>,
+    pub get_best_individual_by_generation: bool,
 }
 impl Default for LimitConfiguration {
     fn default() -> Self {
@@ -91,7 +91,7 @@ impl Default for LimitConfiguration {
             problem_solving: ProblemSolving::Minimization, 
             max_generations: 100, 
             fitness_target: None, 
-            get_best_individual_by_generation: None
+            get_best_individual_by_generation: false
         }
     }
 }
@@ -99,25 +99,62 @@ impl Default for LimitConfiguration {
 #[derive(Copy, Clone)]
 pub struct GaConfiguration {
     pub adaptive_ga: bool,
-    pub number_of_threads: Option<i32>,
+    pub number_of_threads: i32,
     pub limit_configuration: LimitConfiguration,
     pub selection_configuration: SelectionConfiguration,
     pub crossover_configuration: CrossoverConfiguration,
     pub mutation_configuration: MutationConfiguration,
     pub survivor: Survivor,
-    pub log_level: Option<LogLevel>,
+    pub log_level: LogLevel,
 }
 impl Default for GaConfiguration{
     fn default() -> Self {
         GaConfiguration { 
             adaptive_ga: false, 
-            number_of_threads: None, 
+            number_of_threads: 1, 
+            survivor: Survivor::Fitness, 
+            log_level: LogLevel::Off,
             limit_configuration: LimitConfiguration { ..Default::default() }, 
             selection_configuration: SelectionConfiguration { ..Default::default() }, 
             crossover_configuration: CrossoverConfiguration { ..Default::default() }, 
-            mutation_configuration: MutationConfiguration { ..Default::default() }, 
-            survivor: Survivor::Fitness, 
-            log_level: None 
+            mutation_configuration: MutationConfiguration { ..Default::default() }
         }
     }
 }
+
+impl GaConfiguration{
+    pub fn new() -> Self {
+        Self::default()
+    }
+    pub fn with_adaptive_ga(mut self, adaptive_ga: bool) -> Self{
+        self.adaptive_ga = adaptive_ga;
+        self
+    }
+    pub fn with_number_of_threads(mut self, number_of_threads: i32)-> Self{
+        self.number_of_threads = number_of_threads;
+        self
+    }
+    pub fn with_logs(mut self, log_level: LogLevel) -> Self{
+        self.log_level = log_level;
+        self
+    }
+
+    //Limit configuration
+    pub fn with_problem_solving(mut self, problem_solving: ProblemSolving)-> Self{
+        self.limit_configuration.problem_solving = problem_solving;
+        self
+    }
+    pub fn with_max_generations(mut self, max_generations: i32)-> Self{
+        self.limit_configuration.max_generations = max_generations;
+        self
+    }
+    pub fn with_fitness_target(mut self, fitness_target: f64)-> Self{
+        self.limit_configuration.fitness_target = Some(fitness_target);
+        self
+    }
+    pub fn with_best_individual_by_generation(mut self, best_individual_by_generation: bool) -> Self {
+        self.limit_configuration.get_best_individual_by_generation = best_individual_by_generation;
+        self
+    }
+
+} 

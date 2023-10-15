@@ -19,14 +19,14 @@ U:GenotypeT + Send + Sync + 'static + Clone
 
     //We set the environment variable from the configuration value
     let key = "RUST_LOG";
-    let log_level = if configuration.log_level.is_none(){log::LevelFilter::Off}else{match configuration.log_level.unwrap(){
+    let log_level = match configuration.log_level{
         LogLevel::Off => log::LevelFilter::Off,
         LogLevel::Error => log::LevelFilter::Error,
         LogLevel::Warn => log::LevelFilter::Warn,
         LogLevel::Info => log::LevelFilter::Info,
         LogLevel::Debug => log::LevelFilter::Debug,
         LogLevel::Trace => log::LevelFilter::Trace,
-    }};
+    };
     env::set_var(key, log_level.as_str());
     let _ = env_logger::try_init();
 
@@ -50,7 +50,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
         age += 1;
 
         //1- Parent selection for reproduction
-        let mut parents = selection::factory(&population.individuals, configuration.selection_configuration, configuration.number_of_threads.unwrap_or(1));
+        let mut parents = selection::factory(&population.individuals, configuration.selection_configuration, configuration.number_of_threads);
         debug!(target="ga_events", method="run"; "Parents selected for reproduction");
 
         //2- Getting the offspring
@@ -64,7 +64,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
         debug!(target="ga_events", method="run"; "Best individual calculated - generation {}", i+1);
 
         //3.1- If we want to return the best individual by generation
-        if configuration.limit_configuration.get_best_individual_by_generation.is_some() {
+        if configuration.limit_configuration.get_best_individual_by_generation {
             best_population.add_individual_gn(best_individual.clone(), i, configuration.adaptive_ga);
         }
 
@@ -82,7 +82,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
     }
 
     //If it's not required to return the best individuals by generation
-    if (configuration.limit_configuration.get_best_individual_by_generation.is_some() && !configuration.limit_configuration.get_best_individual_by_generation.unwrap()) || configuration.limit_configuration.get_best_individual_by_generation.is_none() {
+    if !configuration.limit_configuration.get_best_individual_by_generation {
         best_population.add_individual_gn(best_individual, -1, configuration.adaptive_ga);
     }
     best_population
@@ -248,7 +248,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 {
 
     debug!(target="ga_events", method="population_fitness_calculation"; "Started the population fitness calculation");
-    let mut number_of_threads = configuration.number_of_threads.unwrap_or(1);
+    let mut number_of_threads = configuration.number_of_threads;
     let (tx, rx) = sync_channel(number_of_threads as usize);
 
     //Division of the individuals in different threads
@@ -338,8 +338,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
 {
     //Setting the control variables
     debug!(target="ga_events", method="parent_crossover"; "Started the parent crossover");
-    let mut number_of_threads = if configuration.number_of_threads.is_none() {1} else {configuration.number_of_threads.unwrap()}; 
-    number_of_threads = if number_of_threads > parents.len() as i32 {parents.len() as i32}else{number_of_threads};
+    let number_of_threads = if configuration.number_of_threads > parents.len() as i32 {parents.len() as i32}else{configuration.number_of_threads};
     let jump = parents.len() / number_of_threads as usize;
 
     let mut handles = Vec::new();

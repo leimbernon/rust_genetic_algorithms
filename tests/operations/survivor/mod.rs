@@ -37,7 +37,7 @@ fn test_fitness_survivor_minization(){
     let mut population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6,
     individual_7, individual_8, individual_9, individual_10, individual_11, individual_12];
 
-    fitness::fitness_based(&mut population, 10,  LimitConfiguration{problem_solving: ProblemSolving::Minimization, max_generations: 100, fitness_target: None, get_best_individual_by_generation: None});
+    fitness::fitness_based(&mut population, 10,  LimitConfiguration{problem_solving: ProblemSolving::Minimization, ..Default::default()});
 
     //Tests that the population has 10 individuals
     assert_eq!(population.len(), 10);
@@ -83,7 +83,7 @@ fn test_fitness_survivor_maximization(){
     let mut population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6,
     individual_7, individual_8, individual_9, individual_10, individual_11, individual_12];
 
-    fitness::fitness_based(&mut population, 10, LimitConfiguration{problem_solving: ProblemSolving::Maximization, max_generations: 100, fitness_target: None, get_best_individual_by_generation: None});
+    fitness::fitness_based(&mut population, 10, LimitConfiguration{problem_solving: ProblemSolving::Maximization, ..Default::default()});
 
     //Tests that the population has 10 individuals
     assert_eq!(population.len(), 10);
@@ -179,7 +179,7 @@ fn test_survivor_fitness_fixed(){
     let mut population = vec![individual_1, individual_2, individual_3, individual_4, individual_5, individual_6,
     individual_7, individual_8, individual_9, individual_10, individual_11, individual_12];
 
-    fitness::fitness_based(&mut population, 10,  LimitConfiguration{problem_solving: ProblemSolving::FixedFitness, max_generations: 100, fitness_target: Some(14.5), get_best_individual_by_generation: None});
+    fitness::fitness_based(&mut population, 10,  LimitConfiguration{problem_solving: ProblemSolving::FixedFitness, fitness_target: Some(14.5), ..Default::default()});
 
     //Tests that the population has 10 individuals
     assert_eq!(population.len(), 10);
