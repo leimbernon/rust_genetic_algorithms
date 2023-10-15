@@ -1,4 +1,4 @@
-use genetic_algorithms::{ga::{run, self}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration, SelectionConfiguration, MutationConfiguration, CrossoverConfiguration}};
+use genetic_algorithms::{ga::{run, self}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving}};
 use crate::structures::{Gene, Genotype};
 extern crate num_cpus;
 
@@ -6,16 +6,13 @@ extern crate num_cpus;
 fn test_ga_start_maximize(){
 
     //Creates the GA configuration
-    let configuration = GaConfiguration{
-        adaptive_ga: false,
-        number_of_threads: None,
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
-        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
-        crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
-        mutation_configuration: MutationConfiguration { method: Mutation::Swap, ..Default::default() },
-        survivor: Survivor::Fitness,
-        log_level: None,
-    };
+    let configuration = GaConfiguration::new()
+        .with_problem_solving(ProblemSolving::Maximization)
+        .with_selection_method(Selection::Random)
+        .with_crossover_method(Crossover::Cycle)
+        .with_mutation_method(Mutation::Swap)
+        .with_survivor_method(Survivor::Fitness);
+
 
     //Creates the population
     let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
@@ -46,16 +43,13 @@ fn test_ga_start_maximize(){
 fn test_ga_run_minimize(){
 
     //Creates the GA configuration
-    let configuration = GaConfiguration{
-        adaptive_ga: false,
-        number_of_threads: None,
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Minimization, get_best_individual_by_generation: None},
-        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
-        crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
-        mutation_configuration: MutationConfiguration { probability_max: Some(0.2), method: Mutation::Swap, ..Default::default() },
-        survivor: Survivor::Fitness,
-        log_level: None,
-    };
+    let configuration = GaConfiguration::new()
+        .with_problem_solving(ProblemSolving::Minimization)
+        .with_selection_method(Selection::Random)
+        .with_crossover_method(Crossover::Cycle)
+        .with_mutation_method(Mutation::Swap)
+        .with_mutation_probability_max(0.2)
+        .with_survivor_method(Survivor::Fitness);
 
     //Creates the population
     let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
@@ -87,16 +81,14 @@ fn test_ga_run_minimize(){
 fn test_ga_run(){
 
     //Creates the GA configuration
-    let configuration = GaConfiguration{
-        adaptive_ga: false, 
-        number_of_threads: Some(8),
-        limit_configuration: LimitConfiguration{max_generations: 1000, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
-        selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
-        crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
-        mutation_configuration: MutationConfiguration{method: Mutation::Swap, ..Default::default()},
-        survivor: Survivor::Fitness,
-        log_level: None,
-    };
+    let configuration = GaConfiguration::new()
+        .with_threads(8)
+        .with_problem_solving(ProblemSolving::Maximization)
+        .with_selection_method(Selection::Tournament)
+        .with_number_of_couples(10)
+        .with_crossover_method(Crossover::Cycle)
+        .with_mutation_method(Mutation::Swap)
+        .with_survivor_method(Survivor::Fitness);
 
     //Creates the population
     let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
