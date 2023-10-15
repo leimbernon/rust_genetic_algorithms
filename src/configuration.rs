@@ -167,4 +167,21 @@ impl GaConfiguration{
         self
     }
 
+    //Crossover configuration
+    pub fn with_crossover_number_of_points(mut self, number_of_points: i32)->Self{
+        self.crossover_configuration.number_of_points = Some(number_of_points);
+        self
+    }
+    pub fn with_crossover_probability_max(mut self, probability_max: f64)->Self{
+        self.crossover_configuration.probability_max = Some(probability_max);
+        self
+    }
+    pub fn with_crossover_probability_min(mut self, probability_min: f64) -> Self{
+        self.crossover_configuration.probability_min = Some(probability_min);
+        self
+    }
+    pub fn with_crossover_method(mut self, crossover_method: Crossover) -> Self {
+        self.crossover_configuration.method = crossover_method;
+        self
+    }
 } 
