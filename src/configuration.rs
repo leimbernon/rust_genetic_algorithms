@@ -31,13 +31,13 @@ pub enum LogLevel {
 
 #[derive(Copy, Clone)]
 pub struct SelectionConfiguration{
-    pub number_of_couples: Option<i32>,
+    pub number_of_couples: i32,
     pub method: Selection,
 }
 impl Default for SelectionConfiguration{
     fn default() -> Self {
         SelectionConfiguration { 
-            number_of_couples: None, 
+            number_of_couples: 1, 
             method: Selection::Tournament 
         }
     }
@@ -154,6 +154,16 @@ impl GaConfiguration{
     }
     pub fn with_best_individual_by_generation(mut self, best_individual_by_generation: bool) -> Self {
         self.limit_configuration.get_best_individual_by_generation = best_individual_by_generation;
+        self
+    }
+
+    //Selection configuration
+    pub fn with_number_of_couples(mut self, number_of_couples: i32)->Self{
+        self.selection_configuration.number_of_couples = number_of_couples;
+        self
+    }
+    pub fn with_selection_method(mut self, selection_method: Selection)->Self{
+        self.selection_configuration.method = selection_method;
         self
     }
 

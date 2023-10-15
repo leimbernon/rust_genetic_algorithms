@@ -9,7 +9,7 @@ fn test_ga_start_maximize(){
     let configuration = GaConfiguration{
         adaptive_ga: false,
         limit_configuration: LimitConfiguration{problem_solving: ProblemSolving::Maximization, ..Default::default()},
-        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
+        selection_configuration: SelectionConfiguration { method: Selection::Random, ..Default::default() },
         crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
         mutation_configuration: MutationConfiguration { method: Mutation::Swap, ..Default::default() },
         survivor: Survivor::Fitness,
@@ -47,7 +47,7 @@ fn test_ga_run_minimize(){
     //Creates the GA configuration
     let configuration = GaConfiguration{
         limit_configuration: LimitConfiguration{problem_solving: ProblemSolving::Minimization, ..Default::default()},
-        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
+        selection_configuration: SelectionConfiguration { method: Selection::Random, ..Default::default() },
         crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
         mutation_configuration: MutationConfiguration { probability_max: Some(0.2), method: Mutation::Swap, ..Default::default() },
         survivor: Survivor::Fitness,
@@ -87,7 +87,7 @@ fn test_ga_run(){
     let configuration = GaConfiguration{
         number_of_threads: 8,
         limit_configuration: LimitConfiguration{problem_solving: ProblemSolving::Maximization, ..Default::default()},
-        selection_configuration: SelectionConfiguration{number_of_couples: Some(10), method:Selection::Tournament},
+        selection_configuration: SelectionConfiguration{number_of_couples: 10, method:Selection::Tournament},
         crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
         mutation_configuration: MutationConfiguration{method: Mutation::Swap, ..Default::default()},
         survivor: Survivor::Fitness,

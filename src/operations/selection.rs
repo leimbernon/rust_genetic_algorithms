@@ -21,7 +21,7 @@ U: GenotypeT + Sync + Send + 'static + Clone
     match configuration.method {
         Selection::Random => {random(individuals)},
         Selection::RouletteWheel => {roulette_wheel_selection(individuals)},
-        Selection::StochasticUniversalSampling => {stochastic_universal_sampling(individuals, configuration.number_of_couples.unwrap())},
-        Selection::Tournament => {tournament(individuals, configuration.number_of_couples.unwrap(), number_of_threads)},
+        Selection::StochasticUniversalSampling => {stochastic_universal_sampling(individuals, configuration.number_of_couples)},
+        Selection::Tournament => {tournament(individuals, configuration.number_of_couples, number_of_threads)},
     }
 }
