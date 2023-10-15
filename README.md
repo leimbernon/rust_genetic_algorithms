@@ -5,7 +5,7 @@
 ## Description
 This library provides a simple framework for implementing [genetic algorithms (GA)](https://en.wikipedia.org/wiki/Genetic_algorithm) with Rust.
 
-This library also supports multithreading.
+This library also supports multithreading and adaptive genetic algorithms.
 
 ## Table of content
 - [RUST genetic algorithms library](#rust-genetic-algorithms-library)
@@ -116,7 +116,9 @@ This structure has the following attributes:
 - `method`: Specifies which crossover operator to use.
 
 `MutationConfiguration`:
-- `probability`: Optional. Specifies the probability that a given child will be mutated. This number must be between 0.0 and 1.0, both inclusive.
+- `probability_max`: Optional. Specifies the maximum probability that a genotype is mutated. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be greater than `probability_min`.
+- `probability_min`: Optional. Specifies the minimum probability that a genotype is mutated. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be lower than `probability_max`.
+
 - `method`: Specifies which mutation operator to use.
 
 `LimitConfiguration`:
@@ -206,17 +208,13 @@ impl GenotypeT for Genotype{
 Define the configuration of the GA.
 
 ```rust
-let configuration = GaConfiguration{
-        adaptive_ga: false,
-        number_of_threads: None,
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
-        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
-        crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
-        mutation_configuration: MutationConfiguration { method: Mutation::Swap, ..Default::default() },
-        survivor: Survivor::Fitness,
-        log_level: None,
-    };
-
+let configuration = GaConfiguration::new()
+   let configuration = GaConfiguration::new()
+        .with_problem_solving(ProblemSolving::Maximization)
+        .with_selection_method(Selection::Random)
+        .with_crossover_method(Crossover::Cycle)
+        .with_mutation_method(Mutation::Swap)
+        .with_survivor_method(Survivor::Fitness);
 ```
 
 Define the Alleles, and initialize the population.
@@ -251,5 +249,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "1.1.0"
+genetic_algorithms = "1.2.0"
 ```
