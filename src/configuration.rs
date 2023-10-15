@@ -180,8 +180,22 @@ impl GaConfiguration{
         self.crossover_configuration.probability_min = Some(probability_min);
         self
     }
-    pub fn with_crossover_method(mut self, crossover_method: Crossover) -> Self {
-        self.crossover_configuration.method = crossover_method;
+    pub fn with_crossover_method(mut self, method: Crossover) -> Self {
+        self.crossover_configuration.method = method;
+        self
+    }
+
+    //Mutation configuration
+    pub fn with_mutation_probability_max(mut self, probability_max: f64)->Self{
+        self.mutation_configuration.probability_max = Some(probability_max);
+        self
+    }
+    pub fn with_mutation_probability_min(mut self, probability_min: f64) -> Self{
+        self.mutation_configuration.probability_min = Some(probability_min);
+        self
+    }
+    pub fn with_mutation_method(mut self, method: Mutation) -> Self {
+        self.mutation_configuration.method = method;
         self
     }
 } 
