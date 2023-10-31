@@ -3,7 +3,7 @@ use rand::Rng;
 use log::{trace, debug, info};
 use std::env;
 
-use crate::{population::Population, traits::{GenotypeT,Configuration}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
+use crate::{population::Population, traits::{GenotypeT,ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
 use crate::configuration::GaConfiguration;
 
 pub struct Ga{
@@ -16,7 +16,7 @@ impl Default for Ga{
         }
     }
 }
-impl Configuration for Ga{
+impl ConfigurationT for Ga{
     fn new()->Self{
         Self::default()
     }

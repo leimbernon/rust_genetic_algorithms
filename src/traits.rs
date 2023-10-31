@@ -32,7 +32,7 @@ pub trait GenotypeT: Clone{
     }
 }
 
-pub trait Configuration{
+pub trait ConfigurationT{
     fn new() -> Self;
     fn with_adaptive_ga(self, adaptive_ga: bool) -> Self;
     fn with_threads(self, number_of_threads: i32)-> Self;

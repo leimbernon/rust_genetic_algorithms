@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::{operations::{Crossover, Selection, Mutation, Survivor}, traits::Configuration};
+use crate::{operations::{Crossover, Selection, Mutation, Survivor}, traits::ConfigurationT};
 
 
 #[derive(Copy, Clone, PartialEq)]
@@ -122,7 +122,7 @@ impl Default for GaConfiguration{
     }
 }
 
-impl Configuration for GaConfiguration{
+impl ConfigurationT for GaConfiguration{
     fn new() -> Self {
         Self::default()
     }
