@@ -3,10 +3,95 @@ use rand::Rng;
 use log::{trace, debug, info};
 use std::env;
 
-use crate::{population::Population, traits::GenotypeT, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
+use crate::{population::Population, traits::{GenotypeT,Configuration}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
 use crate::configuration::GaConfiguration;
 
-/**
+pub struct Ga{
+    pub configuration: GaConfiguration
+}
+impl Default for Ga{
+    fn default() -> Self {
+        Ga { 
+            configuration: GaConfiguration{..Default::default()}
+        }
+    }
+}
+impl Configuration for Ga{
+    fn new()->Self{
+        Self::default()
+    }
+
+    fn with_adaptive_ga(self, adaptive_ga: bool) -> Self {
+        self.configuration.with_adaptive_ga(adaptive_ga);
+        self
+    }
+    fn with_threads(self, number_of_threads: i32)-> Self {
+        self.configuration.with_threads(number_of_threads);
+        self
+    }
+    fn with_logs(self, log_level: LogLevel) -> Self {
+        self.configuration.with_logs(log_level);
+        self
+    }
+    fn with_survivor_method(self, method: crate::operations::Survivor) -> Self {
+        self.configuration.with_survivor_method(method);
+        self
+    }
+    fn with_problem_solving(self, problem_solving: ProblemSolving)-> Self {
+        self.configuration.with_problem_solving(problem_solving);
+        self
+    }
+    fn with_max_generations(self, max_generations: i32)-> Self {
+        self.configuration.with_max_generations(max_generations);
+        self
+    }
+    fn with_fitness_target(self, fitness_target: f64)-> Self {
+        self.configuration.with_fitness_target(fitness_target);
+        self
+    }
+    fn with_best_individual_by_generation(self, best_individual_by_generation: bool) -> Self {
+        self.configuration.with_best_individual_by_generation(best_individual_by_generation);
+        self
+    }
+    fn with_number_of_couples(self, number_of_couples: i32)->Self {
+        self.configuration.with_number_of_couples(number_of_couples);
+        self
+    }
+    fn with_selection_method(self, selection_method: crate::operations::Selection)->Self {
+        self.configuration.with_selection_method(selection_method);
+        self
+    }
+    fn with_crossover_number_of_points(self, number_of_points: i32)->Self {
+        self.configuration.with_crossover_number_of_points(number_of_points);
+        self
+    }
+    fn with_crossover_probability_max(self, probability_max: f64)->Self {
+        self.configuration.with_crossover_probability_max(probability_max);
+        self
+    }
+    fn with_crossover_probability_min(self, probability_min: f64) -> Self {
+        self.configuration.with_crossover_probability_min(probability_min);
+        self
+    }
+    fn with_crossover_method(self, method: crossover::Crossover) -> Self {
+        self.configuration.with_crossover_method(method);
+        self
+    }
+    fn with_mutation_probability_max(self, probability_max: f64)->Self {
+        self.configuration.with_mutation_probability_max(probability_max);
+        self
+    }
+    fn with_mutation_probability_min(self, probability_min: f64) -> Self {
+        self.configuration.with_mutation_probability_min(probability_min);
+        self
+    }
+    fn with_mutation_method(self, method: crate::operations::Mutation) -> Self {
+        self.configuration.with_mutation_method(method);
+        self
+    }
+}
+
+/**  
  * Function to run the genetic algorithms cycle
  */
 pub fn run<U>(mut population: Population<U>, configuration: GaConfiguration)->Population<U>
