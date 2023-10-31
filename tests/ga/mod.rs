@@ -1,4 +1,4 @@
-use genetic_algorithms::{ga::{run, self}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving}};
+use genetic_algorithms::{ga::{run, self}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::{GenotypeT, Configuration}, configuration::{GaConfiguration, ProblemSolving}};
 use crate::structures::{Gene, Genotype};
 extern crate num_cpus;
 
