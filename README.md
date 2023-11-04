@@ -1,11 +1,11 @@
 # RUST genetic algorithms library
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a934b8668dbf4412b3c63a7b275ad949)](https://app.codacy.com/gh/leimbernon/rust_genetic_algorithms?utm_source=github.com&utm_medium=referral&utm_content=leimbernon/rust_genetic_algorithms&utm_campaign=Badge_Grade_Settings) [![CircleCI](https://dl.circleci.com/status-badge/img/gh/leimbernon/rust_genetic_algorithms/tree/develop.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/leimbernon/rust_genetic_algorithms/tree/develop)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a934b8668dbf4412b3c63a7b275ad949)](https://app.codacy.com/gh/leimbernon/rust_genetic_algorithms?utm_source=github.com&utm_medium=referral&utm_content=leimbernon/rust_genetic_algorithms&utm_campaign=Badge_Grade_Settings)
 [![Rust Unit Tests](https://github.com/leimbernon/rust_genetic_algorithms/actions/workflows/rust-unit-tests.yml/badge.svg)](https://github.com/leimbernon/rust_genetic_algorithms/actions/workflows/rust-unit-tests.yml)
 
 ## Description
 This library provides a simple framework for implementing [genetic algorithms (GA)](https://en.wikipedia.org/wiki/Genetic_algorithm) with Rust.
 
-This library also supports multithreading.
+This library also supports multithreading and adaptive genetic algorithms.
 
 ## Table of content
 - [RUST genetic algorithms library](#rust-genetic-algorithms-library)
@@ -116,7 +116,9 @@ This structure has the following attributes:
 - `method`: Specifies which crossover operator to use.
 
 `MutationConfiguration`:
-- `probability`: Optional. Specifies the probability that a given child will be mutated. This number must be between 0.0 and 1.0, both inclusive.
+- `probability_max`: Optional. Specifies the maximum probability that a genotype is mutated. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be greater than `probability_min`.
+- `probability_min`: Optional. Specifies the minimum probability that a genotype is mutated. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be lower than `probability_max`.
+
 - `method`: Specifies which mutation operator to use.
 
 `LimitConfiguration`:
@@ -131,7 +133,7 @@ A simple example of use could be minimizing a genotype whose gene has only one i
 ### Creation of the gene and genotype structure
 
 Use the traits.
-`use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration}};`
+`use genetic_algorithms::{operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::{GenotypeT, ConfigurationT}, configuration::ProblemSolving, ga};`
 
 Define the gene structure.
 
@@ -203,22 +205,6 @@ impl GenotypeT for Genotype{
 }
 ```
 
-Define the configuration of the GA.
-
-```rust
-let configuration = GaConfiguration{
-        adaptive_ga: false,
-        number_of_threads: None,
-        limit_configuration: LimitConfiguration{max_generations: 100, fitness_target: None, problem_solving: ProblemSolving::Maximization, get_best_individual_by_generation: None},
-        selection_configuration: SelectionConfiguration { number_of_couples: None, method: Selection::Random },
-        crossover_configuration: CrossoverConfiguration{method: Crossover::Cycle, number_of_points: None, ..Default::default()},
-        mutation_configuration: MutationConfiguration { method: Mutation::Swap, ..Default::default() },
-        survivor: Survivor::Fitness,
-        log_level: None,
-    };
-
-```
-
 Define the Alleles, and initialize the population.
 
 ```rust
@@ -231,14 +217,20 @@ Define the Alleles, and initialize the population.
   static ALLELES_CAN_BE_REPEATED: bool = false;
   static NUMBER_OF_THREADS: i32 = 8;
 
-  let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
+  let mut population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 
 ```
 
-Finally, run the GA.
+Finally, configure and run the GA.
 
 ```rust
-population = genetic_algorithms::ga::run(population, configuration);
+population = ga::Ga::new()
+                .with_problem_solving(ProblemSolving::Maximization)
+                .with_selection_method(Selection::Random)
+                .with_crossover_method(Crossover::Cycle)
+                .with_mutation_method(Mutation::Swap)
+                .with_survivor_method(Survivor::Fitness)
+                .run(population);
 ```
 
 ### Other examples
@@ -251,5 +243,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "1.1.0"
+genetic_algorithms = "1.2.0"
 ```
