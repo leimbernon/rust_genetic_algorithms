@@ -133,7 +133,7 @@ A simple example of use could be minimizing a genotype whose gene has only one i
 ### Creation of the gene and genotype structure
 
 Use the traits.
-`use genetic_algorithms::{ga::run, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::GenotypeT, configuration::{GaConfiguration, ProblemSolving, LimitConfiguration}};`
+`use genetic_algorithms::{operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::{GenotypeT, ConfigurationT}, configuration::ProblemSolving, ga};`
 
 Define the gene structure.
 
@@ -205,17 +205,6 @@ impl GenotypeT for Genotype{
 }
 ```
 
-Define the configuration of the GA.
-
-```rust
-   let configuration = GaConfiguration::new()
-        .with_problem_solving(ProblemSolving::Maximization)
-        .with_selection_method(Selection::Random)
-        .with_crossover_method(Crossover::Cycle)
-        .with_mutation_method(Mutation::Swap)
-        .with_survivor_method(Survivor::Fitness);
-```
-
 Define the Alleles, and initialize the population.
 
 ```rust
@@ -228,14 +217,20 @@ Define the Alleles, and initialize the population.
   static ALLELES_CAN_BE_REPEATED: bool = false;
   static NUMBER_OF_THREADS: i32 = 8;
 
-  let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
+  let mut population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 
 ```
 
-Finally, run the GA.
+Finally, configure and run the GA.
 
 ```rust
-population = genetic_algorithms::ga::run(population, configuration);
+population = ga::Ga::new()
+                .with_problem_solving(ProblemSolving::Maximization)
+                .with_selection_method(Selection::Random)
+                .with_crossover_method(Crossover::Cycle)
+                .with_mutation_method(Mutation::Swap)
+                .with_survivor_method(Survivor::Fitness)
+                .run(population);
 ```
 
 ### Other examples
