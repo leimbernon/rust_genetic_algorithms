@@ -126,79 +126,79 @@ impl ConfigurationT for GaConfiguration{
     fn new() -> Self {
         Self::default()
     }
-    fn with_adaptive_ga(mut self, adaptive_ga: bool) -> Self{
+    fn with_adaptive_ga(&mut self, adaptive_ga: bool) -> &mut Self{
         self.adaptive_ga = adaptive_ga;
         self
     }
-    fn with_threads(mut self, number_of_threads: i32)-> Self{
+    fn with_threads(&mut self, number_of_threads: i32)-> &mut Self{
         self.number_of_threads = number_of_threads;
         self
     }
-    fn with_logs(mut self, log_level: LogLevel) -> Self{
+    fn with_logs(&mut self, log_level: LogLevel) -> &mut Self{
         self.log_level = log_level;
         self
     }
-    fn with_survivor_method(mut self, method: Survivor) -> Self{
+    fn with_survivor_method(&mut self, method: Survivor) -> &mut Self{
         self.survivor = method;
         self
     }
 
     //Limit configuration
-    fn with_problem_solving(mut self, problem_solving: ProblemSolving)-> Self{
+    fn with_problem_solving(&mut self, problem_solving: ProblemSolving)->&mut Self{
         self.limit_configuration.problem_solving = problem_solving;
         self
     }
-    fn with_max_generations(mut self, max_generations: i32)-> Self{
+    fn with_max_generations(&mut self, max_generations: i32)-> &mut Self{
         self.limit_configuration.max_generations = max_generations;
         self
     }
-    fn with_fitness_target(mut self, fitness_target: f64)-> Self{
+    fn with_fitness_target(&mut self, fitness_target: f64)-> &mut Self{
         self.limit_configuration.fitness_target = Some(fitness_target);
         self
     }
-    fn with_best_individual_by_generation(mut self, best_individual_by_generation: bool) -> Self {
+    fn with_best_individual_by_generation(&mut self, best_individual_by_generation: bool) -> &mut Self {
         self.limit_configuration.get_best_individual_by_generation = best_individual_by_generation;
         self
     }
 
     //Selection configuration
-    fn with_number_of_couples(mut self, number_of_couples: i32)->Self{
+    fn with_number_of_couples(&mut self, number_of_couples: i32)->&mut Self{
         self.selection_configuration.number_of_couples = number_of_couples;
         self
     }
-    fn with_selection_method(mut self, selection_method: Selection)->Self{
+    fn with_selection_method(&mut self, selection_method: Selection)->&mut Self{
         self.selection_configuration.method = selection_method;
         self
     }
 
     //Crossover configuration
-    fn with_crossover_number_of_points(mut self, number_of_points: i32)->Self{
+    fn with_crossover_number_of_points(&mut self, number_of_points: i32)->&mut Self{
         self.crossover_configuration.number_of_points = Some(number_of_points);
         self
     }
-    fn with_crossover_probability_max(mut self, probability_max: f64)->Self{
+    fn with_crossover_probability_max(&mut self, probability_max: f64)->&mut Self{
         self.crossover_configuration.probability_max = Some(probability_max);
         self
     }
-    fn with_crossover_probability_min(mut self, probability_min: f64) -> Self{
+    fn with_crossover_probability_min(&mut self, probability_min: f64) -> &mut Self{
         self.crossover_configuration.probability_min = Some(probability_min);
         self
     }
-    fn with_crossover_method(mut self, method: Crossover) -> Self {
+    fn with_crossover_method(&mut self, method: Crossover) -> &mut Self {
         self.crossover_configuration.method = method;
         self
     }
 
     //Mutation configuration
-    fn with_mutation_probability_max(mut self, probability_max: f64)->Self{
+    fn with_mutation_probability_max(&mut self, probability_max: f64)->&mut Self{
         self.mutation_configuration.probability_max = Some(probability_max);
         self
     }
-    fn with_mutation_probability_min(mut self, probability_min: f64) -> Self{
+    fn with_mutation_probability_min(&mut self, probability_min: f64) -> &mut Self{
         self.mutation_configuration.probability_min = Some(probability_min);
         self
     }
-    fn with_mutation_method(mut self, method: Mutation) -> Self {
+    fn with_mutation_method(&mut self, method: Mutation) -> &mut Self {
         self.mutation_configuration.method = method;
         self
     }

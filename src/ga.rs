@@ -21,74 +21,84 @@ impl ConfigurationT for Ga{
         Self::default()
     }
 
-    fn with_adaptive_ga(self, adaptive_ga: bool) -> Self {
+    fn with_adaptive_ga(&mut self, adaptive_ga: bool) -> &mut Self {
         self.configuration.with_adaptive_ga(adaptive_ga);
         self
     }
-    fn with_threads(self, number_of_threads: i32)-> Self {
+    fn with_threads(&mut self, number_of_threads: i32)-> &mut Self {
         self.configuration.with_threads(number_of_threads);
         self
     }
-    fn with_logs(self, log_level: LogLevel) -> Self {
+    fn with_logs(&mut self, log_level: LogLevel) -> &mut Self {
         self.configuration.with_logs(log_level);
         self
     }
-    fn with_survivor_method(self, method: crate::operations::Survivor) -> Self {
+    fn with_survivor_method(&mut self, method: crate::operations::Survivor) -> &mut Self {
         self.configuration.with_survivor_method(method);
         self
     }
-    fn with_problem_solving(self, problem_solving: ProblemSolving)-> Self {
+    fn with_problem_solving(&mut self, problem_solving: ProblemSolving)->&mut Self {
         self.configuration.with_problem_solving(problem_solving);
         self
     }
-    fn with_max_generations(self, max_generations: i32)-> Self {
+    fn with_max_generations(&mut self, max_generations: i32)-> &mut Self {
         self.configuration.with_max_generations(max_generations);
         self
     }
-    fn with_fitness_target(self, fitness_target: f64)-> Self {
+    fn with_fitness_target(&mut self, fitness_target: f64)-> &mut Self {
         self.configuration.with_fitness_target(fitness_target);
         self
     }
-    fn with_best_individual_by_generation(self, best_individual_by_generation: bool) -> Self {
+    fn with_best_individual_by_generation(&mut self, best_individual_by_generation: bool) -> &mut Self {
         self.configuration.with_best_individual_by_generation(best_individual_by_generation);
         self
     }
-    fn with_number_of_couples(self, number_of_couples: i32)->Self {
+    fn with_number_of_couples(&mut self, number_of_couples: i32)->&mut Self {
         self.configuration.with_number_of_couples(number_of_couples);
         self
     }
-    fn with_selection_method(self, selection_method: crate::operations::Selection)->Self {
+    fn with_selection_method(&mut self, selection_method: crate::operations::Selection)->&mut Self {
         self.configuration.with_selection_method(selection_method);
         self
     }
-    fn with_crossover_number_of_points(self, number_of_points: i32)->Self {
+    fn with_crossover_number_of_points(&mut self, number_of_points: i32)->&mut Self {
         self.configuration.with_crossover_number_of_points(number_of_points);
         self
     }
-    fn with_crossover_probability_max(self, probability_max: f64)->Self {
+    fn with_crossover_probability_max(&mut self, probability_max: f64)->&mut Self {
         self.configuration.with_crossover_probability_max(probability_max);
         self
     }
-    fn with_crossover_probability_min(self, probability_min: f64) -> Self {
+    fn with_crossover_probability_min(&mut self, probability_min: f64) -> &mut Self {
         self.configuration.with_crossover_probability_min(probability_min);
         self
     }
-    fn with_crossover_method(self, method: crossover::Crossover) -> Self {
+    fn with_crossover_method(&mut self, method: crossover::Crossover) -> &mut Self {
         self.configuration.with_crossover_method(method);
         self
     }
-    fn with_mutation_probability_max(self, probability_max: f64)->Self {
+    fn with_mutation_probability_max(&mut self, probability_max: f64)->&mut Self {
         self.configuration.with_mutation_probability_max(probability_max);
         self
     }
-    fn with_mutation_probability_min(self, probability_min: f64) -> Self {
+    fn with_mutation_probability_min(&mut self, probability_min: f64) -> &mut Self {
         self.configuration.with_mutation_probability_min(probability_min);
         self
     }
-    fn with_mutation_method(self, method: crate::operations::Mutation) -> Self {
+    fn with_mutation_method(&mut self, method: crate::operations::Mutation) -> &mut Self {
         self.configuration.with_mutation_method(method);
         self
     }
+}
+
+impl Ga{
+    pub fn run<U>(&mut self, population: Population<U>)->Population<U>
+    where 
+    U:GenotypeT + Send + Sync + 'static + Clone
+    {
+        run(population, self.configuration)
+    }
+
 }
 
 /**  

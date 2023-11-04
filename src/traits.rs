@@ -34,30 +34,30 @@ pub trait GenotypeT: Clone{
 
 pub trait ConfigurationT{
     fn new() -> Self;
-    fn with_adaptive_ga(self, adaptive_ga: bool) -> Self;
-    fn with_threads(self, number_of_threads: i32)-> Self;
-    fn with_logs(self, log_level: LogLevel) -> Self;
-    fn with_survivor_method(self, method: Survivor) -> Self;
+    fn with_adaptive_ga(&mut self, adaptive_ga: bool) -> &mut Self;
+    fn with_threads(&mut self, number_of_threads: i32)-> &mut Self;
+    fn with_logs(&mut self, log_level: LogLevel) -> &mut Self;
+    fn with_survivor_method(&mut self, method: Survivor) -> &mut Self;
 
     //Limit configuration
-    fn with_problem_solving(self, problem_solving: ProblemSolving)-> Self;
-    fn with_max_generations(self, max_generations: i32)-> Self;
-    fn with_fitness_target(self, fitness_target: f64)-> Self;
-    fn with_best_individual_by_generation(self, best_individual_by_generation: bool) -> Self;
+    fn with_problem_solving(&mut self, problem_solving: ProblemSolving)->&mut Self;
+    fn with_max_generations(&mut self, max_generations: i32)-> &mut Self;
+    fn with_fitness_target(&mut self, fitness_target: f64)-> &mut Self;
+    fn with_best_individual_by_generation(&mut self, best_individual_by_generation: bool) -> &mut Self;
 
     //Selection configuration
-    fn with_number_of_couples(self, number_of_couples: i32)->Self;
-    fn with_selection_method(self, selection_method: Selection)->Self;
+    fn with_number_of_couples(&mut self, number_of_couples: i32)->&mut Self;
+    fn with_selection_method(&mut self, selection_method: Selection)->&mut Self;
 
     //Crossover configuration
-    fn with_crossover_number_of_points(self, number_of_points: i32)->Self;
-    fn with_crossover_probability_max(self, probability_max: f64)->Self;
-    fn with_crossover_probability_min(self, probability_min: f64) -> Self;
-    fn with_crossover_method(self, method: Crossover) -> Self;
+    fn with_crossover_number_of_points(&mut self, number_of_points: i32)->&mut Self;
+    fn with_crossover_probability_max(&mut self, probability_max: f64)->&mut Self;
+    fn with_crossover_probability_min(&mut self, probability_min: f64) -> &mut Self;
+    fn with_crossover_method(&mut self, method: Crossover) -> &mut Self;
 
     //Mutation configuration
-    fn with_mutation_probability_max(self, probability_max: f64)->Self;
-    fn with_mutation_probability_min(self, probability_min: f64) -> Self;
-    fn with_mutation_method(self, method: Mutation) -> Self;
+    fn with_mutation_probability_max(&mut self, probability_max: f64)->&mut Self;
+    fn with_mutation_probability_min(&mut self, probability_min: f64) -> &mut Self;
+    fn with_mutation_method(&mut self, method: Mutation) -> &mut Self;
 
 }

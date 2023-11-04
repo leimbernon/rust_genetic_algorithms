@@ -1,18 +1,9 @@
-use genetic_algorithms::{ga::{run, self}, operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::{GenotypeT, ConfigurationT}, configuration::{GaConfiguration, ProblemSolving}};
+use genetic_algorithms::{operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::{GenotypeT, ConfigurationT}, configuration::ProblemSolving, ga};
 use crate::structures::{Gene, Genotype};
 extern crate num_cpus;
 
 #[test]
 fn test_ga_start_maximize(){
-
-    //Creates the GA configuration
-    let configuration = GaConfiguration::new()
-        .with_problem_solving(ProblemSolving::Maximization)
-        .with_selection_method(Selection::Random)
-        .with_crossover_method(Crossover::Cycle)
-        .with_mutation_method(Mutation::Swap)
-        .with_survivor_method(Survivor::Fitness);
-
 
     //Creates the population
     let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
@@ -32,7 +23,13 @@ fn test_ga_start_maximize(){
     Genotype{dna: dna_9, fitness: 9.0, age: 0}, Genotype{dna: dna_10, fitness: 10.0, age: 0}];
 
     let mut population = Population::new(individuals);
-    population = run(population, configuration);
+    population = ga::Ga::new()
+                        .with_problem_solving(ProblemSolving::Maximization)
+                        .with_selection_method(Selection::Random)
+                        .with_crossover_method(Crossover::Cycle)
+                        .with_mutation_method(Mutation::Swap)
+                        .with_survivor_method(Survivor::Fitness)
+                        .run(population);
     
     assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_fitness(), 20.0);
@@ -42,15 +39,6 @@ fn test_ga_start_maximize(){
 #[test]
 fn test_ga_run_minimize(){
 
-    //Creates the GA configuration
-    let configuration = GaConfiguration::new()
-        .with_problem_solving(ProblemSolving::Minimization)
-        .with_selection_method(Selection::Random)
-        .with_crossover_method(Crossover::Cycle)
-        .with_mutation_method(Mutation::Swap)
-        .with_mutation_probability_max(0.2)
-        .with_survivor_method(Survivor::Fitness);
-
     //Creates the population
     let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
     let dna_2 = vec![Gene{id:2}, Gene{id:3}, Gene{id:4}, Gene{id:1}];
@@ -69,7 +57,14 @@ fn test_ga_run_minimize(){
     Genotype{dna: dna_9, fitness: 9.0, age: 0}, Genotype{dna: dna_10, fitness: 10.0, age: 0}];
 
     let mut population = Population::new(individuals);
-    population = run(population, configuration);
+    population = ga::Ga::new()
+                    .with_problem_solving(ProblemSolving::Minimization)
+                    .with_selection_method(Selection::Random)
+                    .with_crossover_method(Crossover::Cycle)
+                    .with_mutation_method(Mutation::Swap)
+                    .with_mutation_probability_max(0.2)
+                    .with_survivor_method(Survivor::Fitness)
+                    .run(population);
     
     assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_fitness(), 10.0);
@@ -80,16 +75,6 @@ fn test_ga_run_minimize(){
 #[test]
 fn test_ga_run(){
 
-    //Creates the GA configuration
-    let configuration = GaConfiguration::new()
-        .with_threads(8)
-        .with_problem_solving(ProblemSolving::Maximization)
-        .with_selection_method(Selection::Tournament)
-        .with_number_of_couples(10)
-        .with_crossover_method(Crossover::Cycle)
-        .with_mutation_method(Mutation::Swap)
-        .with_survivor_method(Survivor::Fitness);
-
     //Creates the population
     let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
     let dna_2 = vec![Gene{id:2}, Gene{id:3}, Gene{id:4}, Gene{id:1}];
@@ -108,7 +93,15 @@ fn test_ga_run(){
     Genotype{dna: dna_9, fitness: 9.0, age: 0}, Genotype{dna: dna_10, fitness: 10.0, age: 0}];
 
     let mut population = Population::new(individuals);
-    population = run(population, configuration);
+    population = ga::Ga::new()
+                    .with_threads(8)
+                    .with_problem_solving(ProblemSolving::Maximization)
+                    .with_selection_method(Selection::Tournament)
+                    .with_number_of_couples(10)
+                    .with_crossover_method(Crossover::Cycle)
+                    .with_mutation_method(Mutation::Swap)
+                    .with_survivor_method(Survivor::Fitness)
+                    .run(population);
     
     assert_eq!(population.individuals.len(), 1);
     
