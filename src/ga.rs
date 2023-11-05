@@ -6,21 +6,34 @@ use std::env;
 use crate::{population::Population, traits::{GenotypeT,ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
 use crate::configuration::GaConfiguration;
 
-pub struct Ga{
-    pub configuration: GaConfiguration
+pub struct Ga<U>
+where U:GenotypeT,
+{
+    pub configuration: GaConfiguration,
+    pub alleles: Vec<U::Gene>,
+    pub population: Population<U>,
 }
-impl Default for Ga{
+
+
+impl<U> Default for Ga<U>
+where U:GenotypeT,
+{
     fn default() -> Self {
         Ga { 
-            configuration: GaConfiguration{..Default::default()}
+            configuration: GaConfiguration{..Default::default()},
+            population: Population::new_empty(),
+            alleles: Vec::new(),
         }
     }
 }
-impl ConfigurationT for Ga{
+
+
+impl<U> ConfigurationT for Ga<U>
+where U:GenotypeT,
+{
     fn new()->Self{
         Self::default()
     }
-
     fn with_adaptive_ga(&mut self, adaptive_ga: bool) -> &mut Self {
         self.configuration.with_adaptive_ga(adaptive_ga);
         self
@@ -37,6 +50,8 @@ impl ConfigurationT for Ga{
         self.configuration.with_survivor_method(method);
         self
     }
+
+    //Limit configuration
     fn with_problem_solving(&mut self, problem_solving: ProblemSolving)->&mut Self {
         self.configuration.with_problem_solving(problem_solving);
         self
@@ -53,6 +68,24 @@ impl ConfigurationT for Ga{
         self.configuration.with_best_individual_by_generation(best_individual_by_generation);
         self
     }
+    fn with_population_size(&mut self, population_size: i32) -> &mut Self {
+        self.configuration.with_population_size(population_size);
+        self
+    }
+    fn with_genes_per_individual(&mut self, genes_per_individual: i32) -> &mut Self {
+        self.configuration.with_genes_per_individual(genes_per_individual);
+        self
+    }
+    fn with_needs_unique_ids(&mut self, needs_unique_ids: bool) -> &mut Self {
+        self.configuration.with_needs_unique_ids(needs_unique_ids);
+        self
+    }
+    fn with_alleles_can_be_repeated(&mut self, alleles_can_be_repeated: bool) -> &mut Self {
+        self.configuration.with_alleles_can_be_repeated(alleles_can_be_repeated);
+        self
+    }
+
+    //Selection configuration
     fn with_number_of_couples(&mut self, number_of_couples: i32)->&mut Self {
         self.configuration.with_number_of_couples(number_of_couples);
         self
@@ -61,6 +94,8 @@ impl ConfigurationT for Ga{
         self.configuration.with_selection_method(selection_method);
         self
     }
+
+    //Crossover configuration
     fn with_crossover_number_of_points(&mut self, number_of_points: i32)->&mut Self {
         self.configuration.with_crossover_number_of_points(number_of_points);
         self
@@ -77,6 +112,8 @@ impl ConfigurationT for Ga{
         self.configuration.with_crossover_method(method);
         self
     }
+
+    //Mutation configuration
     fn with_mutation_probability_max(&mut self, probability_max: f64)->&mut Self {
         self.configuration.with_mutation_probability_max(probability_max);
         self
@@ -91,170 +128,189 @@ impl ConfigurationT for Ga{
     }
 }
 
-impl Ga{
-    pub fn run<U>(&mut self, population: Population<U>)->Population<U>
-    where 
+
+impl<U>Ga<U>
+where
     U:GenotypeT + Send + Sync + 'static + Clone
+{
+
+    /**
+     * Function to set the alleles
+     */
+    pub fn with_alleles(&mut self, alleles: Vec<U::Gene>) -> &mut Self {
+        self.alleles = alleles;
+        self
+    }
+
+    /**
+     * Function to set the population
+     */
+    pub fn with_population(&mut self, population: Population<U>) -> &mut Self {
+        self.population = population;
+        self
+    }
+
+    /**
+     * Function to randomly initialize the population
+     */
+    pub fn random_initialization(&mut self)->Population<U>
+    where U:GenotypeT + Send + Sync + 'static + Clone
     {
-        run(population, self.configuration)
-    }
+        //Before starting the run, we will check the conditions
+        condition_checker_factory::<U>(None, None, Some(self.alleles.as_slice()), 
+                                        Some(self.configuration.limit_configuration.genes_per_individual), 
+                                        Some(self.configuration.limit_configuration.alleles_can_be_repeated));
 
-}
+        info!("Random initialization started");
+        //let mut individuals = Vec::new();
+        let (tx, rx) = sync_channel(self.configuration.number_of_threads as usize);
 
-/**  
- * Function to run the genetic algorithms cycle
- */
-pub fn run<U>(mut population: Population<U>, configuration: GaConfiguration)->Population<U>
-where 
-U:GenotypeT + Send + Sync + 'static + Clone
-{
+        //Setting the number of individuals per thread
+        let individuals_per_thread = self.configuration.limit_configuration.population_size / self.configuration.number_of_threads;
 
-    //Before starting the run, we will check the conditions
-    condition_checker_factory::<U>(Some(configuration), Some(&population), None, None, None);
+        //Cloning the individuals for multithreading
+        let alleles_t = Arc::new(Mutex::new(self.alleles.clone()));
 
-    //We set the environment variable from the configuration value
-    let key = "RUST_LOG";
-    let log_level = match configuration.log_level{
-        LogLevel::Off => log::LevelFilter::Off,
-        LogLevel::Error => log::LevelFilter::Error,
-        LogLevel::Warn => log::LevelFilter::Warn,
-        LogLevel::Info => log::LevelFilter::Info,
-        LogLevel::Debug => log::LevelFilter::Debug,
-        LogLevel::Trace => log::LevelFilter::Trace,
-    };
-    env::set_var(key, log_level.as_str());
-    let _ = env_logger::try_init();
-
-    //Initialize the adaptive ga
-    if configuration.adaptive_ga{
-        population.aga_init();
-    }
-
-    //Best individual within the generations and population returned
-    let initial_population_size = population.size();
-    let mut age = 0;
-
-    //Calculation of the fitness and the best individual
-    let mut best_individual = population_fitness_calculation(&mut population.individuals, configuration);
-    let mut best_population: Population<U> = Population::new_empty();
-
-    //We start the cycles
-    for i in 0..configuration.limit_configuration.max_generations {
-
-        info!(target="ga_events", method="run"; "Generation number: {}", i+1);
-        age += 1;
-
-        //1- Parent selection for reproduction
-        let mut parents = selection::factory(&population.individuals, configuration.selection_configuration, configuration.number_of_threads);
-        debug!(target="ga_events", method="run"; "Parents selected for reproduction");
-
-        //2- Getting the offspring
-        let mut offspring = parent_crossover(&mut parents, &population.individuals, &configuration, age, population.f_max, population.f_avg);
-        debug!(target="ga_events", method="run"; "Offspring created");
-
-        //3- Sets the best individual
-        for child in &offspring{
-            best_individual = get_best_individual(&best_individual, child, configuration.limit_configuration.problem_solving);
-        }
-        debug!(target="ga_events", method="run"; "Best individual calculated - generation {}", i+1);
-
-        //3.1- If we want to return the best individual by generation
-        if configuration.limit_configuration.get_best_individual_by_generation {
-            best_population.add_individual_gn(best_individual.clone(), i, configuration.adaptive_ga);
-        }
-
-        //4- Insert the children in the population
-        population.add_individuals(&mut offspring, configuration.adaptive_ga);
-
-        //5- Survivor selection
-        survivor::factory(configuration.survivor, &mut population.individuals, initial_population_size, configuration.limit_configuration);
-        debug!(target="ga_events", method="run"; "Survivors selected");
-
-        //6- Identifies if the limit has been reached or not
-        if limit_reached(configuration.limit_configuration, &population.individuals){
-            break;
-        }
-    }
-
-    //If it's not required to return the best individuals by generation
-    if !configuration.limit_configuration.get_best_individual_by_generation {
-        best_population.add_individual_gn(best_individual, -1, configuration.adaptive_ga);
-    }
-    best_population
-}
-
-/*
- * Function to randomly initialize the population
- */
-pub fn random_initialization<U>(alleles: &[U::Gene], population_size: i32, genes_per_individual:i32, 
-                                            needs_unique_ids: bool, alleles_can_be_repeated: bool, number_of_threads: i32)->Population<U>
-where U:GenotypeT + Send + Sync + 'static + Clone
-{
-    //Before starting the run, we will check the conditions
-    condition_checker_factory::<U>(None, None, Some(alleles), Some(genes_per_individual), Some(alleles_can_be_repeated));
-
-    info!("Random initialization started");
-    //let mut individuals = Vec::new();
-    let (tx, rx) = sync_channel(number_of_threads as usize);
-
-    //Setting the number of individuals per thread
-    let individuals_per_thread = population_size / number_of_threads;
-
-    //Cloning the individuals for multithreading
-    let alleles_t = Arc::new(Mutex::new(alleles.to_vec()));
-
-    //Walking through the threads
-    for _ in 0..number_of_threads {
+        //Walking through the threads
+        for _ in 0..self.configuration.number_of_threads {
 
         //Cloning the information from the main thread
         let (tx, 
-             alleles_t, 
-             alleles_can_be_repeated_t, 
-             genes_per_individual_t, 
-             individuals_per_thread_t,
-             needs_unique_ids_t) = (tx.clone(), Arc::clone(&alleles_t), alleles_can_be_repeated, genes_per_individual, individuals_per_thread, needs_unique_ids);
+        alleles_t, 
+        alleles_can_be_repeated_t, 
+        genes_per_individual_t, 
+        individuals_per_thread_t,
+        needs_unique_ids_t) = (tx.clone(), Arc::clone(&alleles_t), self.configuration.limit_configuration.alleles_can_be_repeated, 
+                                    self.configuration.limit_configuration.genes_per_individual, individuals_per_thread, 
+                                    self.configuration.limit_configuration.needs_unique_ids);
 
-         //Starting the thread management
-         thread::spawn(move || {
+        //Starting the thread management
+        thread::spawn(move || {
 
-            let mut individuals = Vec::new();
+        let mut individuals = Vec::new();
 
-            for _ in 0..individuals_per_thread_t{
+        for _ in 0..individuals_per_thread_t{
 
-                let mut individual = U::new();
+        let mut individual = U::new();
 
-                //Gets the dna randomly
-                if alleles_can_be_repeated_t {
-                    let dna_individual = helpers::initialize_dna::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
-                    individual.set_dna(dna_individual.as_slice());
-                }else{
-                    let dna_individual = helpers::initialize_dna_without_repeated_alleles::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
-                    individual.set_dna(dna_individual.as_slice());
-                }
+        //Gets the dna randomly
+        if alleles_can_be_repeated_t {
+        let dna_individual = helpers::initialize_dna::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+        individual.set_dna(dna_individual.as_slice());
+        }else{
+        let dna_individual = helpers::initialize_dna_without_repeated_alleles::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+        individual.set_dna(dna_individual.as_slice());
+        }
 
-                //Sets the dna of the individual, the age, and calculates fitness
-                individual.set_age(0);
-                individual.calculate_fitness();
+        //Sets the dna of the individual, the age, and calculates fitness
+        individual.set_age(0);
+        individual.calculate_fitness();
 
-                //Adds the individual in the vector
-                individuals.push(individual);
+        //Adds the individual in the vector
+        individuals.push(individual);
 
-            }
-            
-            //we send the individuals randomly initialized
-            tx.send(individuals).unwrap();
-         });
-    }
+        }
 
-    drop(tx);
+        //we send the individuals randomly initialized
+        tx.send(individuals).unwrap();
+        });
+        }
 
-    // We receive from the threads and add them into individuals
-    let mut individuals = Vec::new();
-    for mut received in rx {
+        drop(tx);
+
+        // We receive from the threads and add them into individuals
+        let mut individuals = Vec::new();
+        for mut received in rx {
         individuals.append(&mut received);
+        }
+
+        Population::new(individuals)
+
+    }
+    
+    /**
+     * Method for running the Genetic Algorithms
+     */
+    pub fn run(&mut self)->Population<U>
+    where 
+    U:GenotypeT + Send + Sync + 'static + Clone
+    {
+        //Before starting the run, we will check the conditions
+        condition_checker_factory::<U>(Some(self.configuration), Some(&self.population), None, None, None);
+
+        //We set the environment variable from the configuration value
+        let key = "RUST_LOG";
+        let log_level = match self.configuration.log_level{
+            LogLevel::Off => log::LevelFilter::Off,
+            LogLevel::Error => log::LevelFilter::Error,
+            LogLevel::Warn => log::LevelFilter::Warn,
+            LogLevel::Info => log::LevelFilter::Info,
+            LogLevel::Debug => log::LevelFilter::Debug,
+            LogLevel::Trace => log::LevelFilter::Trace,
+        };
+        env::set_var(key, log_level.as_str());
+        let _ = env_logger::try_init();
+
+        //Initialize the adaptive ga
+        if self.configuration.adaptive_ga{
+            self.population.aga_init();
+        }
+
+        //Best individual within the generations and population returned
+        let initial_population_size = self.population.size();
+        let mut age = 0;
+
+        //Calculation of the fitness and the best individual
+        let mut best_individual = population_fitness_calculation(&mut self.population.individuals, self.configuration);
+        let mut best_population: Population<U> = Population::new_empty();
+
+        //We start the cycles
+        for i in 0..self.configuration.limit_configuration.max_generations {
+
+            info!(target="ga_events", method="run"; "Generation number: {}", i+1);
+            age += 1;
+
+            //1- Parent selection for reproduction
+            let mut parents = selection::factory(&self.population.individuals, self.configuration.selection_configuration, self.configuration.number_of_threads);
+            debug!(target="ga_events", method="run"; "Parents selected for reproduction");
+
+            //2- Getting the offspring
+            let mut offspring = parent_crossover(&mut parents, &self.population.individuals, &self.configuration, age, self.population.f_max, self.population.f_avg);
+            debug!(target="ga_events", method="run"; "Offspring created");
+
+            //3- Sets the best individual
+            for child in &offspring{
+                best_individual = get_best_individual(&best_individual, child, self.configuration.limit_configuration.problem_solving);
+            }
+            debug!(target="ga_events", method="run"; "Best individual calculated - generation {}", i+1);
+
+            //3.1- If we want to return the best individual by generation
+            if self.configuration.limit_configuration.get_best_individual_by_generation {
+                best_population.add_individual_gn(best_individual.clone(), i, self.configuration.adaptive_ga);
+            }
+
+            //4- Insert the children in the population
+            self.population.add_individuals(&mut offspring, self.configuration.adaptive_ga);
+
+            //5- Survivor selection
+            survivor::factory(self.configuration.survivor, &mut self.population.individuals, initial_population_size, self.configuration.limit_configuration);
+            debug!(target="ga_events", method="run"; "Survivors selected");
+
+            //6- Identifies if the limit has been reached or not
+            if limit_reached(self.configuration.limit_configuration, &self.population.individuals){
+                break;
+            }
+        }
+
+        //If it's not required to return the best individuals by generation
+        if !self.configuration.limit_configuration.get_best_individual_by_generation {
+            best_population.add_individual_gn(best_individual, -1, self.configuration.adaptive_ga);
+        }
+        best_population
+
     }
 
-    Population::new(individuals)
+
 
 }
 

@@ -44,6 +44,10 @@ pub trait ConfigurationT{
     fn with_max_generations(&mut self, max_generations: i32)-> &mut Self;
     fn with_fitness_target(&mut self, fitness_target: f64)-> &mut Self;
     fn with_best_individual_by_generation(&mut self, best_individual_by_generation: bool) -> &mut Self;
+    fn with_population_size(&mut self, population_size: i32) -> &mut Self;
+    fn with_genes_per_individual(&mut self, genes_per_individual: i32) -> &mut Self;
+    fn with_needs_unique_ids(&mut self, needs_unique_ids: bool) -> &mut Self;
+    fn with_alleles_can_be_repeated(&mut self, alleles_can_be_repeated: bool) -> &mut Self;
 
     //Selection configuration
     fn with_number_of_couples(&mut self, number_of_couples: i32)->&mut Self;

@@ -84,6 +84,10 @@ pub struct LimitConfiguration{
     pub max_generations: i32,
     pub fitness_target: Option<f64>, 
     pub get_best_individual_by_generation: bool,
+    pub population_size: i32,
+    pub genes_per_individual: i32,
+    pub needs_unique_ids: bool,
+    pub alleles_can_be_repeated: bool,
 }
 impl Default for LimitConfiguration {
     fn default() -> Self {
@@ -91,7 +95,11 @@ impl Default for LimitConfiguration {
             problem_solving: ProblemSolving::Minimization, 
             max_generations: 100, 
             fitness_target: None, 
-            get_best_individual_by_generation: false
+            get_best_individual_by_generation: false,
+            population_size: 0,
+            genes_per_individual: 0,
+            needs_unique_ids: false,
+            alleles_can_be_repeated: false,
         }
     }
 }
@@ -158,6 +166,22 @@ impl ConfigurationT for GaConfiguration{
     }
     fn with_best_individual_by_generation(&mut self, best_individual_by_generation: bool) -> &mut Self {
         self.limit_configuration.get_best_individual_by_generation = best_individual_by_generation;
+        self
+    }
+    fn with_population_size(&mut self, population_size: i32) -> &mut Self {
+        self.limit_configuration.population_size = population_size;
+        self
+    }
+    fn with_genes_per_individual(&mut self, genes_per_individual: i32) -> &mut Self {
+        self.limit_configuration.genes_per_individual = genes_per_individual;
+        self
+    }
+    fn with_needs_unique_ids(&mut self, needs_unique_ids: bool) -> &mut Self {
+        self.limit_configuration.needs_unique_ids = needs_unique_ids;
+        self
+    }
+    fn with_alleles_can_be_repeated(&mut self, alleles_can_be_repeated: bool) -> &mut Self {
+        self.limit_configuration.alleles_can_be_repeated = alleles_can_be_repeated;
         self
     }
 
