@@ -231,12 +231,17 @@ where
     /**
      * Method for running the Genetic Algorithms
      */
-    pub fn run(&mut self)->Population<U>
+    pub fn run(&mut self, initialize_population: bool)->Population<U>
     where 
     U:GenotypeT + Send + Sync + 'static + Clone
     {
         //Before starting the run, we will check the conditions
         condition_checker_factory::<U>(Some(self.configuration), Some(&self.population), None, None, None);
+
+        //If we want to initialize the population randomly
+        if initialize_population {
+            self.population = self.random_initialization();
+        }   
 
         //We set the environment variable from the configuration value
         let key = "RUST_LOG";
