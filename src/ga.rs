@@ -12,6 +12,7 @@ where U:GenotypeT,
     pub configuration: GaConfiguration,
     pub alleles: Vec<U::Gene>,
     pub population: Population<U>,
+    pub random_initialization: bool,
 }
 
 
@@ -23,6 +24,7 @@ where U:GenotypeT,
             configuration: GaConfiguration{..Default::default()},
             population: Population::new_empty(),
             alleles: Vec::new(),
+            random_initialization: true,
         }
     }
 }
@@ -147,6 +149,7 @@ where
      */
     pub fn with_population(&mut self, population: Population<U>) -> &mut Self {
         self.population = population;
+        self.random_initialization = false;
         self
     }
 
@@ -231,7 +234,7 @@ where
     /**
      * Method for running the Genetic Algorithms
      */
-    pub fn run(&mut self, initialize_population: bool)->Population<U>
+    pub fn run(&mut self)->Population<U>
     where 
     U:GenotypeT + Send + Sync + 'static + Clone
     {
@@ -239,7 +242,7 @@ where
         condition_checker_factory::<U>(Some(self.configuration), Some(&self.population), None, None, None);
 
         //If we want to initialize the population randomly
-        if initialize_population {
+        if self.random_initialization {
             self.population = self.random_initialization();
         }   
 
