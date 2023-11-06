@@ -143,9 +143,6 @@ pub struct Gene{
     pub id: i32,
 }
 impl GeneT for Gene{
-    fn new()->Gene{
-        return Gene{id: -1};
-    }
     fn get_id(&self) -> &i32{
         return &self.id;
     }
@@ -190,13 +187,6 @@ impl GenotypeT for Genotype{
             let fitness = f64::from(i.get_id()*position);
             self.fitness += fitness;
             position += 1;
-        }
-    }
-    fn new() -> Self {
-        return Genotype{
-            dna: Vec::new(),
-            fitness: 0.0,
-            age: 0,
         }
     }
     fn set_dna(&mut self, dna: &[Self::Gene]){

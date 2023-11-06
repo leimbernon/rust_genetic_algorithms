@@ -1,16 +1,30 @@
 use crate::{configuration::{LogLevel, ProblemSolving}, operations::{Survivor, Selection, Crossover, Mutation}};
 
 pub trait GeneT: Default + Clone + Copy + Sync + Send {
-    fn new() -> Self;
+    fn new() -> Self{
+        Default::default()
+    }
+    fn default(mut self) -> Self{
+        self.set_id(-1);
+        self
+    }
     fn get_id(&self) -> i32{0}
     fn set_id(&mut self, id: i32);
 }
 
-pub trait GenotypeT: Clone{
+pub trait GenotypeT: Clone + Default{
 
     type Gene: GeneT;
     
-    fn new() -> Self;
+    fn new() -> Self{
+        Default::default()
+    }
+    fn default(mut self) -> Self{
+        self.set_fitness(0.0);
+        self.set_age(0);
+        self.set_dna(Vec::new().as_slice());
+        self
+    }
     fn new_gene() -> Self::Gene{
         Self::Gene::new()
     }
