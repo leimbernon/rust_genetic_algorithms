@@ -6,6 +6,8 @@
   "hostRequirements": {
     "cpus": 2
   },
+  "waitFor": "onCreateCommand",
+  "updateContentCommand": "cargo build",
   "customizations": {
     "vscode": {
       "extensions": [
