@@ -17,7 +17,6 @@ This library also supports multithreading and adaptive genetic algorithms.
     - [Operators](#operators)
     - [Population](#population)
     - [Runner](#runner)
-    - [Initialization](#initialization)
     - [GA Configuration](#ga-configuration)
   - [Example](#example)
     - [Creation of the gene and genotype structure](#creation-of-the-gene-and-genotype-structure)
@@ -37,11 +36,12 @@ This release uses traits for generic implementations.
 These traits are inside the `traits` module:
 
 - `GeneT`: This trait must be implemented on your own gene representation.
-  - `new()`: This is the constructor function.
+  - `new()`: Optional. This is the constructor function.
   - `get_id()`: Optional. This function must return the id of the gene.
+  - `set_id()`: Sets the id of the gene.
 - `GenotypeT`: This trait must be implemented on your own genotype representation.
   - `Gene`: This is the `GeneT` associated type.
-  - `new()`: This is the constructor function.
+  - `new()`: Optional. This is the constructor function.
   - `new_gene()`: Optional. Must return `Self::Gene`.
   - `get_dna()`: Must return the array of genes (`GeneT`).
   - `set_dna(dna: &[Self::Gene])`: Must set the array of genes (`GeneT`).
@@ -80,17 +80,8 @@ Within the `population` module, the `Population` structure will define the popul
 
 ### Runner
 
-Since genetic algorithms run over several generations, there is a `start` function in this library within the `ga` module that facilitates the process.
+Since genetic algorithms run over several generations, there is a `run` function in this library within the `ga` module that facilitates the process.
 This function needs the `GaConfiguration` structure, which contains the operators to be used, the maximum number of generations, the problem solver (Maximization or Minimization), etc., and the `Population` structure, which is in the `population` module.
-
-### Initialization
-
-If it is desired to perform the initialization of the population randomly through this library, it can be done through the function `random_initialization`. This function requires the following parameters:
-- `alleles`: This is an array containing the elements that can be combined in the population. They have to comply with the `GenotypeT` trait.
-- `population_size`: Indicates the size of the population we want to have.
-- `genes_per_individual`: Sets the number of genes that each individual in the population has.
-- `needs_unique_ids`: This variable indicates whether each gene of each individual has to contain a unique ID. This is useful mainly for the `cycle` crossover method.
-- `alleles_can_be_repeated`: Within an individual, the same allele can be repeated several times. This variable indicates whether this behavior is desired, or whether it is preferred that the alleles be unique within each individual.
 
 ### GA Configuration
 
@@ -215,12 +206,15 @@ Finally, configure and run the GA.
 
 ```rust
 population = ga::Ga::new()
-                .with_problem_solving(ProblemSolving::Maximization)
-                .with_selection_method(Selection::Random)
-                .with_crossover_method(Crossover::Cycle)
-                .with_mutation_method(Mutation::Swap)
-                .with_survivor_method(Survivor::Fitness)
-                .run(population);
+                    .with_threads(8)
+                    .with_problem_solving(ProblemSolving::Maximization)
+                    .with_selection_method(Selection::Tournament)
+                    .with_number_of_couples(10)
+                    .with_crossover_method(Crossover::Cycle)
+                    .with_mutation_method(Mutation::Swap)
+                    .with_survivor_method(Survivor::Fitness)
+                    .with_population(population)
+                    .run();
 ```
 
 ### Other examples
@@ -233,5 +227,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "1.2.0"
+genetic_algorithms = "1.3.0"
 ```
