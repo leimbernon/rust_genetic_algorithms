@@ -209,7 +209,6 @@ let population = ga::Ga::new()
                     .with_alleles(alleles)
                     .with_genes_per_individual(6)
                     .with_population_size(100)
-                    .with_random_initialization(true)
                     .run();
 ```
 
