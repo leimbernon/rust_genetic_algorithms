@@ -13,6 +13,7 @@ where U:GenotypeT,
     pub alleles: Vec<U::Gene>,
     pub population: Population<U>,
     pub random_initialization: bool,
+    pub default_population: bool,
 }
 
 
@@ -25,6 +26,7 @@ where U:GenotypeT,
             population: Population::new_empty(),
             alleles: Vec::new(),
             random_initialization: true,
+            default_population: true,
         }
     }
 }
@@ -150,6 +152,7 @@ where
     pub fn with_population(&mut self, population: Population<U>) -> &mut Self {
         self.population = population;
         self.random_initialization = false;
+        self.default_population = false;
         self
     }
 
@@ -160,9 +163,7 @@ where
     where U:GenotypeT + Send + Sync + 'static + Clone
     {
         //Before starting the run, we will check the conditions
-        condition_checker_factory::<U>(None, None, Some(self.alleles.as_slice()), 
-                                        Some(self.configuration.limit_configuration.genes_per_individual), 
-                                        Some(self.configuration.limit_configuration.alleles_can_be_repeated));
+        condition_checker_factory::<U>(Some(self.configuration), None, Some(&self.alleles), self.default_population);
 
         info!("Random initialization started");
         //let mut individuals = Vec::new();
@@ -239,7 +240,7 @@ where
     U:GenotypeT + Send + Sync + 'static + Clone
     {
         //Before starting the run, we will check the conditions
-        condition_checker_factory::<U>(Some(self.configuration), Some(&self.population), None, None, None);
+        condition_checker_factory::<U>(Some(self.configuration), Some(&self.population), Some(&self.alleles), self.default_population);
 
         //If we want to initialize the population randomly
         if self.random_initialization {
@@ -315,11 +316,7 @@ where
             best_population.add_individual_gn(best_individual, -1, self.configuration.adaptive_ga);
         }
         best_population
-
     }
-
-
-
 }
 
 /**
