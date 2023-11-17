@@ -29,7 +29,8 @@ fn test_ga_start_maximize(){
                         .with_crossover_method(Crossover::Cycle)
                         .with_mutation_method(Mutation::Swap)
                         .with_survivor_method(Survivor::Fitness)
-                        .run(population);
+                        .with_population(population)
+                        .run();
     
     assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_fitness(), 20.0);
@@ -64,7 +65,8 @@ fn test_ga_run_minimize(){
                     .with_mutation_method(Mutation::Swap)
                     .with_mutation_probability_max(0.2)
                     .with_survivor_method(Survivor::Fitness)
-                    .run(population);
+                    .with_population(population)
+                    .run();
     
     assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_fitness(), 10.0);
@@ -101,7 +103,8 @@ fn test_ga_run(){
                     .with_crossover_method(Crossover::Cycle)
                     .with_mutation_method(Mutation::Swap)
                     .with_survivor_method(Survivor::Fitness)
-                    .run(population);
+                    .with_population(population)
+                    .run();
     
     assert_eq!(population.individuals.len(), 1);
     
@@ -120,7 +123,14 @@ fn test_parent_crossover_repeating_alleles(){
     static ALLELES_CAN_BE_REPEATED: bool = true;
     static NUMBER_OF_THREADS: i32 = 8;
 
-    let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
+    let population: Population<Genotype> = ga::Ga::new()
+                    .with_threads(NUMBER_OF_THREADS)
+                    .with_population_size(POPULATION_SIZE)
+                    .with_genes_per_individual(GENES_PER_INDIVIDUAL)
+                    .with_needs_unique_ids(NEEDS_UNIQUE_IDS)
+                    .with_alleles_can_be_repeated(ALLELES_CAN_BE_REPEATED)
+                    .with_alleles(alleles.to_vec())
+                    .random_initialization();
 
     //Once population has been initialized, we check for each individual in the population the number of genes in the dna
     for individual in population.individuals{
@@ -141,7 +151,14 @@ fn test_parent_crossover_without_repeating_alleles(){
     static ALLELES_CAN_BE_REPEATED: bool = false;
     static NUMBER_OF_THREADS: i32 = 8;
 
-    let population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
+    let population: Population<Genotype> = ga::Ga::new()
+                    .with_threads(NUMBER_OF_THREADS)
+                    .with_population_size(POPULATION_SIZE)
+                    .with_genes_per_individual(GENES_PER_INDIVIDUAL)
+                    .with_needs_unique_ids(NEEDS_UNIQUE_IDS)
+                    .with_alleles_can_be_repeated(ALLELES_CAN_BE_REPEATED)
+                    .with_alleles(alleles.to_vec())
+                    .random_initialization();
 
     //Once population has been initialized, we check for each individual we check that genes are not repeated
     for individual in population.individuals{

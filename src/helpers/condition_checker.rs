@@ -84,3 +84,35 @@ U:GenotypeT + Send + Sync + 'static + Clone{
         panic!("The number of genes within an individual should not be more than the different alleles.");
     }
 }
+
+/**
+ * Function to check that the number of genes per individual is set
+ */
+pub fn check_genes_per_individual_is_set(configuration: GaConfiguration){
+    if configuration.limit_configuration.genes_per_individual <= 0 {
+        panic!("The number of genes per individual must be set.");
+    }
+}
+
+/**
+ * Function to check that the population size is set
+ */
+pub fn check_population_size_is_set(configuration: GaConfiguration){
+    if configuration.limit_configuration.population_size <= 0 {
+        panic!("The population size must be set.");
+    }
+}
+
+/**
+ * Function to check that the alleles are set
+ */
+pub fn check_alleles_are_set<U>(alleles: Option<&[U::Gene]>)
+where U:GenotypeT + Send + Sync + 'static + Clone{
+    if alleles.is_none() {
+        panic!("The alleles must be set.");
+    }else if let Some(alleles) = alleles{
+        if alleles.is_empty() {
+            panic!("The alleles must be set.");
+        }
+    }
+}

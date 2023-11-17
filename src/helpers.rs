@@ -8,7 +8,7 @@ pub mod condition_checker;
  * Function to call the different condition checkers 
  */
 pub fn condition_checker_factory<U>(configuration: Option<GaConfiguration>, population: Option<&Population<U>>, 
-                                    alleles: Option<&[U::Gene]>, genes_per_individual: Option<i32>, alleles_can_be_repeated: Option<bool>)
+                                    alleles: Option<&[U::Gene]>, default_population: bool)
 where
 U: GenotypeT + Send + Sync + 'static + Clone
 {
@@ -38,21 +38,22 @@ U: GenotypeT + Send + Sync + 'static + Clone
         if configuration.adaptive_ga{
             //2.3.1- Checks for the crossover parameters
             condition_checker::aga_crossover_probabilities(configuration);
-        }   
-    }
+        } 
 
-    //5- We check if we want to not repeat the alleles
-    if let Some(alleles_can_be_repeated) = alleles_can_be_repeated {
-        if let Some(alleles) = alleles {
-            if let Some(genes_per_individual) = genes_per_individual{
-
-                if alleles_can_be_repeated {
-                    condition_checker::check_genotype_length_not_bigger_than_alleles::<U>(alleles, genes_per_individual);
-                }
-
+        //2.4- Condition checkers for the repetition of the alleles
+        if configuration.limit_configuration.alleles_can_be_repeated{
+            if let Some(alleles) = alleles {
+                condition_checker::check_genotype_length_not_bigger_than_alleles::<U>(alleles, configuration.limit_configuration.genes_per_individual);
             }
         }
-    }
+
+        //2.5- Condition checkers for the default population
+        if default_population{
+            condition_checker::check_genes_per_individual_is_set(configuration);
+            condition_checker::check_population_size_is_set(configuration);
+            condition_checker::check_alleles_are_set::<U>(alleles);
+        }  
+    } 
 }
 
 /**
