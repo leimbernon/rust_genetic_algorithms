@@ -186,26 +186,19 @@ impl GenotypeT for Genotype{
 }
 ```
 
-Define the Alleles, and initialize the population.
+Define the Alleles
 
 ```rust
   let binding =  vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4},
                                    Gene{id:5}, Gene{id:6}, Gene{id:7}, Gene{id:8}];
   let alleles = binding.as_slice();
-  static GENES_PER_INDIVIDUAL: i32 = 6;
-  static POPULATION_SIZE: i32 = 100;
-  static NEEDS_UNIQUE_IDS: bool = false;
-  static ALLELES_CAN_BE_REPEATED: bool = false;
-  static NUMBER_OF_THREADS: i32 = 8;
-
-  let mut population = ga::random_initialization::<Genotype>(alleles, POPULATION_SIZE, GENES_PER_INDIVIDUAL, NEEDS_UNIQUE_IDS, ALLELES_CAN_BE_REPEATED, NUMBER_OF_THREADS);
 
 ```
 
 Finally, configure and run the GA.
 
 ```rust
-population = ga::Ga::new()
+let population = ga::Ga::new()
                     .with_threads(8)
                     .with_problem_solving(ProblemSolving::Maximization)
                     .with_selection_method(Selection::Tournament)
@@ -213,7 +206,10 @@ population = ga::Ga::new()
                     .with_crossover_method(Crossover::Cycle)
                     .with_mutation_method(Mutation::Swap)
                     .with_survivor_method(Survivor::Fitness)
-                    .with_population(population)
+                    .with_alleles(alleles)
+                    .with_genes_per_individual(6)
+                    .with_population_size(100)
+                    .with_random_initialization(true)
                     .run();
 ```
 
