@@ -1,5 +1,4 @@
 use core::panic;
-use std::ops::Index;
 
 use crate::{population::Population, traits::{GenotypeT, GeneT}, configuration::GaConfiguration};
 
