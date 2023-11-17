@@ -1,16 +1,30 @@
 use crate::{configuration::{LogLevel, ProblemSolving}, operations::{Survivor, Selection, Crossover, Mutation}};
 
 pub trait GeneT: Default + Clone + Copy + Sync + Send {
-    fn new() -> Self;
+    fn new() -> Self{
+        Default::default()
+    }
+    fn default(mut self) -> Self{
+        self.set_id(-1);
+        self
+    }
     fn get_id(&self) -> i32{0}
     fn set_id(&mut self, id: i32);
 }
 
-pub trait GenotypeT: Clone{
+pub trait GenotypeT: Clone + Default{
 
     type Gene: GeneT;
     
-    fn new() -> Self;
+    fn new() -> Self{
+        Default::default()
+    }
+    fn default(mut self) -> Self{
+        self.set_fitness(0.0);
+        self.set_age(0);
+        self.set_dna(Vec::new().as_slice());
+        self
+    }
     fn new_gene() -> Self::Gene{
         Self::Gene::new()
     }
@@ -44,6 +58,10 @@ pub trait ConfigurationT{
     fn with_max_generations(&mut self, max_generations: i32)-> &mut Self;
     fn with_fitness_target(&mut self, fitness_target: f64)-> &mut Self;
     fn with_best_individual_by_generation(&mut self, best_individual_by_generation: bool) -> &mut Self;
+    fn with_population_size(&mut self, population_size: i32) -> &mut Self;
+    fn with_genes_per_individual(&mut self, genes_per_individual: i32) -> &mut Self;
+    fn with_needs_unique_ids(&mut self, needs_unique_ids: bool) -> &mut Self;
+    fn with_alleles_can_be_repeated(&mut self, alleles_can_be_repeated: bool) -> &mut Self;
 
     //Selection configuration
     fn with_number_of_couples(&mut self, number_of_couples: i32)->&mut Self;

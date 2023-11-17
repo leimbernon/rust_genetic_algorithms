@@ -6,9 +6,6 @@ pub struct Gene{
     pub id: i32,
 }
 impl GeneT for Gene{
-    fn new()->Gene{
-        Gene{id: -1}
-    }
     fn get_id(&self) -> i32{
         self.id
     }
@@ -47,13 +44,6 @@ impl GenotypeT for Genotype{
         for (i, gene) in self.dna.iter().enumerate() {
             let fitness = f64::from(gene.get_id()*i as i32);
             self.fitness += fitness;
-        }
-    }
-    fn new() -> Self {
-        Genotype{
-            dna: Vec::new(),
-            fitness: 0.0,
-            age: 0,
         }
     }
     fn set_dna(&mut self, dna: &[Self::Gene]){
