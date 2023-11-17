@@ -10,11 +10,9 @@ jobs:
       - name: Cargo login
         uses: actions-rs/cargo@v1
         with:
-          toolchain: nightly
           command: login
           args: ${{ secrets.CARGO_REGISTRY_TOKEN }}
       - name: publish
         uses: actions-rs/cargo@v1
         with:
-          toolchain: nightly
           command: publish
