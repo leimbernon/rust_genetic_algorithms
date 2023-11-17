@@ -1,4 +1,5 @@
 use core::panic;
+use std::ops::Index;
 
 use crate::{population::Population, traits::{GenotypeT, GeneT}, configuration::GaConfiguration};
 
@@ -110,11 +111,9 @@ pub fn check_alleles_are_set<U>(alleles: Option<&[U::Gene]>)
 where U:GenotypeT + Send + Sync + 'static + Clone{
     if alleles.is_none() {
         panic!("The alleles must be set.");
-    }else{
-        if let Some(alleles) = alleles{
-            if alleles.len() == 0 {
-                panic!("The alleles must be set.");
-            } 
+    }else if let Some(alleles) = alleles{
+        if alleles.is_empty() {
+            panic!("The alleles must be set.");
         }
     }
 }
