@@ -117,6 +117,10 @@ This structure has the following attributes:
 - `max_generations`: If the result is not optimal, this attribute indicates the maximum number of generations to run before stopping.
 - `fitness_target`: Optional. The fitness of the best individual.
 - `get_best_individual_by_generation`: Optional. Tells the runner to return the best individual by generation.
+- `population_size`: Size of the population to be executed.
+- `genes_per_individual`: Number of genes that each individual must have.
+- `needs_unique_ids`: Optional. Indicates whether each gene must have unique numbering.
+- `alleles_can_be_repeated`: Indicates whether the same allele can be repeated in an individual.
 
 ## Example
 
@@ -222,5 +226,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "1.3.0"
+genetic_algorithms = "1.3.1"
 ```
