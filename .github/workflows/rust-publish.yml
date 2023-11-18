@@ -7,10 +7,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions-rs/toolchain@v1
+      - name: Cargo login
+        uses: actions-rs/cargo@v1
         with:
-          toolchain: stable
-          override: true
-      - uses: katyo/publish-crates@v2
+          command: login
+          args: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+      - name: publish
+        uses: actions-rs/cargo@v1
         with:
-          registry-token: ${{secrets.CARGO_REGISTRY_TOKEN}}
+          command: publish
