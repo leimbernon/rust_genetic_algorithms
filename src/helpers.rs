@@ -52,7 +52,10 @@ U: GenotypeT + Send + Sync + 'static + Clone
             condition_checker::check_genes_per_individual_is_set(configuration);
             condition_checker::check_population_size_is_set(configuration);
             condition_checker::check_alleles_are_set::<U>(alleles);
-        }  
+        } 
+
+        //2.6- Condition checker for the couples
+        condition_checker::check_number_of_couples_is_set(configuration);
     } 
 }
 

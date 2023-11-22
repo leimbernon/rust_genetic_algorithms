@@ -116,3 +116,12 @@ where U:GenotypeT + Send + Sync + 'static + Clone{
         }
     }
 }
+
+/**
+ * Function to check that the number of couples is set
+ */
+pub fn check_number_of_couples_is_set(configuration: GaConfiguration){
+    if configuration.selection_configuration.number_of_couples <= 0 {
+        panic!("The number of couples must be set.");
+    }
+}
