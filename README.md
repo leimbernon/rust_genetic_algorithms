@@ -97,7 +97,7 @@ This structure has the following attributes:
 - `log_level`: Optional. It configures the maximum log level we want to have. If this value is none, logs will be disabled.
 
 `SelectionConfiguration`:
-- `number_of_couples`: Optional. This attribute applies only to stochastic universal sampling. It specifies the number of pairs to select from the population.
+- `number_of_couples`: Optional. This attribute applies only to stochastic universal sampling. It specifies the number of pairs to select from the population. By defaultthe value will be the half of the population size.
 - `method`: Specifies which selection operator to use.
 
 `CrossoverConfiguration`:
@@ -226,5 +226,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "1.3.1"
+genetic_algorithms = "1.3.2"
 ```

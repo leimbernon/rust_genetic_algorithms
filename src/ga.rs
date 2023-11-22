@@ -153,6 +153,11 @@ where
         self.population = population;
         self.random_initialization = false;
         self.default_population = false;
+        
+        //Checks if the number of couples is 0, sets the number of couples to the half of the population
+        if self.configuration.selection_configuration.number_of_couples == 0 {
+            self.configuration.selection_configuration.number_of_couples = ((self.population.size() / 2) as f64).round() as i32;
+        }
         self
     }
 
@@ -244,7 +249,8 @@ where
 
         //If we want to initialize the population randomly
         if self.random_initialization {
-            self.population = self.random_initialization();
+            let tmp_population=self.random_initialization();
+            self.with_population(tmp_population);
         }   
 
         //We set the environment variable from the configuration value
