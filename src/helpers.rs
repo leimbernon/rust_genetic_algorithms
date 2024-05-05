@@ -7,7 +7,7 @@ pub mod condition_checker;
 /*
  * Function to call the different condition checkers 
  */
-pub fn condition_checker_factory<U>(configuration: Option<GaConfiguration>, population: Option<&Population<U>>, 
+pub fn condition_checker_factory<U>(configuration: Option<&GaConfiguration>, population: Option<&Population<U>>, 
                                     alleles: Option<&[U::Gene]>, default_population: bool)
 where
 U: GenotypeT + Send + Sync + 'static + Clone

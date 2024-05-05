@@ -104,7 +104,23 @@ impl Default for LimitConfiguration {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
+pub struct SaveProgressConfiguration{
+    pub save_progress: bool,
+    pub save_progress_interval: i32,
+    pub save_progress_path: String,
+}
+impl Default for SaveProgressConfiguration {
+    fn default() -> Self {
+        SaveProgressConfiguration { 
+            save_progress: false, 
+            save_progress_interval: 0, 
+            save_progress_path: String::new()
+        }
+    }
+}
+
+#[derive(Clone)]
 pub struct GaConfiguration {
     pub adaptive_ga: bool,
     pub number_of_threads: i32,
@@ -114,6 +130,7 @@ pub struct GaConfiguration {
     pub mutation_configuration: MutationConfiguration,
     pub survivor: Survivor,
     pub log_level: LogLevel,
+    pub save_progress_configuration: SaveProgressConfiguration,
 }
 impl Default for GaConfiguration{
     fn default() -> Self {
@@ -125,7 +142,8 @@ impl Default for GaConfiguration{
             limit_configuration: LimitConfiguration { ..Default::default() }, 
             selection_configuration: SelectionConfiguration { ..Default::default() }, 
             crossover_configuration: CrossoverConfiguration { ..Default::default() }, 
-            mutation_configuration: MutationConfiguration { ..Default::default() }
+            mutation_configuration: MutationConfiguration { ..Default::default() },
+            save_progress_configuration: SaveProgressConfiguration { ..Default::default() }
         }
     }
 }
@@ -226,4 +244,19 @@ impl ConfigurationT for GaConfiguration{
         self.mutation_configuration.method = method;
         self
     }
+
+    //Save progress configuration
+    fn with_save_progress(&mut self, save_progress: bool) -> &mut Self {
+        self.save_progress_configuration.save_progress = save_progress;
+        self
+    }
+    fn with_save_progress_interval(&mut self, save_progress_interval: i32) -> &mut Self {
+        self.save_progress_configuration.save_progress_interval = save_progress_interval;
+        self
+    }
+    fn with_save_progress_path(&mut self, save_progress_path: String) -> &mut Self {
+        self.save_progress_configuration.save_progress_path = save_progress_path;
+        self
+    }
+
 } 

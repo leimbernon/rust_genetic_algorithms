@@ -130,6 +130,20 @@ where U:GenotypeT,
         self.configuration.with_mutation_method(method);
         self
     }
+
+    //Save progress configuration
+    fn with_save_progress(&mut self, save_progress: bool) -> &mut Self {
+        self.configuration.with_save_progress(save_progress);
+        self
+    }
+    fn with_save_progress_interval(&mut self, save_progress_interval: i32) -> &mut Self {
+        self.configuration.with_save_progress_interval(save_progress_interval);
+        self
+    }
+    fn with_save_progress_path(&mut self, save_progress_path: String) -> &mut Self {
+        self.configuration.with_save_progress_path(save_progress_path);
+        self
+    }
 }
 
 
@@ -168,7 +182,7 @@ where
     where U:GenotypeT + Send + Sync + 'static + Clone
     {
         //Before starting the run, we will check the conditions
-        condition_checker_factory::<U>(Some(self.configuration), None, Some(&self.alleles), self.default_population);
+        condition_checker_factory::<U>(Some(&self.configuration), None, Some(&self.alleles), self.default_population);
 
         info!("Random initialization started");
         //let mut individuals = Vec::new();
@@ -245,7 +259,7 @@ where
     U:GenotypeT + Send + Sync + 'static + Clone
     {
         //Before starting the run, we will check the conditions
-        condition_checker_factory::<U>(Some(self.configuration), Some(&self.population), Some(&self.alleles), self.default_population);
+        condition_checker_factory::<U>(Some(&self.configuration), Some(&self.population), Some(&self.alleles), self.default_population);
 
         //If we want to initialize the population randomly
         if self.random_initialization {
@@ -276,7 +290,7 @@ where
         let mut age = 0;
 
         //Calculation of the fitness and the best individual
-        let mut best_individual = population_fitness_calculation(&mut self.population.individuals, self.configuration);
+        let mut best_individual = population_fitness_calculation(&mut self.population.individuals, self.configuration.clone());
         let mut best_population: Population<U> = Population::new_empty();
 
         //We start the cycles
@@ -532,7 +546,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
     for t in 0..number_of_threads{
 
         //We copy the parents that we want to crossover inside the thread
-        let (individuals, configuration, offspring, crossover_probability_config, mutation_probability_config) = (individuals.clone(), *configuration, Arc::clone(&offspring), crossover_probability_config, mutation_probability_config);
+        let (individuals, configuration, offspring, crossover_probability_config, mutation_probability_config) = (individuals.clone(), configuration.clone(), Arc::clone(&offspring), crossover_probability_config, mutation_probability_config);
         let mut parents_t = HashMap::new();
         let parents_c = parents.clone();
 
