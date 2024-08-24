@@ -11,8 +11,8 @@ pub fn swap<U: GenotypeT>(individual: &mut U){
     let index_2 = rng.gen_range(0..individual.get_dna().len());
     trace!(target="mutation_events", method="swap"; "Mutation index 1: {}, mutation index 2: {}", index_1, index_2);
 
-    let gene_1 = individual.get_dna().get(index_1).copied().unwrap();
-    let gene_2 = individual.get_dna().get(index_2).copied().unwrap();
+    let gene_1 = individual.get_dna().get(index_1).cloned().unwrap();
+    let gene_2 = individual.get_dna().get(index_2).cloned().unwrap();
 
     //Swapping both genes
     individual.set_gene(index_1, gene_2);
