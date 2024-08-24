@@ -27,7 +27,7 @@ U:GenotypeT + Send + Sync + 'static + Clone{
 /**
  * This function checks that fitness target is not none
  */
-pub fn fitness_target_is_some(configuration: GaConfiguration, problem_type: String){
+pub fn fitness_target_is_some(configuration: &GaConfiguration, problem_type: String){
 
     //Checks that the fitness target is some
     if configuration.limit_configuration.fitness_target.is_none(){
@@ -55,7 +55,7 @@ U:GenotypeT + Send + Sync + 'static + Clone{
 /**
  * Checks that for adaptive crossover all the requirements are set
  */
-pub fn aga_crossover_probabilities(configuration: GaConfiguration){
+pub fn aga_crossover_probabilities(configuration: &GaConfiguration){
     if configuration.crossover_configuration.probability_max.is_none() || configuration.crossover_configuration.probability_min.is_none() {
         panic!("For Adaptive Genetic Algorithms, the probability_max and probability_min in the crossover_configuration are mandatory.");
     }else if configuration.crossover_configuration.probability_max <=  configuration.crossover_configuration.probability_min {
@@ -88,7 +88,7 @@ U:GenotypeT + Send + Sync + 'static + Clone{
 /**
  * Function to check that the number of genes per individual is set
  */
-pub fn check_genes_per_individual_is_set(configuration: GaConfiguration){
+pub fn check_genes_per_individual_is_set(configuration: &GaConfiguration){
     if configuration.limit_configuration.genes_per_individual <= 0 {
         panic!("The number of genes per individual must be set.");
     }
@@ -97,7 +97,7 @@ pub fn check_genes_per_individual_is_set(configuration: GaConfiguration){
 /**
  * Function to check that the population size is set
  */
-pub fn check_population_size_is_set(configuration: GaConfiguration){
+pub fn check_population_size_is_set(configuration: &GaConfiguration){
     if configuration.limit_configuration.population_size <= 0 {
         panic!("The population size must be set.");
     }
@@ -120,7 +120,7 @@ where U:GenotypeT + Send + Sync + 'static + Clone{
 /**
  * Function to check that the number of couples is set
  */
-pub fn check_number_of_couples_is_set(configuration: GaConfiguration){
+pub fn check_number_of_couples_is_set(configuration: &GaConfiguration){
     if configuration.selection_configuration.number_of_couples <= 0 {
         panic!("The number of couples must be set.");
     }
