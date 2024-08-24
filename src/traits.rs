@@ -1,6 +1,6 @@
 use crate::{configuration::{LogLevel, ProblemSolving}, operations::{Survivor, Selection, Crossover, Mutation}};
 
-pub trait GeneT: Default + Clone + Copy + Sync + Send {
+pub trait GeneT: Default + Clone + Sync + Send {
     fn new() -> Self{
         Default::default()
     }

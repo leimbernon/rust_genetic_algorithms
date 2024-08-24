@@ -74,7 +74,7 @@ U: GenotypeT + Send + Sync + 'static + Clone{
     //Selects the genes randomly from the vector without repeating them
     for j in 0..genes_per_individual{
         let index = rng.gen_range(0..tmp_alleles.len());
-        let mut gene = tmp_alleles.get(index).copied().unwrap();
+        let mut gene = tmp_alleles.get(index).cloned().unwrap();
 
         //If we need unique ids
         if needs_unique_ids {
@@ -102,7 +102,7 @@ U: GenotypeT + Send + Sync + 'static + Clone{
     //Selects the genes randomly from the vector without repeating them
     for j in 0..genes_per_individual{
         let index = rng.gen_range(0..alleles.len());
-        let mut gene = alleles.get(index).copied().unwrap();
+        let mut gene = alleles.get(index).cloned().unwrap();
 
         //If we need unique ids
         if needs_unique_ids {
