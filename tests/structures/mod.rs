@@ -9,7 +9,7 @@ impl GeneT for Gene{
     fn get_id(&self) -> i32{
         self.id
     }
-    fn set_id(&mut self, id: i32)->&Self {
+    fn set_id(&mut self, id: i32)->&mut Self {
         self.id = id;
         self
     }
@@ -29,11 +29,11 @@ impl GenotypeT for Genotype{
     fn get_fitness(&self) -> f64 {
         self.fitness
     }
-    fn set_fitness(&mut self, fitness: f64)->&Self {
+    fn set_fitness(&mut self, fitness: f64)->&mut Self {
         self.fitness = fitness;
         self
     }
-    fn set_age(&mut self, age:i32)->&Self{
+    fn set_age(&mut self, age:i32)->&mut Self{
         self.age = age;
         self
     }
@@ -49,7 +49,7 @@ impl GenotypeT for Genotype{
             self.fitness += fitness;
         }
     }
-    fn set_dna(&mut self, dna: &[Self::Gene])->&Self{
+    fn set_dna(&mut self, dna: &[Self::Gene])->&mut Self{
         self.dna = dna.to_vec();
         self
     }
