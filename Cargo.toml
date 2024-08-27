@@ -2,7 +2,7 @@
 name = "genetic_algorithms"
 description = "Library for solving genetic algorithm problems"
 authors = ["Luis Eduardo Imbernón <imbernon@gmail.com>"]
-version = "1.4.0"
+version = "1.4.1"
 edition = "2021"
 rust-version = "1.60"
 readme = "README.md"
