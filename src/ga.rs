@@ -2,23 +2,28 @@ use std::{sync::{mpsc::sync_channel, Mutex, Arc}, thread, collections::HashMap};
 use rand::Rng;
 use log::{trace, debug, info};
 use std::env;
-
-use crate::{population::Population, traits::{GenotypeT,ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
+use std::marker::PhantomData;
+use crate::{population::Population, traits::{GenotypeT, ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
 use crate::configuration::GaConfiguration;
 
-pub struct Ga<U>
-where U:GenotypeT,
+pub struct Ga<U, F>
+where
+    U:GenotypeT,
+    F: Fn(&i32,&Population<U>)
 {
     pub configuration: GaConfiguration,
     pub alleles: Vec<U::Gene>,
     pub population: Population<U>,
     pub random_initialization: bool,
     pub default_population: bool,
+    pub _marker: PhantomData<F>
 }
 
 
-impl<U> Default for Ga<U>
-where U:GenotypeT,
+impl<U,F> Default for Ga<U,F>
+where
+    U:GenotypeT,
+    F: Fn(&i32,&Population<U>)
 {
     fn default() -> Self {
         Ga { 
@@ -27,13 +32,16 @@ where U:GenotypeT,
             alleles: Vec::new(),
             random_initialization: true,
             default_population: true,
+            _marker: PhantomData
         }
     }
 }
 
 
-impl<U> ConfigurationT for Ga<U>
-where U:GenotypeT,
+impl<U,F> ConfigurationT for Ga<U,F>
+where
+    U:GenotypeT,
+    F: Fn(&i32,&Population<U>)
 {
     fn new()->Self{
         Self::default()
@@ -147,11 +155,11 @@ where U:GenotypeT,
 }
 
 
-impl<U>Ga<U>
+impl<U,F>Ga<U,F>
 where
-    U:GenotypeT + Send + Sync + 'static + Clone
+    U:GenotypeT + Send + Sync + 'static + Clone,
+    F: Fn(&i32, &Population<U>)
 {
-
     /**
      * Function to set the alleles
      */
@@ -250,13 +258,24 @@ where
         Population::new(individuals)
 
     }
-    
+
     /**
-     * Method for running the Genetic Algorithms
+    * Method for running the Genetic Algorithms without any callback
+    */
+    pub fn run_without_callback(&mut self)->Population<U>
+    where
+        U:GenotypeT + Send + Sync + 'static + Clone
+    {
+        self.run(None)
+    }
+
+    /**
+     * Method for running the Genetic Algorithms with callback
      */
-    pub fn run(&mut self)->Population<U>
+    pub fn run(&mut self, callback: Option<F>)->Population<U>
     where 
-    U:GenotypeT + Send + Sync + 'static + Clone
+        U:GenotypeT + Send + Sync + 'static + Clone,
+        F: Fn(&i32, &Population<U>)
     {
         //Before starting the run, we will check the conditions
         condition_checker_factory::<U>(Some(&self.configuration), Some(&self.population), Some(&self.alleles), self.default_population);
@@ -324,6 +343,11 @@ where
             //5- Survivor selection
             survivor::factory(self.configuration.survivor, &mut self.population.individuals, initial_population_size, self.configuration.limit_configuration);
             debug!(target="ga_events", method="run"; "Survivors selected");
+
+            // If it's wanted to return a callback
+            if let Some(func) = &callback {
+                func(&i, &self.population);
+            }
 
             //6- Identifies if the limit has been reached or not
             if limit_reached(self.configuration.limit_configuration, &self.population.individuals){
