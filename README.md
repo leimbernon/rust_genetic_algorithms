@@ -141,7 +141,7 @@ impl GeneT for Gene{
     fn get_id(&self) -> &i32{
         return &self.id;
     }
-    fn set_id(&mut self, id: i32) {
+    fn set_id(&mut self, id: i32)->&mut Self {
         self.id = id;
     }
 }
@@ -164,10 +164,10 @@ impl GenotypeT for Genotype{
     fn get_fitness(&self) -> f64 {
         return self.fitness;
     }
-    fn set_fitness(&mut self, fitness: f64) {
+    fn set_fitness(&mut self, fitness: f64) ->&mut Self {
         self.fitness = fitness;
     }
-    fn set_age(&mut self, age:i32){
+    fn set_age(&mut self, age:i32) ->&mut Self {
         self.age = age;
     }
     fn get_age(&self) -> i32 {
@@ -184,7 +184,7 @@ impl GenotypeT for Genotype{
             position += 1;
         }
     }
-    fn set_dna(&mut self, dna: &[Self::Gene]){
+    fn set_dna(&mut self, dna: &[Self::Gene]) ->&mut Self{
         self.dna = dna.to_vec();
     }
 }
@@ -215,6 +215,26 @@ let population = ga::Ga::new()
                     .with_population_size(100)
                     .run();
 ```
+If you want to receive a notification every few generations and when the genetic algorithms have terminated and why, this is possible via a callback function. This function has to be of the form Fn(&i32,&Population<GenotypeT>, TerminationCause);
+Following the previous case, an example could be the following:
+
+```rust
+fn callback_function(generation_number: &i32, population: &Population<Genotype>, termination_cause: TerminationCause){
+  print!("Callback received");
+}
+let population = ga::Ga::new()
+                    .with_threads(8)
+                    .with_problem_solving(ProblemSolving::Maximization)
+                    .with_selection_method(Selection::Tournament)
+                    .with_number_of_couples(10)
+                    .with_crossover_method(Crossover::Cycle)
+                    .with_mutation_method(Mutation::Swap)
+                    .with_survivor_method(Survivor::Fitness)
+                    .with_alleles(alleles)
+                    .with_genes_per_individual(6)
+                    .with_population_size(100)
+                    .run_with_callback(Some(callback_function), 8);
+```
 
 ### Other examples
 - Travelling salesman problem: [https://en.wikipedia.org/wiki/Travelling_salesman_problem](https://en.wikipedia.org/wiki/Travelling_salesman_problem)
@@ -226,5 +246,5 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-genetic_algorithms = "1.4.1"
+genetic_algorithms = "1.5.0"
 ```
