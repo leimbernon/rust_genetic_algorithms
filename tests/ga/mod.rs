@@ -30,7 +30,7 @@ fn test_ga_start_maximize(){
                         .with_mutation_method(Mutation::Swap)
                         .with_survivor_method(Survivor::Fitness)
                         .with_population(population)
-                        .run_without_callback();
+                        .run();
     
     assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_fitness(), 20.0);
@@ -66,7 +66,7 @@ fn test_ga_run_minimize(){
                     .with_mutation_probability_max(0.2)
                     .with_survivor_method(Survivor::Fitness)
                     .with_population(population)
-                    .run_without_callback();
+                    .run();
     
     assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_fitness(), 10.0);
@@ -104,7 +104,7 @@ fn test_ga_run(){
                     .with_mutation_method(Mutation::Swap)
                     .with_survivor_method(Survivor::Fitness)
                     .with_population(population)
-                    .run_without_callback();
+                    .run();
     
     assert_eq!(population.individuals.len(), 1);
     
@@ -171,4 +171,44 @@ fn test_parent_crossover_without_repeating_alleles(){
             gene_ids.push(gene.id);
         }
     }
+}
+
+fn callback_function(generation_number: &i32, population: &Population<Genotype>){
+    assert_eq!(*generation_number, 7);
+    assert_eq!(population.individuals.len(), 10);
+}
+
+#[test]
+fn test_callback_function(){
+    //Creates the population
+    let dna_1 = vec![Gene{id:1}, Gene{id:2}, Gene{id:3}, Gene{id:4}];
+    let dna_2 = vec![Gene{id:2}, Gene{id:3}, Gene{id:4}, Gene{id:1}];
+    let dna_3 = vec![Gene{id:3}, Gene{id:4}, Gene{id:1}, Gene{id:2}];
+    let dna_4 = vec![Gene{id:4}, Gene{id:1}, Gene{id:2}, Gene{id:3}];
+    let dna_5 = vec![Gene{id:2}, Gene{id:1}, Gene{id:3}, Gene{id:4}];
+    let dna_6 = vec![Gene{id:1}, Gene{id:3}, Gene{id:4}, Gene{id:2}];
+    let dna_7 = vec![Gene{id:3}, Gene{id:4}, Gene{id:2}, Gene{id:1}];
+    let dna_8 = vec![Gene{id:4}, Gene{id:2}, Gene{id:1}, Gene{id:3}];
+    let dna_9 = vec![Gene{id:2}, Gene{id:1}, Gene{id:4}, Gene{id:3}];
+    let dna_10 = vec![Gene{id:1}, Gene{id:4}, Gene{id:3}, Gene{id:2}];
+
+    let individuals = vec![Genotype{dna: dna_1, fitness: 1.0, age: 0}, Genotype{dna: dna_2, fitness: 2.0, age: 0},
+                           Genotype{dna: dna_3, fitness: 3.0, age: 0}, Genotype{dna: dna_4, fitness: 4.0, age: 0}, Genotype{dna: dna_5, fitness: 5.0, age: 0},
+                           Genotype{dna: dna_6, fitness: 6.0, age: 0}, Genotype{dna: dna_7, fitness: 7.0, age: 0}, Genotype{dna: dna_8, fitness: 8.0, age: 0},
+                           Genotype{dna: dna_9, fitness: 9.0, age: 0}, Genotype{dna: dna_10, fitness: 10.0, age: 0}];
+
+    let mut population = Population::new(individuals);
+    population = ga::Ga::new()
+        .with_threads(8)
+        .with_problem_solving(ProblemSolving::Maximization)
+        .with_selection_method(Selection::Tournament)
+        .with_number_of_couples(10)
+        .with_crossover_method(Crossover::Cycle)
+        .with_mutation_method(Mutation::Swap)
+        .with_survivor_method(Survivor::Fitness)
+        .with_population(population)
+        .with_max_generations(10)
+        .run_with_callback(Some(callback_function), 8);
+
+    assert_eq!(population.individuals.len(), 1);
 }

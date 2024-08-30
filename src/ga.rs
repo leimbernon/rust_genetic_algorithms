@@ -252,14 +252,14 @@ where
 
     }
 
-    pub fn run_without_callback(&mut self)->Population<U>{
-        self.run_with_callback(None::<fn(&i32, &Population<U>)>)
+    pub fn run(&mut self)->Population<U>{
+        self.run_with_callback(None::<fn(&i32, &Population<U>)>, 0)
     }
 
     /**
      * Method for running the Genetic Algorithms with callback
      */
-    pub fn run_with_callback<F>(&mut self, callback: Option<F>)->Population<U>
+    pub fn run_with_callback<F>(&mut self, callback: Option<F>, generations_to_callback: i32)->Population<U>
     where 
         U:GenotypeT + Send + Sync + 'static + Clone,
         F: Fn(&i32, &Population<U>)
@@ -299,6 +299,9 @@ where
         let mut best_individual = population_fitness_calculation(&mut self.population.individuals, self.configuration.clone());
         let mut best_population: Population<U> = Population::new_empty();
 
+        // Starting counting the generations for the callback
+        let mut generation_callback_count = 0;
+
         //We start the cycles
         for i in 0..self.configuration.limit_configuration.max_generations {
 
@@ -331,9 +334,14 @@ where
             survivor::factory(self.configuration.survivor, &mut self.population.individuals, initial_population_size, self.configuration.limit_configuration);
             debug!(target="ga_events", method="run"; "Survivors selected");
 
-            // If it's wanted to return a callback
+            // If we want to perform a callback
             if let Some(func) = &callback {
-                func(&i, &self.population);
+                if (generation_callback_count+1) == generations_to_callback {
+                    func(&i, &self.population);
+                    generation_callback_count = 0;
+                } else {
+                    generation_callback_count+=1;
+                }
             }
 
             //6- Identifies if the limit has been reached or not
