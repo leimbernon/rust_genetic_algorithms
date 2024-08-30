@@ -2,28 +2,24 @@ use std::{sync::{mpsc::sync_channel, Mutex, Arc}, thread, collections::HashMap};
 use rand::Rng;
 use log::{trace, debug, info};
 use std::env;
-use std::marker::PhantomData;
 use crate::{population::Population, traits::{GenotypeT, ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
 use crate::configuration::GaConfiguration;
 
-pub struct Ga<U, F>
+pub struct Ga<U>
 where
-    U:GenotypeT,
-    F: Fn(&i32,&Population<U>)
+    U:GenotypeT
 {
     pub configuration: GaConfiguration,
     pub alleles: Vec<U::Gene>,
     pub population: Population<U>,
     pub random_initialization: bool,
-    pub default_population: bool,
-    pub _marker: PhantomData<F>
+    pub default_population: bool
 }
 
 
-impl<U,F> Default for Ga<U,F>
+impl<U> Default for Ga<U>
 where
-    U:GenotypeT,
-    F: Fn(&i32,&Population<U>)
+    U:GenotypeT
 {
     fn default() -> Self {
         Ga { 
@@ -31,17 +27,15 @@ where
             population: Population::new_empty(),
             alleles: Vec::new(),
             random_initialization: true,
-            default_population: true,
-            _marker: PhantomData
+            default_population: true
         }
     }
 }
 
 
-impl<U,F> ConfigurationT for Ga<U,F>
+impl<U> ConfigurationT for Ga<U>
 where
-    U:GenotypeT,
-    F: Fn(&i32,&Population<U>)
+    U:GenotypeT
 {
     fn new()->Self{
         Self::default()
@@ -155,10 +149,9 @@ where
 }
 
 
-impl<U,F>Ga<U,F>
+impl<U>Ga<U>
 where
     U:GenotypeT + Send + Sync + 'static + Clone,
-    F: Fn(&i32, &Population<U>)
 {
     /**
      * Function to set the alleles
@@ -259,20 +252,14 @@ where
 
     }
 
-    /**
-    * Method for running the Genetic Algorithms without any callback
-    */
-    pub fn run_without_callback(&mut self)->Population<U>
-    where
-        U:GenotypeT + Send + Sync + 'static + Clone
-    {
-        self.run(None)
+    pub fn run_without_callback(&mut self)->Population<U>{
+        self.run_with_callback(None::<fn(&i32, &Population<U>)>)
     }
 
     /**
      * Method for running the Genetic Algorithms with callback
      */
-    pub fn run(&mut self, callback: Option<F>)->Population<U>
+    pub fn run_with_callback<F>(&mut self, callback: Option<F>)->Population<U>
     where 
         U:GenotypeT + Send + Sync + 'static + Clone,
         F: Fn(&i32, &Population<U>)

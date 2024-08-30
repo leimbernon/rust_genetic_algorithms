@@ -30,7 +30,7 @@ fn test_ga_start_maximize(){
                         .with_mutation_method(Mutation::Swap)
                         .with_survivor_method(Survivor::Fitness)
                         .with_population(population)
-                        .run();
+                        .run_without_callback();
     
     assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_fitness(), 20.0);
@@ -66,7 +66,7 @@ fn test_ga_run_minimize(){
                     .with_mutation_probability_max(0.2)
                     .with_survivor_method(Survivor::Fitness)
                     .with_population(population)
-                    .run();
+                    .run_without_callback();
     
     assert_eq!(population.individuals.len(), 1);
     assert_eq!(population.individuals[0].get_fitness(), 10.0);
@@ -104,7 +104,7 @@ fn test_ga_run(){
                     .with_mutation_method(Mutation::Swap)
                     .with_survivor_method(Survivor::Fitness)
                     .with_population(population)
-                    .run();
+                    .run_without_callback();
     
     assert_eq!(population.individuals.len(), 1);
     
