@@ -1,4 +1,5 @@
 use genetic_algorithms::{operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::{GenotypeT, ConfigurationT}, configuration::ProblemSolving, ga};
+use genetic_algorithms::ga::TerminationCause;
 use crate::structures::{Gene, Genotype};
 extern crate num_cpus;
 
@@ -173,9 +174,10 @@ fn test_parent_crossover_without_repeating_alleles(){
     }
 }
 
-fn callback_function(generation_number: &i32, population: &Population<Genotype>){
-    assert_eq!(*generation_number, 7);
+fn callback_function(generation_number: &i32, population: &Population<Genotype>, termination_cause: TerminationCause){
+    assert!(*generation_number >= 7);
     assert_eq!(population.individuals.len(), 10);
+    assert!(termination_cause == TerminationCause::NotTerminated ||  termination_cause == TerminationCause::GenerationLimitReached);
 }
 
 #[test]

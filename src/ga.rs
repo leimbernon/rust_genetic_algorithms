@@ -5,6 +5,13 @@ use std::env;
 use crate::{population::Population, traits::{GenotypeT, ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
 use crate::configuration::GaConfiguration;
 
+#[derive(Debug, PartialEq)]
+pub enum TerminationCause {
+    GenerationLimitReached,
+    FitnessTargetReached,
+    NotTerminated
+}
+
 pub struct Ga<U>
 where
     U:GenotypeT
@@ -253,7 +260,7 @@ where
     }
 
     pub fn run(&mut self)->Population<U>{
-        self.run_with_callback(None::<fn(&i32, &Population<U>)>, 0)
+        self.run_with_callback(None::<fn(&i32, &Population<U>,TerminationCause)>, 0)
     }
 
     /**
@@ -262,7 +269,7 @@ where
     pub fn run_with_callback<F>(&mut self, callback: Option<F>, generations_to_callback: i32)->Population<U>
     where 
         U:GenotypeT + Send + Sync + 'static + Clone,
-        F: Fn(&i32, &Population<U>)
+        F: Fn(&i32, &Population<U>, TerminationCause)
     {
         //Before starting the run, we will check the conditions
         condition_checker_factory::<U>(Some(&self.configuration), Some(&self.population), Some(&self.alleles), self.default_population);
@@ -301,6 +308,7 @@ where
 
         // Starting counting the generations for the callback
         let mut generation_callback_count = 0;
+        let mut termination_cause = TerminationCause::NotTerminated;
 
         //We start the cycles
         for i in 0..self.configuration.limit_configuration.max_generations {
@@ -337,7 +345,7 @@ where
             // If we want to perform a callback
             if let Some(func) = &callback {
                 if (generation_callback_count+1) == generations_to_callback {
-                    func(&i, &self.population);
+                    func(&i, &self.population, TerminationCause::NotTerminated);
                     generation_callback_count = 0;
                 } else {
                     generation_callback_count+=1;
@@ -346,6 +354,12 @@ where
 
             //6- Identifies if the limit has been reached or not
             if limit_reached(self.configuration.limit_configuration, &self.population.individuals){
+
+                // If we want to perform a callback
+                if let Some(func) = &callback {
+                    termination_cause = TerminationCause::FitnessTargetReached;
+                    func(&i, &self.population, TerminationCause::NotTerminated);
+                }
                 break;
             }
         }
@@ -354,6 +368,15 @@ where
         if !self.configuration.limit_configuration.get_best_individual_by_generation {
             best_population.add_individual_gn(best_individual, -1, self.configuration.adaptive_ga);
         }
+
+        // If we want to perform a callback and the fitness target is not reached
+        if let Some(func) = &callback {
+            if termination_cause == TerminationCause::NotTerminated {
+                termination_cause = TerminationCause::GenerationLimitReached;
+                func(&self.configuration.limit_configuration.max_generations, &self.population, termination_cause);
+            }
+        }
+
         best_population
     }
 }
