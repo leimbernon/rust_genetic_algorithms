@@ -215,11 +215,11 @@ let population = ga::Ga::new()
                     .with_population_size(100)
                     .run();
 ```
-If you want to receive a notification every few generations, this is possible via a callback function. This function has to be of the form Fn(&i32,&Population<GenotypeT>);
+If you want to receive a notification every few generations and when the genetic algorithms have terminated and why, this is possible via a callback function. This function has to be of the form Fn(&i32,&Population<GenotypeT>, TerminationCause);
 Following the previous case, an example could be the following:
 
 ```rust
-fn callback_function(generation_number: &i32, population: &Population<Genotype>){
+fn callback_function(generation_number: &i32, population: &Population<Genotype>, termination_cause: TerminationCause){
   print!("Callback received");
 }
 let population = ga::Ga::new()
