@@ -1,3 +1,4 @@
+#[cfg(test)]
 use crate::structures::{Gene, Genotype};
 use genetic_algorithms::operations::mutation::{swap, inversion, scramble, aga_probability};
 

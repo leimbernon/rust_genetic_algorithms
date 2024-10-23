@@ -1,3 +1,4 @@
+#[cfg(test)]
 use crate::structures::{Gene, Genotype};
 use genetic_algorithms::operations::crossover::{cycle, multipoint::multipoint_crossover, uniform_crossover, aga_probability};
 

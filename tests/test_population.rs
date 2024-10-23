@@ -1,6 +1,7 @@
-use genetic_algorithms::population::Population;
-
+#[cfg(test)]
+mod structures;
 use crate::structures::{Genotype, Gene};
+use genetic_algorithms::population::Population;
 
 #[test]
 fn test_add_individual_gn_aga(){
