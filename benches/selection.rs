@@ -3,9 +3,8 @@ use rand::Rng;
 use pprof::criterion::{Output, PProfProfiler};
 
 use genetic_algorithms::operations::selection::random::random;
-use genetic_algorithms::operations::selection::fitness_proportionate::{
-    roulette_wheel_selection, stochastic_universal_sampling,
-};
+//use genetic_algorithms::operations::selection::fitness_proportionate::roulette_wheel_selection;
+use genetic_algorithms::operations::selection::fitness_proportionate::stochastic_universal_sampling;
 use genetic_algorithms::operations::selection::tournament::tournament;
 use genetic_algorithms::traits::{GeneT, GenotypeT};
 
@@ -73,8 +72,8 @@ fn setup_population(population_size: usize, gene_length: usize) -> Vec<SimpleGen
 
 // Benchmark function with parameterized population and gene length
 fn benchmark_selection_methods(c: &mut Criterion) {
-    let population_sizes = vec![100, 1000];
-    let gene_lengths = vec![10, 100];
+    let population_sizes = vec![10, 100, 1000];
+    let gene_lengths = vec![10, 100, 1000];
     let tournament_threads = vec![1, 2, 4, 8];
 
     let mut group = c.benchmark_group("selection_methods");

@@ -28,3 +28,15 @@ pprof = { version = "0.13", features = ["criterion", "flamegraph"] }
 [[bench]]
 name = "selection"
 harness = false
+
+[[bench]]
+name = "crossover"
+harness = false
+
+[[bench]]
+name = "mutation"
+harness = false
+
+[[bench]]
+name = "survivor"
+harness = false
