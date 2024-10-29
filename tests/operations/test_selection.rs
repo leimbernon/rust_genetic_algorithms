@@ -1,3 +1,4 @@
+#[cfg(test)]
 use crate::structures::{Gene, Genotype};
 use genetic_algorithms::operations::{selection::random, selection::fitness_proportionate, selection::tournament};
 

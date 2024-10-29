@@ -1,5 +1,6 @@
+#[cfg(test)]
+mod structures;
 use genetic_algorithms::helpers;
-
 use crate::structures::{Gene, Genotype};
 
 #[test]

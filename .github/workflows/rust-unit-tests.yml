@@ -2,7 +2,7 @@ name: Rust Unit Tests
 
 on:
   pull_request:
-    branches: [ "develop", "master" ]
+    branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always

@@ -1,3 +1,5 @@
+#[cfg(test)]
+mod structures;
 use genetic_algorithms::{operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::{GenotypeT, ConfigurationT}, configuration::ProblemSolving, ga};
 use genetic_algorithms::ga::TerminationCause;
 use crate::structures::{Gene, Genotype};

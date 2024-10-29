@@ -2,9 +2,9 @@
 name = "genetic_algorithms"
 description = "Library for solving genetic algorithm problems"
 authors = ["Luis Eduardo Imbernón <imbernon@gmail.com>"]
-version = "1.5.0"
+version = "1.6.0"
 edition = "2021"
-rust-version = "1.60"
+rust-version = "1.82.0"
 readme = "README.md"
 license = "Apache-2.0"
 repository = "https://github.com/leimbernon/rust_genetic_algorithms.git"
@@ -20,3 +20,23 @@ rand = "0.8.5"
 num_cpus = "1.15.0"
 log = { version = "0.4.22", features = ["std", "serde", "kv_unstable"] }
 env_logger = "0.11.5"
+
+[dev-dependencies]
+criterion = "0.5.1"
+pprof = { version = "0.13", features = ["criterion", "flamegraph"] }
+
+[[bench]]
+name = "selection"
+harness = false
+
+[[bench]]
+name = "crossover"
+harness = false
+
+[[bench]]
+name = "mutation"
+harness = false
+
+[[bench]]
+name = "survivor"
+harness = false

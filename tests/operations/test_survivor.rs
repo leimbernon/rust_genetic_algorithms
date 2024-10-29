@@ -1,3 +1,4 @@
+#[cfg(test)]
 use crate::structures::{Gene, Genotype};
 use genetic_algorithms::{operations::survivor::{fitness, age}, traits::GenotypeT, configuration::{ProblemSolving, LimitConfiguration}};
 
