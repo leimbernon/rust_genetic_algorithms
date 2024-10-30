@@ -82,7 +82,7 @@ fn setup_population(population_size: usize, gene_length: usize) -> Vec<SimpleGen
 }
 
 fn benchmark_crossover_methods(c: &mut Criterion) {
-    let population_size = 1000;
+    let population_size = 2;
     let gene_lengths = vec![10, 100, 1000];
     let crossover_points = vec![1, 2, 3]; // Different points for `multipoint_crossover`
 
