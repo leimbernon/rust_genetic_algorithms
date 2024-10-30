@@ -53,7 +53,7 @@ fn test_random_odd_selection(){
 
 
 #[test]
-fn test_fitness_proportionate_selection(){
+fn test_roulette_wheel_selection(){
     //We create 6 dna's for 6 individuals
     let dna_1 = vec![Gene{id:1}, Gene{id:2}];
     let dna_2 = vec![Gene{id:3}, Gene{id:4}];

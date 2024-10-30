@@ -3,7 +3,7 @@ use rand::Rng;
 use pprof::criterion::{Output, PProfProfiler};
 
 use genetic_algorithms::operations::selection::random::random;
-//use genetic_algorithms::operations::selection::fitness_proportionate::roulette_wheel_selection;
+use genetic_algorithms::operations::selection::fitness_proportionate::roulette_wheel_selection;
 use genetic_algorithms::operations::selection::fitness_proportionate::stochastic_universal_sampling;
 use genetic_algorithms::operations::selection::tournament::tournament;
 use genetic_algorithms::traits::{GeneT, GenotypeT};
@@ -97,7 +97,7 @@ fn benchmark_selection_methods(c: &mut Criterion) {
             );
 
             // Benchmark roulette wheel selection
-            /*group.bench_with_input(
+            group.bench_with_input(
                 BenchmarkId::new("roulette wheel selection", format!("population_{}_genes_{}", population_size, gene_length)),
                 &individuals,
                 |b, individuals| {
@@ -105,7 +105,7 @@ fn benchmark_selection_methods(c: &mut Criterion) {
                         let _ = roulette_wheel_selection(individuals);
                     });
                 },
-            );*/
+            );
 
             // Benchmark stochastic universal sampling
             group.bench_with_input(
