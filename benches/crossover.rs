@@ -1,11 +1,12 @@
 use criterion::{criterion_group, criterion_main, AxisScale, BenchmarkId, Criterion, PlotConfiguration};
 
+use rand::seq::SliceRandom;
 use rand::Rng;
 use pprof::criterion::{Output, PProfProfiler};
 
 use genetic_algorithms::operations::crossover::multipoint::multipoint_crossover;
 use genetic_algorithms::operations::crossover::uniform_crossover::uniform;
-//use genetic_algorithms::operations::crossover::cycle::cycle;
+use genetic_algorithms::operations::crossover::cycle::cycle;
 use genetic_algorithms::traits::{GeneT, GenotypeT};
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
@@ -58,13 +59,24 @@ impl GenotypeT for SimpleGenotype {
 }
 
 fn setup_population(population_size: usize, gene_length: usize) -> Vec<SimpleGenotype> {
+    let mut rng = rand::thread_rng();
+    
+    // Generate a single set of genes for all individuals
+    let base_genes: Vec<Gene> = (0..gene_length)
+        .map(|_| Gene { id: rng.gen_range(0..255) })
+        .collect();
+
     (0..population_size)
-        .map(|_| SimpleGenotype {
-            fitness: rand::thread_rng().gen_range(0.0..1.0),
-            dna: (0..gene_length)
-                .map(|_| Gene { id: rand::thread_rng().gen_range(0..255) })
-                .collect(),
-            age: rand::thread_rng().gen_range(0..100),
+        .map(|_| {
+            // Clone and shuffle base_genes to create individual DNA with the same genes in a different order
+            let mut dna = base_genes.clone();
+            dna.shuffle(&mut rng);
+
+            SimpleGenotype {
+                fitness: rng.gen_range(0.0..1.0),
+                dna,
+                age: rng.gen_range(0..100),
+            }
         })
         .collect()
 }
@@ -81,7 +93,7 @@ fn benchmark_crossover_methods(c: &mut Criterion) {
         let individuals = setup_population(population_size, gene_length);
 
         // Benchmark for cycle crossover
-        /*group.bench_with_input(
+        group.bench_with_input(
             BenchmarkId::new("cycle crossover", format!("genes_{}", gene_length)),
             &individuals,
             |b, individuals| {
@@ -91,7 +103,7 @@ fn benchmark_crossover_methods(c: &mut Criterion) {
                     let _ = cycle(parent_1, parent_2);
                 });
             },
-        );*/
+        );
 
         // Benchmark for multipoint crossover
         for &points in &crossover_points {
