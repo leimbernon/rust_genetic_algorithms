@@ -9,18 +9,14 @@ pub fn roulette_wheel_selection<U:GenotypeT>(individuals: &Vec<U>) -> HashMap<us
 
     //1- Calculate the sum of all fitnesses
     debug!(target="selection_events", method="roulette_wheel_selection"; "Starting the roulette wheel selection");
-    let mut total_fitness = 0.0;
+    let total_fitness: f64 = individuals.iter().map(|ind| ind.get_fitness()).sum();
+
     let mut rng = rand::thread_rng();
 
-    for genotype in individuals 
-    { 
-        total_fitness += genotype.get_fitness(); 
-    }
     trace!(target="selection_events", method="roulette_wheel_selection"; "Total fitness: {}", total_fitness);
 
     //2- Identifies what individuals will be parents
     let mut parent_1 = None;
-
     for index in  0..individuals.len(){
 
         //We get the probability
@@ -51,14 +47,11 @@ pub fn stochastic_universal_sampling<U:GenotypeT>(individuals: &Vec<U>, couples:
     trace!(target="selection_events", method="stochastic_universal_sampling"; "Individual couples: {}", individual_couples);
 
     //1- Calculate the selection probabilities
-    let mut total = 0.0;
+    let total: f64 = individuals.iter().map(|gen| gen.get_fitness()).sum();
     let mut last_selection_value = 0.0;
     let mut selection_probabilities = Vec::new();
     let mut rng = rand::thread_rng();
 
-    for genotype in individuals{ 
-        total += genotype.get_fitness();
-    }
     trace!(target="selection_events", method="stochastic_universal_sampling"; "Total fitness: {}", total);
     for genotype in individuals{
         let selection_probability = (genotype.get_fitness() / total) + last_selection_value;
