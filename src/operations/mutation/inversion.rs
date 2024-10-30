@@ -1,40 +1,26 @@
-use std::cmp::Ordering;
 pub(crate) use crate::traits::GenotypeT;
 use rand::Rng;
 use log::{trace, debug};
 
-pub fn inversion<U: GenotypeT>(individual: &mut U){
-
-    //Getting two random genes from the dna of the individual
+pub fn inversion<U: GenotypeT>(individual: &mut U) {
+    // Starting the inversion mutation and obtaining two random indices
     debug!(target="mutation_events", method="inversion"; "Starting the inversion mutation");
     let mut rng = rand::thread_rng();
-    let index_1: usize = rng.gen_range(0..individual.get_dna().len());
-    let index_2: usize = rng.gen_range(0..individual.get_dna().len());
-    let mut lower_index: usize = 0;
-    let mut higher_index: usize = 0;
-    trace!(target="mutation_events", method="inversion"; "Mutation index 1: {}, mutation index 2: {}", index_1, index_2);
+    let len = individual.get_dna().len();
+    
+    // Select two distinct random indices
+    let (index_1, index_2) = (rng.gen_range(0..len), rng.gen_range(0..len));
+    let (lower_index, higher_index) = if index_1 < index_2 { (index_1, index_2) } else { (index_2, index_1) };
 
-    //We create the indexes that we want extract
-    match index_1.cmp(&index_2) {
-        Ordering::Greater => {
-            lower_index = index_2; 
-            higher_index = index_1;
-        },
-        Ordering::Less => {
-            lower_index = index_1;
-            higher_index = index_2;
-        },
-        Ordering::Equal => {}
-    }
+    trace!(target="mutation_events", method="inversion"; "Mutation lower index: {}, mutation higher index: {}", lower_index, higher_index);
 
-    //Changes the dna
-    for i in 0..(higher_index - lower_index) - 1{
+    // Swap genes between the selected indices
+    for i in 0..(higher_index - lower_index) / 2 {
+        // Retrieve genes at both ends
+        let gene_start = individual.get_dna()[lower_index + i].clone();
+        let gene_end = individual.get_dna()[higher_index - i].clone();
 
-        //Gets the gene
-        let gene_end = individual.get_dna().get(higher_index - i).cloned().unwrap();
-        let gene_start = individual.get_dna().get(lower_index + i).cloned().unwrap();
-
-        //Switches both genes
+        // Swap the genes using `set_gene` directly
         individual.set_gene(lower_index + i, gene_end);
         individual.set_gene(higher_index - i, gene_start);
     }

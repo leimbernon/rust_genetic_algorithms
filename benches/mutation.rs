@@ -5,7 +5,7 @@ use pprof::criterion::{Output, PProfProfiler};
 
 use genetic_algorithms::traits::{GeneT, GenotypeT};
 use genetic_algorithms::operations::mutation::swap::swap;
-//use genetic_algorithms::operations::mutation::inversion::inversion;
+use genetic_algorithms::operations::mutation::inversion::inversion;
 use genetic_algorithms::operations::mutation::scramble::scramble;
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
@@ -78,7 +78,7 @@ fn benchmark_mutation_methods(c: &mut Criterion) {
 
         // Benchmark for swap mutation
         group.bench_with_input(
-            BenchmarkId::new("uniform crossover", format!("genes_{}", gene_length)),
+            BenchmarkId::new("swap mutation", format!("genes_{}", gene_length)),
             &individual,
             |b, individual| {
                 b.iter(|| {
@@ -88,19 +88,19 @@ fn benchmark_mutation_methods(c: &mut Criterion) {
         );
 
         // Benchmark for inversion mutation
-        /*group.bench_with_input(
-            BenchmarkId::new("inversion crossover", format!("genes_{}", gene_length)),
+        group.bench_with_input(
+            BenchmarkId::new("inversion mutation", format!("genes_{}", gene_length)),
             &individual,
             |b, individual| {
                 b.iter(|| {
                     let _ = inversion(&mut individual.clone());
                 });
             },
-        );*/
+        );
 
          // Benchmark for scramble mutation
          group.bench_with_input(
-            BenchmarkId::new("scramble crossover", format!("genes_{}", gene_length)),
+            BenchmarkId::new("scramble mutation", format!("genes_{}", gene_length)),
             &individual,
             |b, individual| {
                 b.iter(|| {
