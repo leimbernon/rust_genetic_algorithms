@@ -19,7 +19,7 @@ This library also supports multithreading and adaptive genetic algorithms.
     - [Runner](#runner)
     - [GA Configuration](#ga-configuration)
   - [Example](#example)
-    - [Creation of the gene and genotype structure](#creation-of-the-gene-and-genotype-structure)
+    - [Creation of the gene and chromosome structure](#creation-of-the-gene-and-chromosome-structure)
     - [Other examples](#other-examples)
   - [Usage](#usage)
 
@@ -39,18 +39,18 @@ These traits are inside the `traits` module:
   - `new()`: Optional. This is the constructor function.
   - `get_id()`: Optional. This function must return the id of the gene.
   - `set_id()`: Sets the id of the gene.
-- `GenotypeT`: This trait must be implemented on your own genotype representation.
+- `ChromosomeT`: This trait must be implemented on your own chromosome representation.
   - `Gene`: This is the `GeneT` associated type.
   - `new()`: Optional. This is the constructor function.
   - `new_gene()`: Optional. Must return `Self::Gene`.
   - `get_dna()`: Must return the array of genes (`GeneT`).
   - `set_dna(dna: &[Self::Gene])`: Must set the array of genes (`GeneT`).
   - `set_gene(gene_index: usize, gene: Self::Gene)`: Optional. This method replaces a gene at the specified gene_index position.
-  - `calculate_fitness()`: Optional. This function must calculate the fitness of the individual (or the genotype) in f64.
+  - `calculate_fitness()`: Optional. This function must calculate the fitness of the individual (or the chromosome) in f64.
   - `get_fitness()`: Returns the fitness previously calculated by `calculate_fitness()`.
   - `set_fitness(fitness: f64)`: Sets the fitness value.
-  - `get_age()`: Returns the age of the genotype.
-  - `set_age(age: i32)`: Sets the age of the genotype.
+  - `get_age()`: Returns the age of the chromosome.
+  - `set_age(age: i32)`: Sets the age of the chromosome.
 
 ### Operators
 
@@ -107,8 +107,8 @@ This structure has the following attributes:
 - `method`: Specifies which crossover operator to use.
 
 `MutationConfiguration`:
-- `probability_max`: Optional. Specifies the maximum probability that a genotype is mutated. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be greater than `probability_min`.
-- `probability_min`: Optional. Specifies the minimum probability that a genotype is mutated. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be lower than `probability_max`.
+- `probability_max`: Optional. Specifies the maximum probability that a chromosome is mutated. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be greater than `probability_min`.
+- `probability_min`: Optional. Specifies the minimum probability that a chromosome is mutated. This number must be between 0.0 and 1.0, both inclusive. In case of adaptive genetic algorithms, this parameter is mandatory and must be lower than `probability_max`.
 
 - `method`: Specifies which mutation operator to use.
 
@@ -124,11 +124,11 @@ This structure has the following attributes:
 
 ## Example
 
-A simple example of use could be minimizing a genotype whose gene has only one id.
-### Creation of the gene and genotype structure
+A simple example of use could be minimizing a chromosome whose gene has only one id.
+### Creation of the gene and chromosome structure
 
 Use the traits.
-`use genetic_algorithms::{operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::{GenotypeT, ConfigurationT}, configuration::ProblemSolving, ga};`
+`use genetic_algorithms::{operations::{Selection, Crossover, Mutation, Survivor}, population::Population, traits::{ChromosomeT, ConfigurationT}, configuration::ProblemSolving, ga};`
 
 Define the gene structure.
 
@@ -147,16 +147,16 @@ impl GeneT for Gene{
 }
 ```
 
-Define the genotype structure, and the fitness calculation.
+Define the chromosome structure, and the fitness calculation.
 
 ```rust
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct Genotype{
+pub struct Chromosome{
     pub dna: Vec<Gene>,
     pub fitness: f64,
     pub age: i32,
 }
-impl GenotypeT for Genotype{
+impl ChromosomeT for Chromosome{
     type Gene = Gene;
     fn get_dna(&self) -> &[Self::Gene] {
         &self.dna
@@ -215,11 +215,11 @@ let population = ga::Ga::new()
                     .with_population_size(100)
                     .run();
 ```
-If you want to receive a notification every few generations and when the genetic algorithms have terminated and why, this is possible via a callback function. This function has to be of the form Fn(&i32,&Population<GenotypeT>, TerminationCause);
+If you want to receive a notification every few generations and when the genetic algorithms have terminated and why, this is possible via a callback function. This function has to be of the form Fn(&i32,&Population<ChromosomeT>, TerminationCause);
 Following the previous case, an example could be the following:
 
 ```rust
-fn callback_function(generation_number: &i32, population: &Population<Genotype>, termination_cause: TerminationCause){
+fn callback_function(generation_number: &i32, population: &Population<Chromosome>, termination_cause: TerminationCause){
   print!("Callback received");
 }
 let population = ga::Ga::new()

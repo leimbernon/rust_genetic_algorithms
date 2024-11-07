@@ -1,8 +1,8 @@
-pub(crate) use crate::traits::GenotypeT;
+pub(crate) use crate::traits::ChromosomeT;
 use rand::Rng;
 use log::{trace, debug};
 
-pub fn inversion<U: GenotypeT>(individual: &mut U) {
+pub fn inversion<U: ChromosomeT>(individual: &mut U) {
     // Starting the inversion mutation and obtaining two random indices
     debug!(target="mutation_events", method="inversion"; "Starting the inversion mutation");
     let mut rng = rand::thread_rng();

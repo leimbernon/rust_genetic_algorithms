@@ -3,7 +3,7 @@ use criterion::{criterion_group, criterion_main, AxisScale, BenchmarkId, Criteri
 use rand::Rng;
 use pprof::criterion::{Output, PProfProfiler};
 
-use genetic_algorithms::traits::{GeneT, GenotypeT};
+use genetic_algorithms::traits::{GeneT, ChromosomeT};
 use genetic_algorithms::operations::mutation::swap::swap;
 use genetic_algorithms::operations::mutation::inversion::inversion;
 use genetic_algorithms::operations::mutation::scramble::scramble;
@@ -23,12 +23,12 @@ impl GeneT for Gene {
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
-struct SimpleGenotype {
+struct SimpleChromosome {
     dna: Vec<Gene>,
     pub fitness: f64,
     pub age: i32,
 }
-impl GenotypeT for SimpleGenotype {
+impl ChromosomeT for SimpleChromosome {
     type Gene = Gene;
 
     fn get_dna(&self) -> &[Self::Gene] {
@@ -57,8 +57,8 @@ impl GenotypeT for SimpleGenotype {
     }
 }
 
-fn setup_individual(gene_length: usize) -> SimpleGenotype {
-    SimpleGenotype {
+fn setup_individual(gene_length: usize) -> SimpleChromosome {
+    SimpleChromosome {
         fitness: rand::thread_rng().gen_range(0.0..1.0),
         dna: (0..gene_length)
             .map(|_| Gene { id: rand::thread_rng().gen_range(0..255) })

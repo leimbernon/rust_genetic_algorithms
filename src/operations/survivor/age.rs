@@ -1,7 +1,7 @@
-pub(crate) use crate::traits::GenotypeT;
+pub(crate) use crate::traits::ChromosomeT;
 use log::{trace, debug};
 
-pub fn age_based<U:GenotypeT>(individuals: &mut Vec<U>, population_size: usize)
+pub fn age_based<U:ChromosomeT>(individuals: &mut Vec<U>, population_size: usize)
 {
 
     //We first sort the individuals by their fitness

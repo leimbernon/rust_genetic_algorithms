@@ -1,8 +1,8 @@
 pub(crate) use rand::Rng;
-use crate::traits::GenotypeT;
+use crate::traits::ChromosomeT;
 use log::{trace, debug};
 
-pub fn scramble<U: GenotypeT>(individual: &mut U){
+pub fn scramble<U: ChromosomeT>(individual: &mut U){
 
     //Getting two random genes from the dna of the individual
     debug!(target="mutation_events", method="scramble"; "Starting the scramble mutation");

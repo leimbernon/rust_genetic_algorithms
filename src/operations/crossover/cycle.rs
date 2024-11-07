@@ -1,7 +1,7 @@
-use crate::traits::{GenotypeT, GeneT};
+use crate::traits::{ChromosomeT, GeneT};
 use log::{trace, debug};
 
-pub fn cycle<U: GenotypeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>> {
+pub fn cycle<U: ChromosomeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>> {
     let dna_len = parent_1.get_dna().len();
 
     // Check if parents have the same length DNA

@@ -1,4 +1,4 @@
-use crate::traits::GenotypeT;
+use crate::traits::ChromosomeT;
 use self::swap::swap;
 use self::inversion::inversion;
 use self::scramble::scramble;
@@ -10,7 +10,7 @@ pub mod scramble;
 
 pub fn factory<U>(mutation: Mutation ,individual: &mut U)
 where
-U: GenotypeT + 'static
+U: ChromosomeT + 'static
 {
     match mutation {
         Mutation::Swap => {swap(individual)},
@@ -20,7 +20,7 @@ U: GenotypeT + 'static
 }
 
 //Function to calculate the probability for adaptive genetic algorithms
-pub fn aga_probability<U: GenotypeT>(parent_1: &U, parent_2: &U, f_avg: f64, probability_max: f64, probability_min: f64)->f64{
+pub fn aga_probability<U: ChromosomeT>(parent_1: &U, parent_2: &U, f_avg: f64, probability_max: f64, probability_min: f64)->f64{
     let larger_f = if parent_1.get_fitness() > parent_2.get_fitness() {parent_1.get_fitness()}else{parent_2.get_fitness()};
 
     if larger_f >= f_avg {

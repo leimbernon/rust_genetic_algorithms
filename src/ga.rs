@@ -2,7 +2,7 @@ use std::{sync::{mpsc::sync_channel, Mutex, Arc}, thread, collections::HashMap};
 use rand::Rng;
 use log::{trace, debug, info};
 use std::env;
-use crate::{population::Population, traits::{GenotypeT, ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
+use crate::{population::Population, traits::{ChromosomeT, ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
 use crate::configuration::GaConfiguration;
 
 #[derive(Debug, PartialEq)]
@@ -14,7 +14,7 @@ pub enum TerminationCause {
 
 pub struct Ga<U>
 where
-    U:GenotypeT
+    U:ChromosomeT
 {
     pub configuration: GaConfiguration,
     pub alleles: Vec<U::Gene>,
@@ -26,7 +26,7 @@ where
 
 impl<U> Default for Ga<U>
 where
-    U:GenotypeT
+    U:ChromosomeT
 {
     fn default() -> Self {
         Ga { 
@@ -42,7 +42,7 @@ where
 
 impl<U> ConfigurationT for Ga<U>
 where
-    U:GenotypeT
+    U:ChromosomeT
 {
     fn new()->Self{
         Self::default()
@@ -158,7 +158,7 @@ where
 
 impl<U>Ga<U>
 where
-    U:GenotypeT + Send + Sync + 'static + Clone,
+    U:ChromosomeT + Send + Sync + 'static + Clone,
 {
     /**
      * Function to set the alleles
@@ -187,7 +187,7 @@ where
      * Function to randomly initialize the population
      */
     pub fn random_initialization(&mut self)->Population<U>
-    where U:GenotypeT + Send + Sync + 'static + Clone
+    where U:ChromosomeT + Send + Sync + 'static + Clone
     {
         //Before starting the run, we will check the conditions
         condition_checker_factory::<U>(Some(&self.configuration), None, Some(&self.alleles), self.default_population);
@@ -268,7 +268,7 @@ where
      */
     pub fn run_with_callback<F>(&mut self, callback: Option<F>, generations_to_callback: i32)->Population<U>
     where 
-        U:GenotypeT + Send + Sync + 'static + Clone,
+        U:ChromosomeT + Send + Sync + 'static + Clone,
         F: Fn(&i32, &Population<U>, TerminationCause)
     {
         //Before starting the run, we will check the conditions
@@ -386,7 +386,7 @@ where
  */
 fn get_best_individual<U>(individual_1: &U, individual_2: &U, problem_solving: ProblemSolving) -> U
 where
-U:GenotypeT
+U:ChromosomeT
 {
 
     debug!(target="ga_events", method="get_best_individual"; "Started the best individual method");
@@ -426,7 +426,7 @@ U:GenotypeT
  */
 fn limit_reached<U>(limit: LimitConfiguration, individuals: &Vec<U>)->bool
 where
-U:GenotypeT
+U:ChromosomeT
 {
 
     debug!(target="ga_events", method="limit_reached"; "Started limit reached method");
@@ -462,7 +462,7 @@ U:GenotypeT
  */
 fn population_fitness_calculation<U>(individuals: &mut Vec<U>, configuration: GaConfiguration) -> U
 where
-U:GenotypeT + Send + Sync + 'static + Clone
+U:ChromosomeT + Send + Sync + 'static + Clone
 {
 
     debug!(target="ga_events", method="population_fitness_calculation"; "Started the population fitness calculation");
@@ -552,7 +552,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
  */
 fn parent_crossover<U>(parents: &mut HashMap<usize, usize>, individuals: &Vec<U>, configuration: &GaConfiguration, age: i32, f_max: f64, f_avg: f64) -> Vec<U>
 where 
-U:GenotypeT + Send + Sync + 'static + Clone
+U:ChromosomeT + Send + Sync + 'static + Clone
 {
     //Setting the control variables
     debug!(target="ga_events", method="parent_crossover"; "Started the parent crossover");
