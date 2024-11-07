@@ -1,6 +1,6 @@
 use rand::Rng;
 
-use crate::{configuration::GaConfiguration, population::Population, traits::{GenotypeT, GeneT}, operations::{self, survivor::fitness::ProblemSolving}};
+use crate::{configuration::GaConfiguration, population::Population, traits::{ChromosomeT, GeneT}, operations::{self, survivor::fitness::ProblemSolving}};
 
 pub mod condition_checker;
 
@@ -10,7 +10,7 @@ pub mod condition_checker;
 pub fn condition_checker_factory<U>(configuration: Option<&GaConfiguration>, population: Option<&Population<U>>, 
                                     alleles: Option<&[U::Gene]>, default_population: bool)
 where
-U: GenotypeT + Send + Sync + 'static + Clone
+U: ChromosomeT + Send + Sync + 'static + Clone
 {
     //1- We call the condition for checking the length of every individual
     if let Some(population) = population{
@@ -64,7 +64,7 @@ U: GenotypeT + Send + Sync + 'static + Clone
  */
 pub fn initialize_dna_without_repeated_alleles<U>(alleles: &[U::Gene], genes_per_individual: i32, needs_unique_ids: bool)->Vec<U::Gene>
 where
-U: GenotypeT + Send + Sync + 'static + Clone{
+U: ChromosomeT + Send + Sync + 'static + Clone{
     
     let mut rng = rand::thread_rng();
     let mut dna = Vec::new();
@@ -94,7 +94,7 @@ U: GenotypeT + Send + Sync + 'static + Clone{
  */
 pub fn initialize_dna<U>(alleles: &[U::Gene], genes_per_individual: i32, needs_unique_ids: bool)->Vec<U::Gene>
 where
-U: GenotypeT + Send + Sync + 'static + Clone{
+U: ChromosomeT + Send + Sync + 'static + Clone{
     
     let mut rng = rand::thread_rng();
     let mut dna = Vec::new();

@@ -1,4 +1,4 @@
-use crate::traits::GenotypeT;
+use crate::traits::ChromosomeT;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::{sync::Mutex, thread};
@@ -10,7 +10,7 @@ use log::{trace, debug};
  */
 pub fn tournament<U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
 where
-U:GenotypeT + Send + Sync + 'static + Clone
+U:ChromosomeT + Send + Sync + 'static + Clone
 {
     
     if number_of_threads == 1{
@@ -28,7 +28,7 @@ U:GenotypeT + Send + Sync + 'static + Clone
  */
 fn tournament_single_thread<U>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>
 where
-U:GenotypeT
+U:ChromosomeT
 {
 
     debug!(target="selection_events", method="tournament"; "Starting tournament selection in single thread");
@@ -88,7 +88,7 @@ U:GenotypeT
  */
 fn tournament_multithread<U>(individuals: &Vec<U>, couples: i32, number_of_threads: i32) -> HashMap<usize, usize>
 where
-U:GenotypeT+ Send + Sync + 'static + Clone
+U:ChromosomeT+ Send + Sync + 'static + Clone
 {
 
     debug!(target="selection_events", method="tournament"; "Starting tournament selection in multiple threads ({})", number_of_threads);

@@ -1,8 +1,8 @@
 use rand::Rng;
-use crate::traits::GenotypeT;
+use crate::traits::ChromosomeT;
 use log::{trace, debug};
 
-pub fn uniform<U: GenotypeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
+pub fn uniform<U: ChromosomeT>(parent_1: &U, parent_2: &U) -> Option<Vec<U>>{
 
     //Before doing the operation, we check that the dna in the parent 1 has the same length of the dna in the parent 2
     if parent_1.get_dna().len() != parent_2.get_dna().len() {

@@ -1,7 +1,7 @@
-pub(crate) use crate::{traits::GenotypeT, configuration::{ProblemSolving, LimitConfiguration}};
+pub(crate) use crate::{traits::ChromosomeT, configuration::{ProblemSolving, LimitConfiguration}};
 use log::{trace, debug};
 
-pub fn fitness_based<U:GenotypeT>(individuals: &mut Vec<U>, population_size: usize, limit_configuration: LimitConfiguration)
+pub fn fitness_based<U:ChromosomeT>(individuals: &mut Vec<U>, population_size: usize, limit_configuration: LimitConfiguration)
 {
     debug!(target="survivor_events", method="fitness_based"; "Starting fitness based survivor method");
     if limit_configuration.problem_solving != ProblemSolving::FixedFitness {

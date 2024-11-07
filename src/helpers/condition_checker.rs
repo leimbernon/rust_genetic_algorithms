@@ -1,13 +1,13 @@
 use core::panic;
 
-use crate::{population::Population, traits::{GenotypeT, GeneT}, configuration::GaConfiguration};
+use crate::{population::Population, traits::{ChromosomeT, GeneT}, configuration::GaConfiguration};
 
 /**
  * Function to check that every individual has unique id's within their dna
  */
 pub fn unique_gene_ids<U>(population: &Population<U>)
 where 
-U:GenotypeT + Send + Sync + 'static + Clone{
+U:ChromosomeT + Send + Sync + 'static + Clone{
 
     //We analyze individual by individual
     for (individual_number, individual) in population.individuals.iter().enumerate(){
@@ -40,7 +40,7 @@ pub fn fitness_target_is_some(configuration: &GaConfiguration, problem_type: Str
  */
 pub fn same_dna_length<U>(population: &Population<U>)
 where 
-U:GenotypeT + Send + Sync + 'static + Clone{
+U:ChromosomeT + Send + Sync + 'static + Clone{
     //We analyze individual by individual
     for (individual_number, individual) in population.individuals.iter().enumerate(){
         for i in individual_number+1..population.individuals.len(){
@@ -79,7 +79,7 @@ pub fn aga_mutation_probabilities(configuration: GaConfiguration){
  */
 pub fn check_genotype_length_not_bigger_than_alleles<U>(alleles: &[U::Gene], genes_per_individual:i32)
 where 
-U:GenotypeT + Send + Sync + 'static + Clone{
+U:ChromosomeT + Send + Sync + 'static + Clone{
     if genes_per_individual as usize > alleles.len() {
         panic!("The number of genes within an individual should not be more than the different alleles.");
     }
@@ -107,7 +107,7 @@ pub fn check_population_size_is_set(configuration: &GaConfiguration){
  * Function to check that the alleles are set
  */
 pub fn check_alleles_are_set<U>(alleles: Option<&[U::Gene]>)
-where U:GenotypeT + Send + Sync + 'static + Clone{
+where U:ChromosomeT + Send + Sync + 'static + Clone{
     if alleles.is_none() {
         panic!("The alleles must be set.");
     }else if let Some(alleles) = alleles{

@@ -1,8 +1,8 @@
 pub(crate) use rand::Rng;
-use crate::traits::GenotypeT;
+use crate::traits::ChromosomeT;
 use log::{trace, debug};
 
-pub fn swap<U: GenotypeT>(individual: &mut U){
+pub fn swap<U: ChromosomeT>(individual: &mut U){
 
     //Getting two random genes from the dna of the individual
     debug!(target="mutation_events", method="swap"; "Starting the swap mutation");

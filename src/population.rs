@@ -1,8 +1,8 @@
-use crate::traits::GenotypeT;
+use crate::traits::ChromosomeT;
 
 pub struct Population<U>
 where
-    U: GenotypeT,
+    U: ChromosomeT,
 {
     // The individuals or members of the population.
     pub individuals: Vec<U>,
@@ -19,7 +19,7 @@ where
 
 impl<U> Population<U>
 where
-    U: GenotypeT,
+    U: ChromosomeT,
 {
     // Creates a new empty `Population`
     pub fn new_empty() -> Population<U> {

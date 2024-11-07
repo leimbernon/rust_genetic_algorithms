@@ -1,9 +1,9 @@
-use crate::traits::GenotypeT;
+use crate::traits::ChromosomeT;
 use std::collections::HashMap;
 use rand::Rng;
 use log::{trace, debug};
 
-pub fn roulette_wheel_selection<U:GenotypeT>(individuals: &Vec<U>) -> HashMap<usize, usize>{
+pub fn roulette_wheel_selection<U:ChromosomeT>(individuals: &Vec<U>) -> HashMap<usize, usize>{
 
     let mut mating = HashMap::new();
 
@@ -39,7 +39,7 @@ pub fn roulette_wheel_selection<U:GenotypeT>(individuals: &Vec<U>) -> HashMap<us
 }
 
 
-pub fn stochastic_universal_sampling<U:GenotypeT>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>{
+pub fn stochastic_universal_sampling<U:ChromosomeT>(individuals: &Vec<U>, couples: i32) -> HashMap<usize, usize>{
     
     debug!(target="selection_events", method="stochastic_universal_sampling"; "Starting the stochastic universal sampling selection");
     let mut mating = HashMap::new();

@@ -12,7 +12,7 @@ pub trait GeneT: Default + Clone + Sync + Send {
     fn set_id(&mut self, id: i32) -> &mut Self;
 }
 
-pub trait GenotypeT: Clone + Default{
+pub trait ChromosomeT: Clone + Default{
 
     type Gene: GeneT;
     

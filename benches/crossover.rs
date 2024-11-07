@@ -7,7 +7,7 @@ use pprof::criterion::{Output, PProfProfiler};
 use genetic_algorithms::operations::crossover::multipoint::multipoint_crossover;
 use genetic_algorithms::operations::crossover::uniform_crossover::uniform;
 use genetic_algorithms::operations::crossover::cycle::cycle;
-use genetic_algorithms::traits::{GeneT, GenotypeT};
+use genetic_algorithms::traits::{GeneT, ChromosomeT};
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub struct Gene {
@@ -24,12 +24,12 @@ impl GeneT for Gene {
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
-struct SimpleGenotype {
+struct SimpleChromosome {
     dna: Vec<Gene>,
     pub fitness: f64,
     pub age: i32,
 }
-impl GenotypeT for SimpleGenotype {
+impl ChromosomeT for SimpleChromosome {
     type Gene = Gene;
 
     fn get_dna(&self) -> &[Self::Gene] {
@@ -58,7 +58,7 @@ impl GenotypeT for SimpleGenotype {
     }
 }
 
-fn setup_population(population_size: usize, gene_length: usize) -> Vec<SimpleGenotype> {
+fn setup_population(population_size: usize, gene_length: usize) -> Vec<SimpleChromosome> {
     let mut rng = rand::thread_rng();
     
     // Generate a single set of genes for all individuals
@@ -72,7 +72,7 @@ fn setup_population(population_size: usize, gene_length: usize) -> Vec<SimpleGen
             let mut dna = base_genes.clone();
             dna.shuffle(&mut rng);
 
-            SimpleGenotype {
+            SimpleChromosome {
                 fitness: rng.gen_range(0.0..1.0),
                 dna,
                 age: rng.gen_range(0..100),

@@ -1,4 +1,4 @@
-use genetic_algorithms::traits::{GeneT, GenotypeT};
+use genetic_algorithms::traits::{GeneT, ChromosomeT};
 
 //Structures definition
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
@@ -16,12 +16,12 @@ impl GeneT for Gene{
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
-pub struct Genotype{
+pub struct Chromosome{
     pub dna: Vec<Gene>,
     pub fitness: f64,
     pub age: i32,
 }
-impl GenotypeT for Genotype{
+impl ChromosomeT for Chromosome{
     type Gene = Gene;
     fn get_dna(&self) -> &[Self::Gene] {
         &self.dna

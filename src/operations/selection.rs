@@ -1,7 +1,7 @@
 pub(crate) use std::collections::HashMap;
 
 use crate::configuration::SelectionConfiguration;
-use crate::traits::GenotypeT;
+use crate::traits::ChromosomeT;
 
 use self::random::random;
 use self::fitness_proportionate::roulette_wheel_selection;
@@ -16,7 +16,7 @@ pub mod tournament;
 
 pub fn factory<U>(individuals: &Vec<U>, configuration: SelectionConfiguration, number_of_threads: i32) -> HashMap<usize, usize>
 where
-U: GenotypeT + Sync + Send + 'static + Clone
+U: ChromosomeT + Sync + Send + 'static + Clone
 {
     match configuration.method {
         Selection::Random => {random(individuals)},

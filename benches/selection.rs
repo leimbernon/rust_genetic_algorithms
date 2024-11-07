@@ -6,7 +6,7 @@ use genetic_algorithms::operations::selection::random::random;
 use genetic_algorithms::operations::selection::fitness_proportionate::roulette_wheel_selection;
 use genetic_algorithms::operations::selection::fitness_proportionate::stochastic_universal_sampling;
 use genetic_algorithms::operations::selection::tournament::tournament;
-use genetic_algorithms::traits::{GeneT, GenotypeT};
+use genetic_algorithms::traits::{GeneT, ChromosomeT};
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]
 pub struct Gene {
@@ -23,12 +23,12 @@ impl GeneT for Gene {
 }
 
 #[derive(Debug, Clone, Default, PartialEq)]
-struct SimpleGenotype {
+struct SimpleChromosome {
     dna: Vec<Gene>,
     pub fitness: f64,
     pub age: i32,
 }
-impl GenotypeT for SimpleGenotype {
+impl ChromosomeT for SimpleChromosome {
     type Gene = Gene;
     fn get_dna(&self) -> &[Self::Gene] {
         &self.dna
@@ -57,10 +57,10 @@ impl GenotypeT for SimpleGenotype {
 }
 
 // Setup function to create a population with configurable size and gene length
-fn setup_population(population_size: usize, gene_length: usize) -> Vec<SimpleGenotype> {
+fn setup_population(population_size: usize, gene_length: usize) -> Vec<SimpleChromosome> {
     let mut rng = rand::thread_rng();
     (0..population_size)
-        .map(|_| SimpleGenotype {
+        .map(|_| SimpleChromosome {
             fitness: rng.gen_range(0.0..=1.0),
             dna: (0..gene_length)
                 .map(|_| Gene { id: rng.gen_range(0..255) })
