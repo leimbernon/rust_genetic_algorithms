@@ -1,13 +1,17 @@
 use crate::traits::ChromosomeT;
 use crate::genotypes::Binary as BinaryGenotype;
 
-#[derive(Debug, Clone, Default, PartialEq)]
-pub struct Binary {
+#[derive(Default, Clone, Debug, PartialEq)]
+pub struct Binary<F>
+where F: Fn(&Self)->f64{
     dna: Vec<BinaryGenotype>,
     pub fitness: f64,
     pub age: i32,
+    pub fitness_fn: F
 }
-impl ChromosomeT for Binary {
+
+impl<F> ChromosomeT for Binary<F>
+where F: Fn(&Self)->f64 + Default + Clone{
     type Gene = BinaryGenotype;
 
     fn get_dna(&self) -> &[Self::Gene] {
@@ -32,6 +36,6 @@ impl ChromosomeT for Binary {
         self
     }
     fn calculate_fitness(&mut self) {
-        self.fitness = 0.0;
+        self.fitness = (self.fitness_fn)(self);
     }
 }
