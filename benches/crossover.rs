@@ -4,9 +4,9 @@ use rand::seq::SliceRandom;
 use rand::Rng;
 use pprof::criterion::{Output, PProfProfiler};
 
-use genetic_algorithms::operations::crossover::multipoint::multipoint_crossover;
-use genetic_algorithms::operations::crossover::uniform_crossover::uniform;
-use genetic_algorithms::operations::crossover::cycle::cycle;
+use genetic_algorithms::operations::crossover::multipoint_crossover;
+use genetic_algorithms::operations::crossover::uniform;
+use genetic_algorithms::operations::crossover::cycle;
 use genetic_algorithms::traits::{GeneT, ChromosomeT};
 
 #[derive(Debug, Copy, Clone, Default, PartialEq)]

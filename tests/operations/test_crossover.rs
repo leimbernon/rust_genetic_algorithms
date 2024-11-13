@@ -1,6 +1,6 @@
 #[cfg(test)]
 use crate::structures::{Gene, Chromosome};
-use genetic_algorithms::operations::crossover::{cycle, multipoint::multipoint_crossover, uniform_crossover, aga_probability};
+use genetic_algorithms::operations::crossover::{cycle, multipoint_crossover, uniform_crossover, aga_probability};
 
 
 #[test]

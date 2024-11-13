@@ -1,13 +1,14 @@
 pub(crate) use super::Crossover;
 use crate::configuration::CrossoverConfiguration;
 use crate::traits::ChromosomeT;
-use self::cycle::cycle;
-use self::multipoint::multipoint_crossover;
-use self::uniform_crossover::uniform;
+pub use self::cycle::cycle;
+pub use self::multipoint::multipoint_crossover;
+pub use self::uniform_crossover::uniform;
 
 pub mod cycle;
 pub mod multipoint;
 pub mod uniform_crossover;
+
 
 pub fn factory<U: ChromosomeT>(parent_1: &U, parent_2: &U, configuration: CrossoverConfiguration) -> Option<Vec<U>>{
     match configuration.method {
