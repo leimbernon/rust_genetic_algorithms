@@ -1,6 +1,6 @@
 #[cfg(test)]
 use crate::structures::{Gene, Chromosome};
-use genetic_algorithms::operations::crossover::{cycle, multipoint_crossover, uniform_crossover, aga_probability};
+use genetic_algorithms::operations::crossover::{cycle, multipoint, uniform_crossover, aga_probability};
 
 
 #[test]
@@ -51,7 +51,7 @@ fn test_multipoint_crossover_2_points(){
     let parent_2 = Chromosome{dna: dna_2, fitness: 0.0, age: 0};
 
     //Getting the offspring
-    let mut offspring = multipoint_crossover(&parent_1, &parent_2, &2).unwrap();
+    let mut offspring = multipoint(&parent_1, &parent_2, &2).unwrap();
 
     //Setting the child
     let child_2 = offspring.pop().unwrap();
@@ -90,7 +90,7 @@ fn test_multipoint_crossover_4_points(){
     let parent_2 = Chromosome{dna: dna_2, fitness: 0.0, age: 0};
 
     //Getting the offspring
-    let mut offspring = multipoint_crossover(&parent_1, &parent_2, &4).unwrap();
+    let mut offspring = multipoint(&parent_1, &parent_2, &4).unwrap();
 
     //Setting the child
     let child_2 = offspring.pop().unwrap();

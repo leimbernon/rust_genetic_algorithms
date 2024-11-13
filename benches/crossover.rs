@@ -4,7 +4,7 @@ use rand::seq::SliceRandom;
 use rand::Rng;
 use pprof::criterion::{Output, PProfProfiler};
 
-use genetic_algorithms::operations::crossover::multipoint_crossover;
+use genetic_algorithms::operations::crossover::multipoint;
 use genetic_algorithms::operations::crossover::uniform;
 use genetic_algorithms::operations::crossover::cycle;
 use genetic_algorithms::traits::{GeneT, ChromosomeT};
@@ -114,7 +114,7 @@ fn benchmark_crossover_methods(c: &mut Criterion) {
                     let parent_1 = &individuals[0];
                     let parent_2 = &individuals[1];
                     b.iter(|| {
-                        let _ = multipoint_crossover(parent_1, parent_2, &points);
+                        let _ = multipoint(parent_1, parent_2, &points);
                     });
                 },
             );
