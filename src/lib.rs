@@ -6,3 +6,4 @@ pub mod configuration;
 pub mod helpers;
 pub mod genotypes;
 pub mod chromosomes;
+mod fitness;
