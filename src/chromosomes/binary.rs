@@ -4,7 +4,7 @@ use crate::traits::ChromosomeT;
 use crate::genotypes::Binary as BinaryGenotype;
 
 pub struct Binary{
-    dna: Vec<BinaryGenotype>,
+    pub dna: Vec<BinaryGenotype>,
     pub fitness: f64,
     pub age: i32,
     pub fitness_fn: Arc<dyn Fn(&[BinaryGenotype]) -> f64 + Send + Sync>,
@@ -63,6 +63,13 @@ impl ChromosomeT for Binary{
     fn get_dna(&self) -> &[Self::Gene] {
         &self.dna
     }
+    fn set_dna(&mut self, dna: &[Self::Gene]) -> &mut Self {
+        self.dna = dna.to_vec();
+        self
+    }
+    fn calculate_fitness(&mut self) {
+        self.fitness = (self.fitness_fn)(&self.dna);
+    }
     fn get_fitness(&self) -> f64 {
         self.fitness
     }
@@ -77,15 +84,18 @@ impl ChromosomeT for Binary{
     fn get_age(&self) -> i32 {
         self.age
     }
-    fn set_dna(&mut self, dna: &[Self::Gene]) -> &mut Self {
-        self.dna = dna.to_vec();
-        self
-    }
-    fn calculate_fitness(&mut self) {
-        self.fitness = (self.fitness_fn)(&self.dna);
-    }
 }
 impl Binary {
+
+    pub fn new() -> Self {
+        Self {
+            dna: Vec::new(),
+            fitness: 0.0,
+            age: 0,
+            fitness_fn: Arc::new(|_| 0.0),
+        }
+    }
+
     pub fn set_fitness_fn<F>(&mut self, fitness_fn: F) -> &mut Self
     where
         F: Fn(&[BinaryGenotype]) -> f64 + Send + Sync + 'static,
