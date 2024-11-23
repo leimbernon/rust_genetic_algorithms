@@ -205,46 +205,46 @@ where
         //Walking through the threads
         for _ in 0..self.configuration.number_of_threads {
 
-        //Cloning the information from the main thread
-        let (tx, 
-        alleles_t, 
-        alleles_can_be_repeated_t, 
-        genes_per_individual_t, 
-        individuals_per_thread_t,
-        needs_unique_ids_t) = (tx.clone(), Arc::clone(&alleles_t), self.configuration.limit_configuration.alleles_can_be_repeated, 
-                                    self.configuration.limit_configuration.genes_per_individual, individuals_per_thread, 
-                                    self.configuration.limit_configuration.needs_unique_ids);
+            //Cloning the information from the main thread
+            let (tx,
+            alleles_t,
+            alleles_can_be_repeated_t,
+            genes_per_individual_t,
+            individuals_per_thread_t,
+            needs_unique_ids_t) = (tx.clone(), Arc::clone(&alleles_t), self.configuration.limit_configuration.alleles_can_be_repeated,
+                                        self.configuration.limit_configuration.genes_per_individual, individuals_per_thread,
+                                        self.configuration.limit_configuration.needs_unique_ids);
 
-        //Starting the thread management
-        thread::spawn(move || {
+            //Starting the thread management
+            thread::spawn(move || {
 
-        let mut individuals = Vec::new();
+                let mut individuals = Vec::new();
 
-        for _ in 0..individuals_per_thread_t{
+                for _ in 0..individuals_per_thread_t{
 
-        let mut individual = U::new();
+                    let mut individual = U::new();
 
-        //Gets the dna randomly
-        if alleles_can_be_repeated_t {
-        let dna_individual = helpers::initialize_dna::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
-        individual.set_dna(dna_individual.as_slice());
-        }else{
-        let dna_individual = helpers::initialize_dna_without_repeated_alleles::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
-        individual.set_dna(dna_individual.as_slice());
-        }
+                    //Gets the dna randomly
+                    if alleles_can_be_repeated_t {
+                        let dna_individual = helpers::initialize_dna::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                            individual.set_dna(dna_individual.as_slice());
+                        }else{
+                            let dna_individual = helpers::initialize_dna_without_repeated_alleles::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                            individual.set_dna(dna_individual.as_slice());
+                        }
 
-        //Sets the dna of the individual, the age, and calculates fitness
-        individual.set_age(0);
-        individual.calculate_fitness();
+                    //Sets the dna of the individual, the age, and calculates fitness
+                    individual.set_age(0);
+                    individual.calculate_fitness();
 
-        //Adds the individual in the vector
-        individuals.push(individual);
+                    //Adds the individual in the vector
+                    individuals.push(individual);
 
-        }
+                }
 
-        //we send the individuals randomly initialized
-        tx.send(individuals).unwrap();
-        });
+                //we send the individuals randomly initialized
+                tx.send(individuals).unwrap();
+            });
         }
 
         drop(tx);
@@ -252,7 +252,7 @@ where
         // We receive from the threads and add them into individuals
         let mut individuals = Vec::new();
         for mut received in rx {
-        individuals.append(&mut received);
+            individuals.append(&mut received);
         }
 
         Population::new(individuals)

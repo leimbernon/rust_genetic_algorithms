@@ -3,6 +3,9 @@ use rand::Rng;
 use crate::{configuration::GaConfiguration, population::Population, traits::{ChromosomeT, GeneT}, operations::{self, survivor::fitness::ProblemSolving}};
 
 pub mod condition_checker;
+pub mod binary_initializator;
+pub use binary_initializator::binary_random_initialization;
+
 
 /*
  * Function to call the different condition checkers 
