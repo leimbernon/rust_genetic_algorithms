@@ -1,6 +1,8 @@
 #[cfg(test)]
 mod structures;
-use genetic_algorithms::initializers::{generic_random_initialization, generic_random_initialization_without_repetitions};
+
+use genetic_algorithms::chromosomes::Binary;
+use genetic_algorithms::initializers::{binary_random_initialization, generic_random_initialization, generic_random_initialization_without_repetitions};
 use crate::structures::{Gene, Chromosome};
 
 #[test]
@@ -32,4 +34,9 @@ fn test_initializers_generic_random_initialization_without_repetitions(){
         alleles_ids.push(gene.id);
     }
 
+}
+
+fn test_binary_random_initialization(){
+    let binary = binary_random_initialization(100);
+    assert_eq!(100, binary.phenotype().len());
 }

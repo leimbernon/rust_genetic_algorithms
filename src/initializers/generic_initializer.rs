@@ -4,7 +4,7 @@ use crate::traits::{ChromosomeT, GeneT};
 /**
  * Function to initialize the dna of an individual
  */
-pub fn generic_random_initialization<U>(alleles: &[U::Gene], genes_per_individual: i32, needs_unique_ids: bool)->Vec<U::Gene>
+pub fn generic_random_initialization<U>(alleles: &[U::Gene], genes_per_chromosome: i32, needs_unique_ids: bool) ->Vec<U::Gene>
 where
     U: ChromosomeT + Send + Sync + 'static + Clone{
 
@@ -12,7 +12,7 @@ where
     let mut dna = Vec::new();
 
     //Selects the genes randomly from the vector without repeating them
-    for j in 0..genes_per_individual{
+    for j in 0..genes_per_chromosome {
         let index = rng.gen_range(0..alleles.len());
         let mut gene = alleles.get(index).cloned().unwrap();
 
@@ -31,7 +31,7 @@ where
 /**
  * Function to initialize the dna of an individual without repeating an array of alleles
  */
-pub fn generic_random_initialization_without_repetitions<U>(alleles: &[U::Gene], genes_per_individual: i32, needs_unique_ids: bool)->Vec<U::Gene>
+pub fn generic_random_initialization_without_repetitions<U>(alleles: &[U::Gene], genes_per_chromosome: i32, needs_unique_ids: bool) ->Vec<U::Gene>
 where
     U: ChromosomeT + Send + Sync + 'static + Clone{
 
@@ -41,7 +41,7 @@ where
     let mut tmp_alleles = alleles.to_vec().clone();
 
     //Selects the genes randomly from the vector without repeating them
-    for j in 0..genes_per_individual{
+    for j in 0..genes_per_chromosome {
         let index = rng.gen_range(0..tmp_alleles.len());
         let mut gene = tmp_alleles.get(index).cloned().unwrap();
 
