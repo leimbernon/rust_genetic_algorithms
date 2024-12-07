@@ -2,8 +2,9 @@ use std::{sync::{mpsc::sync_channel, Mutex, Arc}, thread, collections::HashMap};
 use rand::Rng;
 use log::{trace, debug, info};
 use std::env;
-use crate::{population::Population, traits::{ChromosomeT, ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::{condition_checker_factory, self}};
+use crate::{population::Population, traits::{ChromosomeT, ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::condition_checker_factory};
 use crate::configuration::GaConfiguration;
+use crate::initializers::{generic_random_initialization, generic_random_initialization_without_repetitions};
 
 #[derive(Debug, PartialEq)]
 pub enum TerminationCause {
@@ -226,10 +227,10 @@ where
 
                     //Gets the dna randomly
                     if alleles_can_be_repeated_t {
-                        let dna_individual = helpers::initialize_dna::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                        let dna_individual = generic_random_initialization::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
                             individual.set_dna(dna_individual.as_slice());
                         }else{
-                            let dna_individual = helpers::initialize_dna_without_repeated_alleles::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
+                            let dna_individual = generic_random_initialization_without_repetitions::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
                             individual.set_dna(dna_individual.as_slice());
                         }
 

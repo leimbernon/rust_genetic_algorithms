@@ -1,7 +1,6 @@
 use rand::Rng;
 use crate::chromosomes::Binary;
 use crate::genotypes::Binary as BinaryGenotype;
-use crate::traits::GeneT;
 
 pub fn binary_random_initialization(genes_per_chromosome: i32) -> Binary {
     let mut chromosome = Binary::new();

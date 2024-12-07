@@ -3,7 +3,7 @@ use genetic_algorithms::genotypes::Binary as BinaryGenotype;
 use genetic_algorithms::chromosomes::Binary as BinaryChromosome;
 use genetic_algorithms::ga;
 use genetic_algorithms::ga::TerminationCause;
-use genetic_algorithms::helpers::binary_random_initialization;
+use genetic_algorithms::initializers::binary_random_initialization;
 use genetic_algorithms::operations::{Crossover, Mutation, Selection};
 use genetic_algorithms::population::Population;
 use genetic_algorithms::traits::{ChromosomeT, ConfigurationT};

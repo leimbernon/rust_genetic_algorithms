@@ -7,3 +7,4 @@ pub mod helpers;
 pub mod genotypes;
 pub mod chromosomes;
 pub mod fitness;
+pub mod initializers;

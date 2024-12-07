@@ -1,11 +1,6 @@
-use rand::Rng;
-
-use crate::{configuration::GaConfiguration, population::Population, traits::{ChromosomeT, GeneT}, operations::{self, survivor::fitness::ProblemSolving}};
+use crate::{configuration::GaConfiguration, population::Population, traits::{ChromosomeT}, operations::{self, survivor::fitness::ProblemSolving}};
 
 pub mod condition_checker;
-pub mod binary_initializator;
-pub use binary_initializator::binary_random_initialization;
-
 
 /*
  * Function to call the different condition checkers 
@@ -60,60 +55,4 @@ U: ChromosomeT + Send + Sync + 'static + Clone
         //2.6- Condition checker for the couples
         condition_checker::check_number_of_couples_is_set(configuration);
     } 
-}
-
-/**
- * Function to initialize the dna of an individual without repeating an array of alleles
- */
-pub fn initialize_dna_without_repeated_alleles<U>(alleles: &[U::Gene], genes_per_individual: i32, needs_unique_ids: bool)->Vec<U::Gene>
-where
-U: ChromosomeT + Send + Sync + 'static + Clone{
-    
-    let mut rng = rand::thread_rng();
-    let mut dna = Vec::new();
-
-    let mut tmp_alleles = alleles.to_vec().clone();
-
-    //Selects the genes randomly from the vector without repeating them
-    for j in 0..genes_per_individual{
-        let index = rng.gen_range(0..tmp_alleles.len());
-        let mut gene = tmp_alleles.get(index).cloned().unwrap();
-
-        //If we need unique ids
-        if needs_unique_ids {
-            gene.set_id(j);
-        }
-
-        tmp_alleles.remove(index);
-
-        dna.push(gene);
-    }
-
-    dna
-}
-
-/**
- * Function to initialize the dna of an individual
- */
-pub fn initialize_dna<U>(alleles: &[U::Gene], genes_per_individual: i32, needs_unique_ids: bool)->Vec<U::Gene>
-where
-U: ChromosomeT + Send + Sync + 'static + Clone{
-    
-    let mut rng = rand::thread_rng();
-    let mut dna = Vec::new();
-
-    //Selects the genes randomly from the vector without repeating them
-    for j in 0..genes_per_individual{
-        let index = rng.gen_range(0..alleles.len());
-        let mut gene = alleles.get(index).cloned().unwrap();
-
-        //If we need unique ids
-        if needs_unique_ids {
-            gene.set_id(j);
-        }
-        
-        dna.push(gene);
-    }
-
-    dna
 }
