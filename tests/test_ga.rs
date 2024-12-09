@@ -133,7 +133,8 @@ fn test_parent_crossover_repeating_alleles(){
                     .with_needs_unique_ids(NEEDS_UNIQUE_IDS)
                     .with_alleles_can_be_repeated(ALLELES_CAN_BE_REPEATED)
                     .with_alleles(alleles.to_vec())
-                    .random_initialization();
+                    .with_initialization_fn(genetic_algorithms::initializers::generic_random_initialization::<Chromosome>)
+                    .initialization();
 
     //Once population has been initialized, we check for each individual in the population the number of genes in the dna
     for individual in population.individuals{
@@ -161,7 +162,8 @@ fn test_parent_crossover_without_repeating_alleles(){
                     .with_needs_unique_ids(NEEDS_UNIQUE_IDS)
                     .with_alleles_can_be_repeated(ALLELES_CAN_BE_REPEATED)
                     .with_alleles(alleles.to_vec())
-                    .random_initialization();
+                    .with_initialization_fn(genetic_algorithms::initializers::generic_random_initialization_without_repetitions::<Chromosome>)
+                    .initialization();
 
     //Once population has been initialized, we check for each individual we check that genes are not repeated
     for individual in population.individuals{

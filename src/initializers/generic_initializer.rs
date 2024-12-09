@@ -4,9 +4,16 @@ use crate::traits::{ChromosomeT, GeneT};
 /**
  * Function to initialize the dna of an individual
  */
-pub fn generic_random_initialization<U>(alleles: &[U::Gene], genes_per_chromosome: i32, needs_unique_ids: bool) ->Vec<U::Gene>
+pub fn generic_random_initialization<U>(genes_per_chromosome: i32, alleles: Option<&[U::Gene]>, needs_unique_ids: Option<bool>) ->Vec<U::Gene>
 where
     U: ChromosomeT + Send + Sync + 'static + Clone{
+
+    if alleles.is_none() || needs_unique_ids.is_none(){
+        panic!("Alleles and needs_unique_ids must be provided");
+    }
+
+    let alleles = alleles.unwrap();
+    let needs_unique_ids = needs_unique_ids.unwrap();
 
     let mut rng = rand::thread_rng();
     let mut dna = Vec::new();
@@ -31,9 +38,16 @@ where
 /**
  * Function to initialize the dna of an individual without repeating an array of alleles
  */
-pub fn generic_random_initialization_without_repetitions<U>(alleles: &[U::Gene], genes_per_chromosome: i32, needs_unique_ids: bool) ->Vec<U::Gene>
+pub fn generic_random_initialization_without_repetitions<U>(genes_per_chromosome: i32, alleles: Option<&[U::Gene]>, needs_unique_ids: Option<bool>) ->Vec<U::Gene>
 where
     U: ChromosomeT + Send + Sync + 'static + Clone{
+
+    if alleles.is_none() || needs_unique_ids.is_none(){
+        panic!("Alleles and needs_unique_ids must be provided");
+    }
+
+    let alleles = alleles.unwrap();
+    let needs_unique_ids = needs_unique_ids.unwrap();
 
     let mut rng = rand::thread_rng();
     let mut dna = Vec::new();

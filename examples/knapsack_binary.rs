@@ -49,7 +49,10 @@ fn main(){
 
     // Initialization
     for _ in 0..100{
-        let mut chromosome = binary_random_initialization(10);
+        let genes = binary_random_initialization(10, None, None);
+        let mut chromosome = BinaryChromosome::new();
+
+        chromosome.set_dna(genes.as_slice());
         chromosome.set_fitness_fn(fitness_fn);
         chromosome.calculate_fitness();
         println!("Phenotype: {} - Fitness: {}", chromosome.phenotype(), chromosome.get_fitness());

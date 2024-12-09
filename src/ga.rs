@@ -4,7 +4,6 @@ use log::{trace, debug, info};
 use std::env;
 use crate::{population::Population, traits::{ChromosomeT, ConfigurationT}, operations::{selection, crossover, mutation, survivor}, configuration::{ProblemSolving, LimitConfiguration, LogLevel}, helpers::condition_checker_factory};
 use crate::configuration::GaConfiguration;
-use crate::initializers::{generic_random_initialization, generic_random_initialization_without_repetitions};
 
 #[derive(Debug, PartialEq)]
 pub enum TerminationCause {
@@ -20,8 +19,9 @@ where
     pub configuration: GaConfiguration,
     pub alleles: Vec<U::Gene>,
     pub population: Population<U>,
-    pub random_initialization: bool,
-    pub default_population: bool
+    pub default_population: bool,
+
+    pub initialization_fn: Option<Arc<dyn Fn(i32, Option<&[U::Gene]>, Option<bool>) -> Vec<U::Gene> + Send + Sync>>,
 }
 
 
@@ -34,8 +34,8 @@ where
             configuration: GaConfiguration{..Default::default()},
             population: Population::new_empty(),
             alleles: Vec::new(),
-            random_initialization: true,
-            default_population: true
+            default_population: true,
+            initialization_fn: None,
         }
     }
 }
@@ -174,7 +174,6 @@ where
      */
     pub fn with_population(&mut self, population: Population<U>) -> &mut Self {
         self.population = population;
-        self.random_initialization = false;
         self.default_population = false;
         
         //Checks if the number of couples is 0, sets the number of couples to the half of the population
@@ -185,15 +184,33 @@ where
     }
 
     /**
+    * Sets the initialization function
+    */
+    pub fn with_initialization_fn<F>(&mut self, initialization_fn: F) -> &mut Self
+    where
+        U:ChromosomeT + Send + Sync + 'static + Clone,
+        F: Fn(i32, Option<&[U::Gene]>, Option<bool>) -> Vec<U::Gene> + Send + Sync + 'static
+    {
+        self.initialization_fn = Some(Arc::new(initialization_fn));
+        self
+    }
+
+    /**
      * Function to randomly initialize the population
      */
-    pub fn random_initialization(&mut self)->Population<U>
+    pub fn initialization(&mut self) ->Population<U>
     where U:ChromosomeT + Send + Sync + 'static + Clone
     {
+
+        // Before starting initialization, we should verify that initializer is set
+        if self.initialization_fn.is_none(){
+            panic!("No initialization function set");
+        }
+
         //Before starting the run, we will check the conditions
         condition_checker_factory::<U>(Some(&self.configuration), None, Some(&self.alleles), self.default_population);
 
-        info!("Random initialization started");
+        info!("Initialization started");
         //let mut individuals = Vec::new();
         let (tx, rx) = sync_channel(self.configuration.number_of_threads as usize);
 
@@ -209,12 +226,14 @@ where
             //Cloning the information from the main thread
             let (tx,
             alleles_t,
-            alleles_can_be_repeated_t,
             genes_per_individual_t,
             individuals_per_thread_t,
-            needs_unique_ids_t) = (tx.clone(), Arc::clone(&alleles_t), self.configuration.limit_configuration.alleles_can_be_repeated,
-                                        self.configuration.limit_configuration.genes_per_individual, individuals_per_thread,
-                                        self.configuration.limit_configuration.needs_unique_ids);
+            needs_unique_ids_t,
+            initialization_fn_t) = (tx.clone(), Arc::clone(&alleles_t),
+                                        self.configuration.limit_configuration.genes_per_individual,
+                                        individuals_per_thread,
+                                        self.configuration.limit_configuration.needs_unique_ids,
+                                        self.initialization_fn.clone().unwrap());
 
             //Starting the thread management
             thread::spawn(move || {
@@ -226,13 +245,9 @@ where
                     let mut individual = U::new();
 
                     //Gets the dna randomly
-                    if alleles_can_be_repeated_t {
-                        let dna_individual = generic_random_initialization::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
-                            individual.set_dna(dna_individual.as_slice());
-                        }else{
-                            let dna_individual = generic_random_initialization_without_repetitions::<U>(&alleles_t.lock().unwrap(), genes_per_individual_t, needs_unique_ids_t);
-                            individual.set_dna(dna_individual.as_slice());
-                        }
+                    let dna_individual = (initialization_fn_t)(genes_per_individual_t, Some(&alleles_t.lock().unwrap()), Some(needs_unique_ids_t));
+                    individual.set_dna(dna_individual.as_slice());
+
 
                     //Sets the dna of the individual, the age, and calculates fitness
                     individual.set_age(0);
@@ -276,8 +291,8 @@ where
         condition_checker_factory::<U>(Some(&self.configuration), Some(&self.population), Some(&self.alleles), self.default_population);
 
         //If we want to initialize the population randomly
-        if self.random_initialization {
-            let tmp_population=self.random_initialization();
+        if self.initialization_fn.is_some() {
+            let tmp_population= self.initialization();
             self.with_population(tmp_population);
         }   
 
