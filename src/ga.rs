@@ -86,8 +86,8 @@ where
         self.configuration.with_population_size(population_size);
         self
     }
-    fn with_genes_per_individual(&mut self, genes_per_individual: i32) -> &mut Self {
-        self.configuration.with_genes_per_individual(genes_per_individual);
+    fn with_genes_per_chromosome(&mut self, genes_per_individual: i32) -> &mut Self {
+        self.configuration.with_genes_per_chromosome(genes_per_individual);
         self
     }
     fn with_needs_unique_ids(&mut self, needs_unique_ids: bool) -> &mut Self {
